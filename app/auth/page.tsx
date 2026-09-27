@@ -149,7 +149,7 @@ function AuthContent() {
                 </div>
                 <div>
                   <p className="font-semibold text-ink mb-1">Proceso simple y rápido</p>
-                  <p className="text-sm text-slate">Configura, compra y recibe en 4-6 semanas</p>
+                  <p className="text-sm text-slate">Configura, compra y recibe en 1-2 semanas</p>
                 </div>
               </div>
             </div>

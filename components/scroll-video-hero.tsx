@@ -131,7 +131,7 @@ export default function ScrollVideoHero() {
           <p className="text-body-small sm:text-body text-slate mt-6 max-w-2xl mx-auto">
             Lentillas adhesivas de goma que transforman cualquier lente o gafa de sol
             <br className="hidden sm:block" />
-            en tu graduación perfecta. Pre-orden desde $50 p.m. o Pt en 19.16
+            en tu graduación perfecta. Pre-orden desde $50
           </p>
         </div>
 
@@ -158,10 +158,10 @@ export default function ScrollVideoHero() {
           <div className="flex items-center gap-4 flex-wrap justify-center">
             <div>
               <p className="text-body-small font-semibold text-ink">
-                Desde $50 p.m. o Pt en 19.16
+                Desde $50
               </p>
               <p className="text-compact-control text-slate">
-                Con entrega sin costo. Disponible en 6 semanas.
+                Con entrega sin costo. Disponible en 1-2 semanas.
               </p>
             </div>
             <button className="bg-pricing-blue hover:bg-pricing-blue/90 text-gallery-white text-compact-control font-normal px-5 py-2 rounded-full transition-colors">
