@@ -6,6 +6,8 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 
+export const dynamic = 'force-dynamic';
+
 export default function AuthPage() {
   const router = useRouter();
   const searchParams = useSearchParams();

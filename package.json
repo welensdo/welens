@@ -20,6 +20,8 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "embla-carousel-react": "^8.5.1",
+    "eslint": "^8",
+    "eslint-config-next": "15.3.0",
     "framer-motion": "^11.18.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.10.2",
@@ -34,7 +36,5 @@
     "typescript": "^5"
   },
   "devDependencies": {
-    "eslint": "^8",
-    "eslint-config-next": "15.3.0"
   }
 }
