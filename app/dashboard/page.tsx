@@ -77,15 +77,6 @@ export default function DashboardPage() {
       if (ordersRes.ok) {
         const ordersData = await ordersRes.json();
         setOrders(ordersData.orders);
-
-        // Check if there's a new order to show
-        const newOrderNumber = searchParams?.get("order");
-        if (newOrderNumber) {
-          const newOrder = ordersData.orders.find(
-            (o: Order) => o.orderNumber === newOrderNumber
-          );
-          if (newOrder) setSelectedOrder(newOrder);
-        }
       }
     } catch (error) {
       console.error("Error loading data:", error);
