@@ -105,54 +105,57 @@ export default function DashboardPage() {
       <div className="pt-24 pb-20 lg:pt-32 lg:pb-40">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           {/* Header */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-12">
-            <div>
-              <Badge variant="secondary" className="mb-4">
-                Dashboard
-              </Badge>
-              <h1 className="text-4xl sm:text-5xl font-semibold text-ink tracking-tight">
-                Hola, {user?.name}
-              </h1>
-              <p className="text-body text-slate mt-2">
-                Gestiona tus pedidos y configuración
-              </p>
+          <div className="mb-8 sm:mb-12">
+            <Badge variant="secondary" className="mb-3 sm:mb-4 text-[10px] sm:text-xs">
+              Perfil de órdenes
+            </Badge>
+            
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <h1 className="text-2xl sm:text-4xl lg:text-5xl font-semibold text-ink tracking-tight">
+                  Hola, {user?.name}
+                </h1>
+                <p className="text-xs sm:text-base text-slate mt-1 sm:mt-2">
+                  Gestiona tus pedidos y configuración
+                </p>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="flex-shrink-0 px-3 sm:px-6 py-2 sm:py-3 bg-studio-mist hover:bg-control-gray text-ink rounded-full font-medium transition-colors text-xs sm:text-base"
+              >
+                Salir
+              </button>
             </div>
-            <button
-              onClick={handleLogout}
-              className="px-6 py-3 bg-studio-mist hover:bg-control-gray text-ink rounded-full font-medium transition-colors"
-            >
-              Cerrar sesión
-            </button>
           </div>
 
           {/* Orders List */}
-          <div className="space-y-6">
-            <h2 className="text-2xl font-semibold text-ink">Tus pedidos</h2>
+          <div className="space-y-4 sm:space-y-6">
+            <h2 className="text-xl sm:text-2xl font-semibold text-ink">Tus pedidos</h2>
 
             {orders.length === 0 ? (
-              <div className="bg-studio-mist rounded-3xl p-12 text-center">
-                <p className="text-slate mb-6">Aún no tienes pedidos</p>
+              <div className="bg-studio-mist rounded-2xl sm:rounded-3xl p-8 sm:p-12 text-center">
+                <p className="text-slate mb-4 sm:mb-6 text-sm sm:text-base">Aún no tienes pedidos</p>
                 <button
                   onClick={() => router.push("/configurador")}
-                  className="px-8 py-4 bg-pricing-blue hover:bg-pricing-blue/90 text-gallery-white rounded-full font-semibold transition-colors"
+                  className="px-6 sm:px-8 py-3 sm:py-4 bg-pricing-blue hover:bg-pricing-blue/90 text-gallery-white rounded-full font-semibold transition-colors text-sm sm:text-base"
                 >
                   Hacer tu primer pedido
                 </button>
               </div>
             ) : (
-              <div className="grid gap-6">
+              <div className="grid gap-4 sm:gap-6">
                 {orders.map((order) => (
                   <div
                     key={order._id}
-                    className="bg-gallery-white border border-hairline-silver rounded-3xl p-6 lg:p-8 hover:shadow-lg transition-shadow cursor-pointer"
+                    className="bg-gallery-white border border-hairline-silver rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 hover:shadow-lg transition-shadow cursor-pointer"
                     onClick={() => setSelectedOrder(order)}
                   >
-                    <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-4">
+                    <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-4 mb-3 sm:mb-4">
                       <div>
-                        <p className="text-xl font-semibold text-ink mb-1">
+                        <p className="text-base sm:text-xl font-semibold text-ink mb-0.5 sm:mb-1">
                           Pedido #{order.orderNumber}
                         </p>
-                        <p className="text-body-small text-slate">
+                        <p className="text-xs sm:text-sm text-slate">
                           {new Date(order.createdAt).toLocaleDateString("es-MX", {
                             year: "numeric",
                             month: "long",
@@ -160,27 +163,27 @@ export default function DashboardPage() {
                           })}
                         </p>
                       </div>
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto justify-between sm:justify-end">
                         <span
-                          className={`px-4 py-2 rounded-full text-compact-control font-medium ${
+                          className={`px-2.5 sm:px-4 py-1 sm:py-2 rounded-full text-[10px] sm:text-xs font-medium ${
                             statusColors[order.status]
                           }`}
                         >
                           {statusLabels[order.status]}
                         </span>
-                        <span className="text-xl font-semibold text-ink">
+                        <span className="text-lg sm:text-xl font-semibold text-ink">
                           ${order.totalPrice}
                         </span>
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-3">
+                    <div className="flex flex-wrap gap-2 sm:gap-3">
                       {order.items.map((item, idx) => (
                         <div
                           key={idx}
-                          className="bg-studio-mist rounded-2xl px-4 py-2"
+                          className="bg-studio-mist rounded-xl sm:rounded-2xl px-2.5 sm:px-4 py-1.5 sm:py-2"
                         >
-                          <span className="text-compact-control text-ink capitalize">
+                          <span className="text-[10px] sm:text-xs text-ink capitalize">
                             {item.eye === "left" ? "Izq" : "Der"}: {item.type}{" "}
                             {item.value > 0 ? "+" : ""}
                             {item.value.toFixed(2)}
@@ -190,8 +193,8 @@ export default function DashboardPage() {
                     </div>
 
                     {order.trackingNumber && (
-                      <div className="mt-4 pt-4 border-t border-hairline-silver">
-                        <p className="text-body-small text-slate">
+                      <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-hairline-silver">
+                        <p className="text-xs sm:text-sm text-slate">
                           Número de rastreo:{" "}
                           <span className="font-medium text-ink">
                             {order.trackingNumber}
@@ -210,20 +213,20 @@ export default function DashboardPage() {
       {/* Order Detail Modal */}
       {selectedOrder && (
         <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4"
           onClick={() => setSelectedOrder(null)}
         >
           <div
-            className="bg-gallery-white rounded-3xl p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+            className="bg-gallery-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 max-w-2xl w-full max-h-[85vh] sm:max-h-[80vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex justify-between items-start mb-6">
+            <div className="flex justify-between items-start mb-4 sm:mb-6">
               <div>
-                <h2 className="text-3xl font-semibold text-ink mb-2">
+                <h2 className="text-xl sm:text-3xl font-semibold text-ink mb-2">
                   Pedido #{selectedOrder.orderNumber}
                 </h2>
                 <span
-                  className={`inline-block px-4 py-2 rounded-full text-compact-control font-medium ${
+                  className={`inline-block px-2.5 sm:px-4 py-1 sm:py-2 rounded-full text-[10px] sm:text-xs font-medium ${
                     statusColors[selectedOrder.status]
                   }`}
                 >
@@ -235,7 +238,7 @@ export default function DashboardPage() {
                 className="text-slate hover:text-ink transition-colors"
               >
                 <svg
-                  className="w-6 h-6"
+                  className="w-5 h-5 sm:w-6 sm:h-6"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -251,31 +254,31 @@ export default function DashboardPage() {
             </div>
 
             {/* Timeline */}
-            <div className="mb-6">
-              <h3 className="text-xl font-semibold text-ink mb-4">
+            <div className="mb-4 sm:mb-6">
+              <h3 className="text-base sm:text-xl font-semibold text-ink mb-3 sm:mb-4">
                 Estado del pedido
               </h3>
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {selectedOrder.statusHistory
                   .slice()
                   .reverse()
                   .map((history, idx) => (
-                    <div key={idx} className="flex gap-4">
+                    <div key={idx} className="flex gap-3 sm:gap-4">
                       <div className="flex flex-col items-center">
-                        <div className="w-3 h-3 rounded-full bg-pricing-blue" />
+                        <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-pricing-blue" />
                         {idx < selectedOrder.statusHistory.length - 1 && (
                           <div className="w-0.5 h-full bg-hairline-silver my-1" />
                         )}
                       </div>
-                      <div className="pb-6">
-                        <p className="font-semibold text-ink">
+                      <div className="pb-4 sm:pb-6">
+                        <p className="font-semibold text-ink text-sm sm:text-base">
                           {statusLabels[history.status]}
                         </p>
-                        <p className="text-body-small text-slate">
+                        <p className="text-xs sm:text-sm text-slate">
                           {new Date(history.date).toLocaleString("es-MX")}
                         </p>
                         {history.note && (
-                          <p className="text-body-small text-slate mt-1">
+                          <p className="text-xs sm:text-sm text-slate mt-1">
                             {history.note}
                           </p>
                         )}
@@ -286,21 +289,21 @@ export default function DashboardPage() {
             </div>
 
             {/* Items */}
-            <div className="mb-6">
-              <h3 className="text-xl font-semibold text-ink mb-4">
+            <div className="mb-4 sm:mb-6">
+              <h3 className="text-base sm:text-xl font-semibold text-ink mb-3 sm:mb-4">
                 Detalles del pedido
               </h3>
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 {selectedOrder.items.map((item, idx) => (
                   <div
                     key={idx}
-                    className="bg-studio-mist rounded-2xl p-4 flex justify-between"
+                    className="bg-studio-mist rounded-xl sm:rounded-2xl p-3 sm:p-4 flex justify-between"
                   >
                     <div>
-                      <p className="font-semibold text-ink capitalize">
+                      <p className="font-semibold text-ink capitalize text-sm sm:text-base">
                         Ojo {item.eye === "left" ? "izquierdo" : "derecho"}
                       </p>
-                      <p className="text-body-small text-slate capitalize">
+                      <p className="text-xs sm:text-sm text-slate capitalize">
                         {item.type} •{" "}
                         {item.value > 0 ? "+" : ""}
                         {item.value.toFixed(2)}
@@ -311,8 +314,8 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="pt-6 border-t border-hairline-silver">
-              <div className="flex justify-between text-xl font-semibold">
+            <div className="pt-4 sm:pt-6 border-t border-hairline-silver">
+              <div className="flex justify-between text-lg sm:text-xl font-semibold">
                 <span className="text-ink">Total</span>
                 <span className="text-ink">${selectedOrder.totalPrice}</span>
               </div>

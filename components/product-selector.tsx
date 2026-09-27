@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
@@ -14,6 +15,7 @@ interface PrescriptionValues {
 }
 
 export function ProductSelector() {
+  const router = useRouter();
   const [prescriptionType, setPrescriptionType] =
     useState<PrescriptionType>("myopia");
   const [values, setValues] = useState<PrescriptionValues>({
@@ -25,6 +27,12 @@ export function ProductSelector() {
   const myopiaRange = Array.from({ length: 17 }, (_, i) => -0.5 - i * 0.5);
   const astigmatismRange = Array.from({ length: 13 }, (_, i) => -0.25 - i * 0.25);
   const axisRange = Array.from({ length: 19 }, (_, i) => i * 10);
+
+  const handleAddToCart = () => {
+    // Aquí iría la lógica para añadir al carrito
+    // Por ahora redirigimos directamente a checkout
+    router.push('/checkout');
+  };
 
   return (
     <div className="w-full min-h-screen bg-gallery-white py-2 sm:py-12 lg:py-32">
@@ -202,7 +210,11 @@ export function ProductSelector() {
 
             {/* Botón de compra */}
             <div className="pt-2 sm:pt-6">
-              <Button size="lg" className="w-full font-medium text-sm sm:text-base h-11 sm:h-12">
+              <Button 
+                size="lg" 
+                className="w-full font-medium text-sm sm:text-base h-11 sm:h-12"
+                onClick={handleAddToCart}
+              >
                 Añadir al carrito - €49.99
               </Button>
               <p className="font-sf-pro-text text-[10px] sm:text-sm text-slate text-center mt-1.5 sm:mt-4">
