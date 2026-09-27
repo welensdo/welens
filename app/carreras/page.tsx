@@ -4,34 +4,22 @@ import Footer from "@/components/footer";
 export default function CarrerasPage() {
   const positions = [
     {
-      title: "Senior Frontend Engineer",
-      department: "Ingeniería",
-      location: "Madrid / Remoto",
-      type: "Tiempo completo",
+      title: "Abogado Corporativo",
+      department: "Legal",
+      location: "Remote / US",
+      type: "Full-time",
     },
     {
-      title: "Product Designer",
-      department: "Diseño",
-      location: "Madrid",
-      type: "Tiempo completo",
+      title: "Ejecutivo de Ventas",
+      department: "Ventas",
+      location: "Remote / US",
+      type: "Full-time",
     },
     {
-      title: "Customer Success Manager",
-      department: "Soporte",
-      location: "Madrid / Remoto",
-      type: "Tiempo completo",
-    },
-    {
-      title: "Marketing Lead",
+      title: "Encargado de Marketing",
       department: "Marketing",
-      location: "Remoto",
-      type: "Tiempo completo",
-    },
-    {
-      title: "Optical Engineer",
-      department: "I+D",
-      location: "Madrid",
-      type: "Tiempo completo",
+      location: "Remote / US",
+      type: "Full-time",
     },
   ];
 

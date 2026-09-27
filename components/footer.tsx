@@ -13,7 +13,6 @@ export default function Footer() {
       title: "Soporte",
       links: [
         { name: "Soporte y FAQ", href: "/soporte" },
-        { name: "Guías de uso", href: "/guias" },
         { name: "Contacto", href: "/contacto" },
       ],
     },

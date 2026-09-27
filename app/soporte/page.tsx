@@ -1,6 +1,34 @@
+"use client";
+
+import { useState } from "react";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import Link from "next/link";
+
+function FAQItem({ question, answer }: { question: string; answer: string }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="border-b border-hairline-silver">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between py-5 text-left hover:text-pricing-blue transition-colors"
+      >
+        <span className="text-body-emphasized font-semibold text-ink pr-8">
+          {question}
+        </span>
+        <span className="text-pricing-blue text-xl flex-shrink-0">
+          {isOpen ? "−" : "+"}
+        </span>
+      </button>
+      {isOpen && (
+        <div className="pb-6">
+          <p className="text-compact text-slate">{answer}</p>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function SoportePage() {
   const faqs = [
@@ -164,14 +192,13 @@ export default function SoportePage() {
                 <h3 className="text-body-large-emphasized font-semibold text-ink mb-6 pb-3 border-b border-hairline-silver">
                   {category.category}
                 </h3>
-                <div className="space-y-6">
+                <div className="space-y-4">
                   {category.questions.map((item, qIndex) => (
-                    <div key={qIndex} className="bg-gallery-white rounded-2xl p-6">
-                      <h4 className="text-body-emphasized font-semibold text-ink mb-3">
-                        {item.q}
-                      </h4>
-                      <p className="text-compact text-slate">{item.a}</p>
-                    </div>
+                    <FAQItem
+                      key={qIndex}
+                      question={item.q}
+                      answer={item.a}
+                    />
                   ))}
                 </div>
               </div>
