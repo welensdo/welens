@@ -27,25 +27,24 @@ export function ProductSelector() {
   const axisRange = Array.from({ length: 19 }, (_, i) => i * 10);
 
   return (
-    <div className="w-full min-h-screen bg-gallery-white py-8 sm:py-12 lg:py-32">
+    <div className="w-full min-h-screen bg-gallery-white py-4 sm:py-12 lg:py-32">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-          <Badge variant="launch" className="mb-3 sm:mb-4">
+        <div className="text-center mb-6 sm:mb-12 lg:mb-16">
+          <Badge variant="launch" className="mb-2 sm:mb-4 text-xs">
             Personaliza tu visión
           </Badge>
-          <h2 className="font-sf-pro-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-ink mb-3 sm:mb-4 tracking-tight px-4">
+          <h2 className="font-sf-pro-display text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-ink mb-2 sm:mb-4 tracking-tight px-4">
             Selecciona tu graduación
           </h2>
-          <p className="font-sf-pro-text text-base sm:text-lg text-slate max-w-2xl mx-auto px-4">
-            Configura tus lentillas adhesivas con tu prescripción exacta para
-            una visión perfecta
+          <p className="font-sf-pro-text text-sm sm:text-lg text-slate max-w-2xl mx-auto px-4">
+            Configura tus lentillas adhesivas con tu prescripción exacta
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-20 items-start max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-6 sm:gap-12 lg:gap-20 items-start max-w-7xl mx-auto">
           {/* Producto 3D Mockup */}
-          <div className="relative aspect-square bg-studio-mist rounded-2xl sm:rounded-3xl overflow-hidden flex items-center justify-center order-1 lg:order-1">
-            <div className="relative w-full h-full flex items-center justify-center p-6 sm:p-8 lg:p-12">
+          <div className="relative aspect-square bg-studio-mist rounded-xl sm:rounded-3xl overflow-hidden flex items-center justify-center order-1 lg:order-1">
+            <div className="relative w-full h-full flex items-center justify-center p-4 sm:p-8 lg:p-12">
               <Image
                 src="https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=800&q=80"
                 alt="WeLens Product"
@@ -56,25 +55,25 @@ export function ProductSelector() {
               />
             </div>
             {/* Floating info card */}
-            <div className="absolute bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-md rounded-full px-4 sm:px-6 py-2 sm:py-3 shadow-lg">
-              <p className="font-sf-pro-text text-sm sm:text-base font-semibold text-ink">
+            <div className="absolute bottom-3 sm:bottom-8 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-md rounded-full px-3 sm:px-6 py-1.5 sm:py-3 shadow-lg">
+              <p className="font-sf-pro-text text-xs sm:text-base font-semibold text-ink">
                 Desde €49.99
               </p>
             </div>
           </div>
 
           {/* Selectores */}
-          <div className="space-y-6 sm:space-y-8 order-2 lg:order-2">
+          <div className="space-y-4 sm:space-y-8 order-2 lg:order-2">
             {/* Tipo de prescripción */}
             <div>
-              <label className="block font-sf-pro-display text-lg sm:text-xl font-medium text-ink mb-3 sm:mb-4">
+              <label className="block font-sf-pro-display text-base sm:text-xl font-medium text-ink mb-2 sm:mb-4">
                 Tipo de corrección
               </label>
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                 <Button
                   variant={prescriptionType === "myopia" ? "default" : "outline"}
                   onClick={() => setPrescriptionType("myopia")}
-                  className="flex-1 h-12 sm:h-auto text-base"
+                  className="flex-1 h-11 sm:h-auto text-sm sm:text-base"
                 >
                   Miopía
                 </Button>
@@ -83,14 +82,14 @@ export function ProductSelector() {
                     prescriptionType === "astigmatism" ? "default" : "outline"
                   }
                   onClick={() => setPrescriptionType("astigmatism")}
-                  className="flex-1 h-12 sm:h-auto text-base"
+                  className="flex-1 h-11 sm:h-auto text-sm sm:text-base"
                 >
                   Astigmatismo
                 </Button>
                 <Button
                   variant={prescriptionType === "both" ? "default" : "outline"}
                   onClick={() => setPrescriptionType("both")}
-                  className="flex-1 h-12 sm:h-auto text-base"
+                  className="flex-1 h-11 sm:h-auto text-sm sm:text-base"
                 >
                   Ambos
                 </Button>
@@ -99,12 +98,12 @@ export function ProductSelector() {
 
             {/* Miopía Slider */}
             {(prescriptionType === "myopia" || prescriptionType === "both") && (
-              <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-hairline-silver">
-                <div className="flex justify-between items-center mb-4">
-                  <label className="font-sf-pro-display text-base sm:text-lg font-medium text-ink">
+              <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-6 shadow-sm border border-hairline-silver">
+                <div className="flex justify-between items-center mb-3">
+                  <label className="font-sf-pro-display text-sm sm:text-lg font-medium text-ink">
                     Miopía (Dioptrías)
                   </label>
-                  <span className="font-sf-pro-text text-xl sm:text-2xl font-semibold text-pricing-blue">
+                  <span className="font-sf-pro-text text-lg sm:text-2xl font-semibold text-pricing-blue">
                     {values.myopia.toFixed(2)}
                   </span>
                 </div>
@@ -117,9 +116,9 @@ export function ProductSelector() {
                   onChange={(e) =>
                     setValues({ ...values, myopia: parseFloat(e.target.value) })
                   }
-                  className="w-full h-3 bg-control-gray rounded-full appearance-none cursor-pointer accent-pricing-blue"
+                  className="w-full h-2 sm:h-3 bg-control-gray rounded-full appearance-none cursor-pointer accent-pricing-blue"
                 />
-                <div className="flex justify-between mt-3">
+                <div className="flex justify-between mt-2">
                   <span className="font-sf-pro-text text-xs sm:text-sm text-slate">
                     -8.5
                   </span>
@@ -133,12 +132,12 @@ export function ProductSelector() {
             {/* Astigmatismo Slider */}
             {(prescriptionType === "astigmatism" ||
               prescriptionType === "both") && (
-              <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-hairline-silver">
-                <div className="flex justify-between items-center mb-4">
-                  <label className="font-sf-pro-display text-base sm:text-lg font-medium text-ink">
+              <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-6 shadow-sm border border-hairline-silver">
+                <div className="flex justify-between items-center mb-3">
+                  <label className="font-sf-pro-display text-sm sm:text-lg font-medium text-ink">
                     Astigmatismo (Dioptrías)
                   </label>
-                  <span className="font-sf-pro-text text-xl sm:text-2xl font-semibold text-pricing-blue">
+                  <span className="font-sf-pro-text text-lg sm:text-2xl font-semibold text-pricing-blue">
                     {values.astigmatism.toFixed(2)}
                   </span>
                 </div>
@@ -154,9 +153,9 @@ export function ProductSelector() {
                       astigmatism: parseFloat(e.target.value),
                     })
                   }
-                  className="w-full h-3 bg-control-gray rounded-full appearance-none cursor-pointer accent-pricing-blue"
+                  className="w-full h-2 sm:h-3 bg-control-gray rounded-full appearance-none cursor-pointer accent-pricing-blue"
                 />
-                <div className="flex justify-between mt-3">
+                <div className="flex justify-between mt-2">
                   <span className="font-sf-pro-text text-xs sm:text-sm text-slate">
                     -3.25
                   </span>
@@ -170,12 +169,12 @@ export function ProductSelector() {
             {/* Eje (solo para astigmatismo) */}
             {(prescriptionType === "astigmatism" ||
               prescriptionType === "both") && (
-              <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-hairline-silver">
-                <div className="flex justify-between items-center mb-4">
-                  <label className="font-sf-pro-display text-base sm:text-lg font-medium text-ink">
+              <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-6 shadow-sm border border-hairline-silver">
+                <div className="flex justify-between items-center mb-3">
+                  <label className="font-sf-pro-display text-sm sm:text-lg font-medium text-ink">
                     Eje
                   </label>
-                  <span className="font-sf-pro-text text-xl sm:text-2xl font-semibold text-pricing-blue">
+                  <span className="font-sf-pro-text text-lg sm:text-2xl font-semibold text-pricing-blue">
                     {values.axis}°
                   </span>
                 </div>
@@ -188,9 +187,9 @@ export function ProductSelector() {
                   onChange={(e) =>
                     setValues({ ...values, axis: parseInt(e.target.value) })
                   }
-                  className="w-full h-3 bg-control-gray rounded-full appearance-none cursor-pointer accent-pricing-blue"
+                  className="w-full h-2 sm:h-3 bg-control-gray rounded-full appearance-none cursor-pointer accent-pricing-blue"
                 />
-                <div className="flex justify-between mt-3">
+                <div className="flex justify-between mt-2">
                   <span className="font-sf-pro-text text-xs sm:text-sm text-slate">
                     0°
                   </span>
@@ -202,11 +201,11 @@ export function ProductSelector() {
             )}
 
             {/* Botón de compra */}
-            <div className="pt-4 sm:pt-6">
-              <Button size="lg" className="w-full font-medium text-base h-14 sm:h-12">
+            <div className="pt-3 sm:pt-6">
+              <Button size="lg" className="w-full font-medium text-sm sm:text-base h-12 sm:h-12">
                 Añadir al carrito - €49.99
               </Button>
-              <p className="font-sf-pro-text text-xs sm:text-sm text-slate text-center mt-3 sm:mt-4">
+              <p className="font-sf-pro-text text-xs sm:text-sm text-slate text-center mt-2 sm:mt-4">
                 Envío gratuito • Garantía de 2 años
               </p>
             </div>
