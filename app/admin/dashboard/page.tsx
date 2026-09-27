@@ -24,6 +24,7 @@ interface Order {
   };
   shippingAddress: {
     name: string;
+    address?: string;
     street: string;
     city: string;
     state: string;
@@ -368,10 +369,14 @@ export default function AdminDashboard() {
                 <div className="bg-studio-mist rounded-2xl p-4 mb-6">
                   <h4 className="font-semibold text-ink mb-2">Dirección de envío</h4>
                   <p className="text-body-small text-ink">{selectedOrder.shippingAddress.name}</p>
+                  {selectedOrder.shippingAddress.address && (
+                    <p className="text-body-small text-slate mb-1">{selectedOrder.shippingAddress.address}</p>
+                  )}
                   <p className="text-body-small text-slate">{selectedOrder.shippingAddress.street}</p>
                   <p className="text-body-small text-slate">
                     {selectedOrder.shippingAddress.city}, {selectedOrder.shippingAddress.state} {selectedOrder.shippingAddress.zipCode}
                   </p>
+                  <p className="text-body-small text-slate">{selectedOrder.shippingAddress.country}</p>
                   <p className="text-body-small text-slate">{selectedOrder.shippingAddress.phone}</p>
                 </div>
 

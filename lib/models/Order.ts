@@ -25,6 +25,7 @@ export interface IOrder extends mongoose.Document {
   status: OrderStatus;
   shippingAddress: {
     name: string;
+    address: string;
     street: string;
     city: string;
     state: string;
@@ -96,6 +97,7 @@ const OrderSchema = new mongoose.Schema<IOrder>(
     },
     shippingAddress: {
       name: { type: String, required: true },
+      address: { type: String, required: true },
       street: { type: String, required: true },
       city: { type: String, required: true },
       state: { type: String, required: true },

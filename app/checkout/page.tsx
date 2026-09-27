@@ -6,6 +6,7 @@ import { useCart } from "@/contexts/CartContext";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { Badge } from "@/components/ui/badge";
+import { countries } from "@/lib/countries";
 
 export const dynamic = 'force-dynamic';
 
@@ -18,11 +19,12 @@ export default function CheckoutPage() {
 
   const [shippingData, setShippingData] = useState({
     name: "",
+    address: "",
     street: "",
     city: "",
     state: "",
     zipCode: "",
-    country: "México",
+    country: "República Dominicana",
     phone: "",
   });
 
@@ -160,6 +162,48 @@ export default function CheckoutPage() {
                       className="w-full px-4 py-3 rounded-2xl border-2 border-hairline-silver focus:border-pricing-blue focus:outline-none"
                       required
                     />
+                  </div>
+
+                  <div>
+                    <label className="block text-body-small font-medium text-ink mb-2">
+                      Dirección completa
+                    </label>
+                    <textarea
+                      value={shippingData.address}
+                      onChange={(e) =>
+                        setShippingData({ ...shippingData, address: e.target.value })
+                      }
+                      rows={3}
+                      className="w-full px-4 py-3 rounded-2xl border-2 border-hairline-silver focus:border-pricing-blue focus:outline-none resize-none"
+                      placeholder="Calle, número, apartamento, piso, etc."
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-body-small font-medium text-ink mb-2">
+                      País
+                    </label>
+                    <select
+                      value={shippingData.country}
+                      onChange={(e) =>
+                        setShippingData({ ...shippingData, country: e.target.value })
+                      }
+                      className="w-full px-4 py-3 rounded-2xl border-2 border-hairline-silver focus:border-pricing-blue focus:outline-none bg-white appearance-none cursor-pointer"
+                      style={{
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'right 1rem center',
+                        paddingRight: '2.5rem'
+                      }}
+                      required
+                    >
+                      {countries.map((country) => (
+                        <option key={country.code} value={country.name}>
+                          {country.flag} {country.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <div>
@@ -312,13 +356,13 @@ export default function CheckoutPage() {
 
                 <div className="mt-6 p-4 bg-pricing-blue/10 rounded-2xl">
                   <p className="text-compact-control text-ink">
-                    ✓ Envío gratuito a todo México
+                    ✓ Envío gratuito a todo el Caribe
                   </p>
                   <p className="text-compact-control text-ink">
                     ✓ Garantía de satisfacción de 30 días
                   </p>
                   <p className="text-compact-control text-ink">
-                    ✓ Tiempo estimado: 4-6 semanas
+                    ✓ Tiempo estimado: 1-3 semanas
                   </p>
                 </div>
               </div>
