@@ -4,7 +4,6 @@ import FeaturesCarousel from "@/components/features-carousel";
 import ImageComparison from "@/components/image-comparison";
 import HowItWorks from "@/components/how-it-works";
 import BenefitsSection from "@/components/benefits-section";
-import PricingSection from "@/components/pricing-section";
 import Footer from "@/components/footer";
 
 export default function Home() {
@@ -16,7 +15,6 @@ export default function Home() {
       <ImageComparison />
       <BenefitsSection />
       <HowItWorks />
-      <PricingSection />
       <Footer />
     </main>
   );
