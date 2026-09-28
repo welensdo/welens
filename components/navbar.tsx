@@ -118,6 +118,13 @@ export default function Navbar() {
           <div className="flex items-center space-x-2 sm:space-x-4">
             {!loading && (
               <>
+                <Link
+                  href="/configurador"
+                  className="bg-pricing-blue hover:bg-pricing-blue/90 text-gallery-white text-compact-control font-normal px-4 py-1.5 sm:px-5 sm:py-2 rounded-full transition-colors"
+                >
+                  Comprar
+                </Link>
+
                 {/* User Cart Icon with Dropdown */}
                 <div className="relative" ref={dropdownRef}>
                   <button
@@ -244,13 +251,6 @@ export default function Navbar() {
                     </div>
                   )}
                 </div>
-
-                <Link
-                  href="/configurador"
-                  className="bg-pricing-blue hover:bg-pricing-blue/90 text-gallery-white text-compact-control font-normal px-4 py-1.5 sm:px-5 sm:py-2 rounded-full transition-colors"
-                >
-                  Comprar
-                </Link>
               </>
             )}
           </div>
