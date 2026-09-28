@@ -29,7 +29,7 @@ export default function ImageComparison() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-4">
           <div>
-            <Badge variant="secondary">Tecnología</Badge>
+            <Badge variant="secondary">Versátil</Badge>
           </div>
           <div className="flex gap-2 flex-col">
             <h2 className="text-3xl sm:text-5xl tracking-tight lg:max-w-xl font-semibold text-ink">

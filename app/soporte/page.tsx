@@ -37,7 +37,7 @@ export default function SoportePage() {
       questions: [
         {
           q: "¿Cuánto tarda en llegar mi pedido?",
-          a: "Los pedidos estándar tardan 5-7 días laborables. Los miembros WeLens Pro reciben envío prioritario en 24-48h.",
+          a: "Los pedidos estándar tardan 1 a 3 semanas. Los miembros WeLens Pro reciben envío prioritario en 1 semana.",
         },
         {
           q: "¿Cómo puedo rastrear mi pedido?",
@@ -58,7 +58,7 @@ export default function SoportePage() {
         },
         {
           q: "¿Las lentillas se adaptan a cualquier montura?",
-          a: "WeLens funciona con la mayoría de monturas de gafas, excepto monturas sin cerco (al aire) o con lentes muy curvadas. Nuestro configurador te indicará si tu montura es compatible.",
+          a: "Sí, WeLens funciona con cualquier tipo de montura de gafas. Nuestras lentillas adhesivas se adaptan perfectamente a todo tipo de lentes y monturas.",
         },
         {
           q: "¿Cuánto duran las lentillas WeLens?",
@@ -100,7 +100,7 @@ export default function SoportePage() {
         },
         {
           q: "¿Qué pasa si me equivoco en la graduación?",
-          a: "Si introduces una graduación incorrecta, puedes solicitar un reemplazo gratuito dentro de los primeros 30 días.",
+          a: "Si introduces una graduación incorrecta, puedes solicitar un reemplazo a mitad de precio dentro de los primeros 30 días.",
         },
       ],
     },

@@ -9,16 +9,12 @@ export default function ProPage() {
       description: "20% de descuento en todos tus pedidos de lentillas WeLens",
     },
     {
-      title: "Envío prioritario gratuito",
-      description: "Recibe tus lentillas en 24-48h sin coste adicional",
-    },
-    {
       title: "Soporte premium",
       description: "Atención prioritaria por chat, email y teléfono",
     },
     {
       title: "Reposiciones automáticas",
-      description: "Recibe tus lentillas automáticamente cada mes o cuando las necesites",
+      description: "Recibe tus lentillas automáticamente cada 6 meses o cuando las necesites",
     },
     {
       title: "Garantía extendida",
@@ -30,7 +26,7 @@ export default function ProPage() {
     },
     {
       title: "Cambios gratuitos",
-      description: "Cambio de graduación sin coste adicional durante el primer mes",
+      description: "Cambio de graduación sin coste adicional durante todo el año",
     },
     {
       title: "Sin permanencia",
@@ -57,9 +53,9 @@ export default function ProPage() {
             <div className="bg-studio-mist rounded-3xl p-8 lg:p-12 mb-8">
               <div className="flex flex-col items-center mb-8">
                 <div className="text-display-large font-semibold text-ink mb-2">
-                  €9.99<span className="text-body-large text-slate">/mes</span>
+                  $60<span className="text-body-large text-slate">/año</span>
                 </div>
-                <p className="text-body text-slate">o €99.99/año (ahorra 2 meses)</p>
+                <p className="text-body text-slate">Membresía anual</p>
               </div>
 
               <Link
@@ -120,16 +116,6 @@ export default function ProPage() {
               </h3>
               <p className="text-body text-slate">
                 Sí, el 20% de descuento se aplica automáticamente en el checkout cuando eres miembro Pro.
-              </p>
-            </div>
-
-            <div className="bg-studio-mist rounded-3xl p-8">
-              <h3 className="text-body-large-emphasized font-semibold text-ink mb-3">
-                ¿Cuándo se cobran las reposiciones automáticas?
-              </h3>
-              <p className="text-body text-slate">
-                Tú decides la frecuencia. Puedes configurar entregas mensuales, bimensuales o cuando las necesites.
-                Te avisaremos 3 días antes de cada cargo.
               </p>
             </div>
           </div>

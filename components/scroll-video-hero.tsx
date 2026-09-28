@@ -125,8 +125,8 @@ export default function ScrollVideoHero() {
           <p className="text-product-kicker font-semibold text-ink mb-2 sm:mb-4">
             WeLens
           </p>
-          <h1 className="text-4xl sm:text-6xl lg:text-hero-display font-semibold text-ink tracking-tight sm:whitespace-nowrap">
-            Cualquier gafa, adaptada a ti
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-semibold text-ink tracking-tight sm:whitespace-nowrap">
+            Cualquier gafa, adaptada a ti.
           </h1>
           <p className="text-body-small sm:text-body text-slate mt-6 max-w-2xl mx-auto">
             Lentillas adhesivas de goma que transforman cualquier lente o gafa de sol
