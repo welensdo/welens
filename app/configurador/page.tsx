@@ -430,9 +430,12 @@ export default function ConfiguradorPage() {
                     onClick={() => {
                       if (leftEye.type && rightEye.type) {
                         addToCart({
+                          id: `lens-${Date.now()}`,
+                          type: 'lens',
                           leftEye,
                           rightEye,
                           price: calculateTotalPrice(),
+                          quantity: 1,
                         });
                         router.push("/checkout");
                       }
