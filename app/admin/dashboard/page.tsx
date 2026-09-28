@@ -362,12 +362,25 @@ export default function AdminDashboard() {
                 <div className="space-y-3 mb-6">
                   {selectedOrder.items.map((item, idx) => (
                     <div key={idx} className="bg-studio-mist rounded-2xl p-4">
-                      <p className="font-semibold text-ink capitalize">
-                        Ojo {item.eye === "left" ? "izquierdo" : "derecho"}
-                      </p>
-                      <p className="text-body-small text-slate capitalize">
-                        {item.type} • {item.value > 0 ? "+" : ""}{item.value.toFixed(2)}
-                      </p>
+                      {item.itemType === 'lens' ? (
+                        <>
+                          <p className="font-semibold text-ink capitalize">
+                            Ojo {item.eye === "left" ? "izquierdo" : "derecho"}
+                          </p>
+                          <p className="text-body-small text-slate capitalize">
+                            {item.type} • {item.value && item.value > 0 ? "+" : ""}{item.value?.toFixed(2)}
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="font-semibold text-ink">
+                            {item.name}
+                          </p>
+                          <p className="text-body-small text-slate">
+                            Cantidad: {item.quantity} • ${item.price.toFixed(2)}
+                          </p>
+                        </>
+                      )}
                     </div>
                   ))}
                 </div>
