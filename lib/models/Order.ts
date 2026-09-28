@@ -10,12 +10,22 @@ export type OrderStatus =
   | 'delivered' 
   | 'cancelled';
 
-export interface IOrderItem {
+export interface ILensItem {
+  itemType: 'lens';
   eye: 'left' | 'right';
   type: 'miopia' | 'hipermetropia' | 'presbicia';
   value: number;
   price: number;
 }
+
+export interface IAccessoryItem {
+  itemType: 'accessory';
+  name: string;
+  quantity: number;
+  price: number;
+}
+
+export type IOrderItem = ILensItem | IAccessoryItem;
 
 export interface IOrder extends mongoose.Document {
   userId: mongoose.Types.ObjectId;
@@ -57,20 +67,46 @@ const OrderSchema = new mongoose.Schema<IOrder>(
     },
     items: [
       {
+        itemType: {
+          type: String,
+          enum: ['lens', 'accessory'],
+          required: true,
+        },
+        // Lens-specific fields
         eye: {
           type: String,
           enum: ['left', 'right'],
-          required: true,
+          required: function(this: any) {
+            return this.itemType === 'lens';
+          },
         },
         type: {
           type: String,
           enum: ['miopia', 'hipermetropia', 'presbicia'],
-          required: true,
+          required: function(this: any) {
+            return this.itemType === 'lens';
+          },
         },
         value: {
           type: Number,
-          required: true,
+          required: function(this: any) {
+            return this.itemType === 'lens';
+          },
         },
+        // Accessory-specific fields
+        name: {
+          type: String,
+          required: function(this: any) {
+            return this.itemType === 'accessory';
+          },
+        },
+        quantity: {
+          type: Number,
+          required: function(this: any) {
+            return this.itemType === 'accessory';
+          },
+        },
+        // Common field
         price: {
           type: Number,
           required: true,

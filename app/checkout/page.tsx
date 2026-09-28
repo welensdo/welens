@@ -72,9 +72,9 @@ export default function CheckoutPage() {
       if (cart) {
         if (cart.leftEye.type) {
           orderItems.push({
-            type: 'lens',
+            itemType: 'lens',
             eye: "left",
-            correctionType: cart.leftEye.type,
+            type: cart.leftEye.type,
             value: cart.leftEye.value,
             price: cart.price / 2,
           });
@@ -82,9 +82,9 @@ export default function CheckoutPage() {
 
         if (cart.rightEye.type) {
           orderItems.push({
-            type: 'lens',
+            itemType: 'lens',
             eye: "right",
-            correctionType: cart.rightEye.type,
+            type: cart.rightEye.type,
             value: cart.rightEye.value,
             price: cart.price / 2,
           });
@@ -97,18 +97,18 @@ export default function CheckoutPage() {
           // Add lens items
           if (item.leftEye.type) {
             orderItems.push({
-              type: 'lens',
+              itemType: 'lens',
               eye: "left",
-              correctionType: item.leftEye.type,
+              type: item.leftEye.type,
               value: item.leftEye.value,
               price: item.price / 2,
             });
           }
           if (item.rightEye.type) {
             orderItems.push({
-              type: 'lens',
+              itemType: 'lens',
               eye: "right",
-              correctionType: item.rightEye.type,
+              type: item.rightEye.type,
               value: item.rightEye.value,
               price: item.price / 2,
             });
@@ -116,10 +116,10 @@ export default function CheckoutPage() {
         } else if (item.type === 'accessory') {
           // Add accessory items
           orderItems.push({
-            type: 'accessory',
+            itemType: 'accessory',
             name: item.name,
             quantity: item.quantity,
-            price: item.price,
+            price: item.price * item.quantity, // Total price for the quantity
           });
         }
       });

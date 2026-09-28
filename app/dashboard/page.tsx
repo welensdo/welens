@@ -15,9 +15,15 @@ interface Order {
   status: string;
   totalPrice: number;
   items: Array<{
-    eye: string;
-    type: string;
-    value: number;
+    itemType: 'lens' | 'accessory';
+    // Lens fields
+    eye?: string;
+    type?: string;
+    value?: number;
+    // Accessory fields
+    name?: string;
+    quantity?: number;
+    price: number;
   }>;
   trackingNumber?: string;
   createdAt: string;
@@ -184,9 +190,17 @@ export default function DashboardPage() {
                           className="bg-studio-mist rounded-xl sm:rounded-2xl px-2.5 sm:px-4 py-1.5 sm:py-2"
                         >
                           <span className="text-[10px] sm:text-xs text-ink capitalize">
-                            {item.eye === "left" ? "Izq" : "Der"}: {item.type}{" "}
-                            {item.value > 0 ? "+" : ""}
-                            {item.value.toFixed(2)}
+                            {item.itemType === 'lens' ? (
+                              <>
+                                {item.eye === "left" ? "Izq" : "Der"}: {item.type}{" "}
+                                {item.value && item.value > 0 ? "+" : ""}
+                                {item.value?.toFixed(2)}
+                              </>
+                            ) : (
+                              <>
+                                {item.name} (x{item.quantity})
+                              </>
+                            )}
                           </span>
                         </div>
                       ))}
@@ -297,18 +311,39 @@ export default function DashboardPage() {
                 {selectedOrder.items.map((item, idx) => (
                   <div
                     key={idx}
-                    className="bg-studio-mist rounded-xl sm:rounded-2xl p-3 sm:p-4 flex justify-between"
+                    className="bg-studio-mist rounded-xl sm:rounded-2xl p-3 sm:p-4"
                   >
-                    <div>
-                      <p className="font-semibold text-ink capitalize text-sm sm:text-base">
-                        Ojo {item.eye === "left" ? "izquierdo" : "derecho"}
-                      </p>
-                      <p className="text-xs sm:text-sm text-slate capitalize">
-                        {item.type} •{" "}
-                        {item.value > 0 ? "+" : ""}
-                        {item.value.toFixed(2)}
-                      </p>
-                    </div>
+                    {item.itemType === 'lens' ? (
+                      <div className="flex justify-between">
+                        <div>
+                          <p className="font-semibold text-ink capitalize text-sm sm:text-base">
+                            Ojo {item.eye === "left" ? "izquierdo" : "derecho"}
+                          </p>
+                          <p className="text-xs sm:text-sm text-slate capitalize">
+                            {item.type} •{" "}
+                            {item.value && item.value > 0 ? "+" : ""}
+                            {item.value?.toFixed(2)}
+                          </p>
+                        </div>
+                        <p className="font-semibold text-ink text-sm sm:text-base">
+                          ${item.price.toFixed(2)}
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="flex justify-between">
+                        <div>
+                          <p className="font-semibold text-ink text-sm sm:text-base">
+                            {item.name}
+                          </p>
+                          <p className="text-xs sm:text-sm text-slate">
+                            Cantidad: {item.quantity}
+                          </p>
+                        </div>
+                        <p className="font-semibold text-ink text-sm sm:text-base">
+                          ${item.price.toFixed(2)}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

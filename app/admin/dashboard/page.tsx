@@ -12,9 +12,15 @@ interface Order {
   status: string;
   totalPrice: number;
   items: Array<{
-    eye: string;
-    type: string;
-    value: number;
+    itemType: 'lens' | 'accessory';
+    // Lens fields
+    eye?: string;
+    type?: string;
+    value?: number;
+    // Accessory fields
+    name?: string;
+    quantity?: number;
+    price: number;
   }>;
   trackingNumber?: string;
   createdAt: string;
