@@ -367,7 +367,7 @@ export default function CookiesPage() {
                     privacidad@welens.com
                   </a>
                   <br />
-                  Teléfono: +34 900 123 456
+                  Teléfono: +1 809 504 2837
                 </p>
               </div>
             </div>

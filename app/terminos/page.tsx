@@ -93,10 +93,10 @@ export default function TerminosPage() {
                 5. Shipping and Delivery
               </h2>
               <p className="mb-4">
-                <strong className="text-ink">5.1. Timeframes:</strong> Standard shipping 5-7 business days. WeLens Pro 2-3 business days. Timeframes are estimates and not guaranteed.
+                <strong className="text-ink">5.1. Timeframes:</strong> Standard shipping 1-3 weeks. WeLens Pro 1 week. Timeframes are estimates and not guaranteed.
               </p>
               <p className="mb-4">
-                <strong className="text-ink">5.2. Costs:</strong> Free shipping on orders over $50. WeLens Pro includes free shipping on all orders.
+                <strong className="text-ink">5.2. Costs:</strong> WeLens Pro includes free shipping on all orders.
               </p>
               <p>
                 <strong className="text-ink">5.3. Responsibility:</strong> Once the order is delivered to the shipping company, they assume responsibility. You must inspect the package at the time of delivery.
@@ -199,9 +199,7 @@ export default function TerminosPage() {
                 <br />
                 Email: <a href="mailto:legal@welens.com" className="text-pricing-blue hover:text-pricing-blue/80 underline">legal@welens.com</a>
                 <br />
-                Phone: +1 (415) 123-4567
-                <br />
-                Address: 123 Innovation Drive, San Francisco, CA 94102, United States
+                Phone: +1 809 504 2837
               </p>
             </div>
 

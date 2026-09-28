@@ -170,10 +170,10 @@ export default function SoportePage() {
                 </h3>
                 <p className="text-compact text-slate mb-4">Lun-Vie, 9:00-18:00</p>
                 <a
-                  href="tel:+34900123456"
+                  href="tel:+18095042837"
                   className="text-pricing-blue hover:text-pricing-blue/80 text-compact-emphasized font-semibold"
                 >
-                  +34 900 123 456
+                  +1 809 504 2837
                 </a>
               </div>
             </div>

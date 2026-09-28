@@ -331,7 +331,7 @@ export default function AccesibilidadPage() {
                   <li className="flex items-start gap-3">
                     <span className="text-pricing-blue mt-1">•</span>
                     <span>
-                      <strong className="text-ink">Teléfono:</strong> +34 900 123 456
+                      <strong className="text-ink">Teléfono:</strong> +1 809 504 2837
                     </span>
                   </li>
                   <li className="flex items-start gap-3">

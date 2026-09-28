@@ -194,10 +194,10 @@ export default function ContactoPage() {
                         Lun-Vie: 9:00 - 18:00 CET
                       </p>
                       <a
-                        href="tel:+34900123456"
+                        href="tel:+18095042837"
                         className="text-body-emphasized text-pricing-blue hover:text-pricing-blue/80"
                       >
-                        +34 900 123 456
+                        +1 809 504 2837
                       </a>
                     </div>
                   </div>
@@ -215,21 +215,6 @@ export default function ContactoPage() {
                       <button className="text-body-emphasized text-pricing-blue hover:text-pricing-blue/80">
                         Iniciar chat
                       </button>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-studio-mist rounded-3xl p-8">
-                  <div className="flex items-start gap-4">
-                    <div>
-                      <h3 className="text-body-large-emphasized font-semibold text-ink mb-2">
-                        Oficinas
-                      </h3>
-                      <p className="text-body text-slate">
-                        Calle de la Innovación, 42
-                        <br />
-                        28001 Madrid, España
-                      </p>
                     </div>
                   </div>
                 </div>

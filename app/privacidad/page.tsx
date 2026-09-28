@@ -31,15 +31,9 @@ export default function PrivacidadPage() {
                 1. Responsable del Tratamiento
               </h2>
               <p>
-                <strong className="text-ink">Identidad:</strong> WeLens Technologies Inc.
-                <br />
-                <strong className="text-ink">EIN:</strong> XX-XXXXXXX
-                <br />
-                <strong className="text-ink">Dirección:</strong> 123 Innovation Drive, San Francisco, CA 94102, United States
-                <br />
                 <strong className="text-ink">Email:</strong> privacidad@welens.com
                 <br />
-                <strong className="text-ink">Teléfono:</strong> +1 (415) 123-4567
+                <strong className="text-ink">Teléfono:</strong> +1 809 504 2837
               </p>
             </div>
 
@@ -171,8 +165,7 @@ export default function PrivacidadPage() {
               </h2>
               <p>
                 Implementamos medidas técnicas y organizativas para proteger tus datos:
-                encriptación SSL/TLS, contraseñas hasheadas con bcrypt, acceso restringido
-                basado en roles, copias de seguridad regulares, y auditorías de seguridad periódicas.
+                encriptación SSL/TLS, contraseñas hasheadas con bcrypt, copias de seguridad regulares, y auditorías de seguridad periódicas.
               </p>
             </div>
 
