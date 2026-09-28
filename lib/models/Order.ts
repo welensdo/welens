@@ -82,10 +82,24 @@ const OrderSchema = new mongoose.Schema<IOrder>(
         },
         type: {
           type: String,
-          enum: ['miopia', 'hipermetropia', 'presbicia'],
+          enum: {
+            values: ['miopia', 'hipermetropia', 'presbicia'],
+            message: '{VALUE} is not a valid correction type'
+          },
           required: function(this: any) {
             return this.itemType === 'lens';
           },
+          validate: {
+            validator: function(this: any, value: string) {
+              // Only validate enum if it's a lens item
+              if (this.itemType === 'lens') {
+                return ['miopia', 'hipermetropia', 'presbicia'].includes(value);
+              }
+              // For accessories, type field should not exist
+              return value === undefined || value === null;
+            },
+            message: 'Invalid type for item'
+          }
         },
         value: {
           type: Number,
