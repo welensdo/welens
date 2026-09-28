@@ -199,7 +199,9 @@ export default function Navbar() {
                               <div key={item.id} className="bg-studio-mist rounded-lg p-3">
                                 <div className="flex justify-between items-start">
                                   <div className="flex-1">
-                                    <p className="text-xs font-semibold text-ink">{item.name}</p>
+                                    <p className="text-xs font-semibold text-ink">
+                                      {item.type === 'accessory' ? item.name : 'Lentes graduados'}
+                                    </p>
                                     <p className="text-[10px] text-slate">Cantidad: {item.quantity}</p>
                                   </div>
                                   <div className="flex items-center gap-2">
