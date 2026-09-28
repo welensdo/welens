@@ -1,40 +1,66 @@
+"use client";
+
+import { useCart } from "@/contexts/CartContext";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
-import Link from "next/link";
+import { useState } from "react";
 
 export default function AccesoriosPage() {
+  const { addAccessory } = useCart();
+  const [addedProduct, setAddedProduct] = useState<string | null>(null);
+
   const products = [
     {
       name: "Kit de limpieza profesional",
-      price: "€19.99",
+      price: 19.99,
       description: "Kit completo con spray limpiador, paño de microfibra y estuche protector",
     },
     {
       name: "Estuche premium",
-      price: "€14.99",
+      price: 14.99,
       description: "Estuche rígido con protección UV para guardar tus lentillas WeLens",
     },
     {
       name: "Paños de microfibra (pack 3)",
-      price: "€9.99",
+      price: 9.99,
       description: "Pack de 3 paños de microfibra de alta calidad para limpieza diaria",
     },
     {
       name: "Cordón de seguridad",
-      price: "€12.99",
+      price: 12.99,
       description: "Cordón ajustable para mantener tus gafas siempre seguras",
     },
     {
       name: "Solución adhesiva extra",
-      price: "€8.99",
+      price: 8.99,
       description: "Botella adicional de solución adhesiva hipoalergénica (30ml)",
     },
     {
       name: "Aplicador de precisión",
-      price: "€16.99",
+      price: 16.99,
       description: "Herramienta de precisión para aplicar tus lentillas WeLens perfectamente",
     },
   ];
+
+  const handleAddToCart = (product: typeof products[0]) => {
+    addAccessory({
+      name: product.name,
+      price: product.price,
+      quantity: 1,
+    });
+    setAddedProduct(product.name);
+    setTimeout(() => setAddedProduct(null), 2000);
+  };
+
+  const handleAddBundle = () => {
+    addAccessory({
+      name: "Pack Completo",
+      price: 62.95,
+      quantity: 1,
+    });
+    setAddedProduct("Pack Completo");
+    setTimeout(() => setAddedProduct(null), 2000);
+  };
 
   return (
     <div className="min-h-screen bg-gallery-white">
@@ -68,14 +94,14 @@ export default function AccesoriosPage() {
                 <p className="text-compact text-slate mb-4 flex-grow">{product.description}</p>
                 <div className="flex items-center justify-between mt-4 pt-4 border-t border-hairline-silver">
                   <span className="text-body-emphasized font-semibold text-ink">
-                    {product.price}
+                    €{product.price.toFixed(2)}
                   </span>
-                  <Link
-                    href="/configurador"
+                  <button
+                    onClick={() => handleAddToCart(product)}
                     className="bg-pricing-blue hover:bg-pricing-blue/90 text-gallery-white text-compact-control font-normal px-5 py-2 rounded-full transition-colors"
                   >
-                    Añadir
-                  </Link>
+                    {addedProduct === product.name ? "✓ Añadido" : "Añadir"}
+                  </button>
                 </div>
               </div>
             ))}
@@ -96,12 +122,12 @@ export default function AccesoriosPage() {
               <span className="text-body-large text-gallery-white/70 line-through">€83.94</span>
               <span className="text-display-medium font-semibold text-gallery-white">€62.95</span>
             </div>
-            <Link
-              href="/configurador"
+            <button
+              onClick={handleAddBundle}
               className="inline-block bg-gallery-white hover:bg-gallery-white/90 text-pricing-blue text-body-emphasized font-semibold px-8 py-4 rounded-full transition-colors"
             >
-              Comprar Pack Completo
-            </Link>
+              {addedProduct === "Pack Completo" ? "✓ Añadido al carrito" : "Comprar Pack Completo"}
+            </button>
           </div>
         </section>
 
