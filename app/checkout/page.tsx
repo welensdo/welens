@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic';
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { cart, clearCart } = useCart();
+  const { cart, items, cartCount, totalPrice, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [error, setError] = useState("");
@@ -29,8 +29,8 @@ export default function CheckoutPage() {
   });
 
   useEffect(() => {
-    // Check if cart is empty first
-    if (!cart) {
+    // Check if cart is empty first (no cart and no items)
+    if (!cart && items.length === 0) {
       router.push("/configurador");
       return;
     }
@@ -57,7 +57,7 @@ export default function CheckoutPage() {
       .catch(() => {
         router.push("/auth?redirect=checkout");
       });
-  }, [cart]);
+  }, [cart, items]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,34 +65,75 @@ export default function CheckoutPage() {
     setError("");
 
     try {
-      if (!cart) throw new Error("El carrito está vacío");
+      // Prepare all items for the order
+      const orderItems = [];
 
-      const items = [];
+      // Add legacy cart items (backward compatibility)
+      if (cart) {
+        if (cart.leftEye.type) {
+          orderItems.push({
+            type: 'lens',
+            eye: "left",
+            correctionType: cart.leftEye.type,
+            value: cart.leftEye.value,
+            price: cart.price / 2,
+          });
+        }
 
-      if (cart.leftEye.type) {
-        items.push({
-          eye: "left",
-          type: cart.leftEye.type,
-          value: cart.leftEye.value,
-          price: cart.price / 2, // Split price
-        });
+        if (cart.rightEye.type) {
+          orderItems.push({
+            type: 'lens',
+            eye: "right",
+            correctionType: cart.rightEye.type,
+            value: cart.rightEye.value,
+            price: cart.price / 2,
+          });
+        }
       }
 
-      if (cart.rightEye.type) {
-        items.push({
-          eye: "right",
-          type: cart.rightEye.type,
-          value: cart.rightEye.value,
-          price: cart.price / 2,
-        });
+      // Add new cart items (lenses + accessories)
+      items.forEach((item) => {
+        if (item.type === 'lens') {
+          // Add lens items
+          if (item.leftEye.type) {
+            orderItems.push({
+              type: 'lens',
+              eye: "left",
+              correctionType: item.leftEye.type,
+              value: item.leftEye.value,
+              price: item.price / 2,
+            });
+          }
+          if (item.rightEye.type) {
+            orderItems.push({
+              type: 'lens',
+              eye: "right",
+              correctionType: item.rightEye.type,
+              value: item.rightEye.value,
+              price: item.price / 2,
+            });
+          }
+        } else if (item.type === 'accessory') {
+          // Add accessory items
+          orderItems.push({
+            type: 'accessory',
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price,
+          });
+        }
+      });
+
+      if (orderItems.length === 0) {
+        throw new Error("El carrito está vacío");
       }
 
       const response = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items,
-          totalPrice: cart.price,
+          items: orderItems,
+          totalPrice: totalPrice,
           shippingAddress: shippingData,
         }),
       });
@@ -112,7 +153,7 @@ export default function CheckoutPage() {
     }
   };
 
-  if (!cart || !user) {
+  if ((!cart && items.length === 0) || !user) {
     return <div className="min-h-screen bg-gallery-white" />;
   }
 
@@ -290,7 +331,7 @@ export default function CheckoutPage() {
                     disabled={loading}
                     className="w-full py-4 bg-pricing-blue hover:bg-pricing-blue/90 disabled:bg-studio-mist disabled:text-slate text-gallery-white rounded-full font-semibold transition-all shadow-lg hover:shadow-xl"
                   >
-                    {loading ? "Procesando..." : `Confirmar pedido • $${cart.price}`}
+                    {loading ? "Procesando..." : `Confirmar pedido • $${totalPrice.toFixed(2)}`}
                   </button>
                 </form>
               </div>
@@ -304,7 +345,8 @@ export default function CheckoutPage() {
                 </h2>
 
                 <div className="space-y-4 mb-6">
-                  {cart.leftEye.type && (
+                  {/* Legacy cart items */}
+                  {cart && cart.leftEye.type && (
                     <div className="bg-gallery-white rounded-2xl p-4">
                       <div className="flex justify-between items-start mb-2">
                         <div>
@@ -321,7 +363,7 @@ export default function CheckoutPage() {
                     </div>
                   )}
 
-                  {cart.rightEye.type && (
+                  {cart && cart.rightEye.type && (
                     <div className="bg-gallery-white rounded-2xl p-4">
                       <div className="flex justify-between items-start mb-2">
                         <div>
@@ -337,12 +379,64 @@ export default function CheckoutPage() {
                       </div>
                     </div>
                   )}
+
+                  {/* New cart items */}
+                  {items.map((item) => (
+                    <div key={item.id} className="bg-gallery-white rounded-2xl p-4">
+                      {item.type === 'lens' ? (
+                        <>
+                          {item.leftEye.type && (
+                            <div className="flex justify-between items-start mb-3 pb-3 border-b border-hairline-silver">
+                              <div>
+                                <p className="font-semibold text-ink">Lentes - Ojo izquierdo</p>
+                                <p className="text-body-small text-slate capitalize">
+                                  {item.leftEye.type}
+                                </p>
+                              </div>
+                              <p className="font-semibold text-ink">
+                                {item.leftEye.value > 0 ? "+" : ""}
+                                {item.leftEye.value.toFixed(2)}
+                              </p>
+                            </div>
+                          )}
+                          {item.rightEye.type && (
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <p className="font-semibold text-ink">Lentes - Ojo derecho</p>
+                                <p className="text-body-small text-slate capitalize">
+                                  {item.rightEye.type}
+                                </p>
+                              </div>
+                              <p className="font-semibold text-ink">
+                                {item.rightEye.value > 0 ? "+" : ""}
+                                {item.rightEye.value.toFixed(2)}
+                              </p>
+                            </div>
+                          )}
+                          <div className="flex justify-between items-center mt-3 pt-3 border-t border-hairline-silver">
+                            <p className="text-body-small text-slate">Precio</p>
+                            <p className="font-semibold text-ink">${item.price.toFixed(2)}</p>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <p className="font-semibold text-ink">{item.name}</p>
+                            <p className="text-body-small text-slate">Cantidad: {item.quantity}</p>
+                          </div>
+                          <p className="font-semibold text-ink">
+                            ${(item.price * item.quantity).toFixed(2)}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
 
                 <div className="border-t border-hairline-silver pt-4 space-y-3">
                   <div className="flex justify-between text-body-small">
                     <span className="text-slate">Subtotal</span>
-                    <span className="text-ink font-medium">${cart.price}</span>
+                    <span className="text-ink font-medium">${totalPrice.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-body-small">
                     <span className="text-slate">Envío</span>
@@ -350,7 +444,7 @@ export default function CheckoutPage() {
                   </div>
                   <div className="flex justify-between text-lg font-semibold pt-3 border-t border-hairline-silver">
                     <span className="text-ink">Total</span>
-                    <span className="text-ink">${cart.price}</span>
+                    <span className="text-ink">${totalPrice.toFixed(2)}</span>
                   </div>
                 </div>
 

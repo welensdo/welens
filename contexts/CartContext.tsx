@@ -85,7 +85,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [items]);
 
   const addToCart = (item: LensCartItem) => {
-    setCart(item);
+    setCart(item); // Legacy compatibility
+    setItems([...items, item]); // New system - add to items array
   };
 
   const addAccessory = (accessory: Omit<AccessoryCartItem, 'id' | 'type'>) => {
