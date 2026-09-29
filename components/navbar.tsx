@@ -100,12 +100,12 @@ export default function Navbar() {
             >
               Cómo funciona
             </button>
-            <button
-              onClick={() => handleNavClick("precios")}
+            <Link
+              href="/accesorios"
               className="text-global-nav font-normal text-ink hover:text-slate transition-colors"
             >
-              Precios
-            </button>
+              Accesorios
+            </Link>
             <Link
               href="/configurador"
               className="text-global-nav font-normal text-ink hover:text-slate transition-colors"

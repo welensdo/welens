@@ -1,5 +1,8 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
+import AnimatedSection from "@/components/ui/animated-section";
 
 export default function HowItWorks() {
   const steps = [
@@ -29,7 +32,7 @@ export default function HowItWorks() {
   return (
     <div className="w-full py-20 lg:py-40 bg-gallery-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-4 mb-16 text-center">
+        <AnimatedSection animation="fade-up" className="flex flex-col gap-4 mb-16 text-center">
           <div className="flex justify-center">
             <Badge variant="secondary">Proceso</Badge>
           </div>
@@ -39,7 +42,7 @@ export default function HowItWorks() {
           <p className="text-body max-w-2xl mx-auto text-slate">
             Tres pasos simples para transformar cualquier gafa en tu visión perfecta.
           </p>
-        </div>
+        </AnimatedSection>
 
         <div className="space-y-20 lg:space-y-32">
           {steps.map((step, index) => (
@@ -49,7 +52,11 @@ export default function HowItWorks() {
                 index % 2 === 1 ? "lg:flex-row-reverse" : ""
               }`}
             >
-              <div className="flex-1 space-y-4">
+              <AnimatedSection 
+                animation={index % 2 === 0 ? "fade-right" : "fade-left"}
+                delay={200}
+                className="flex-1 space-y-4"
+              >
                 <p className="text-6xl sm:text-7xl font-semibold text-studio-mist">
                   {step.number}
                 </p>
@@ -59,8 +66,13 @@ export default function HowItWorks() {
                 <p className="text-body text-slate leading-relaxed max-w-lg">
                   {step.description}
                 </p>
-              </div>
-              <div className="flex-1 w-full">
+              </AnimatedSection>
+              
+              <AnimatedSection 
+                animation={index % 2 === 0 ? "fade-left" : "fade-right"}
+                delay={400}
+                className="flex-1 w-full"
+              >
                 <div className="relative aspect-[4/3] rounded-3xl overflow-hidden bg-studio-mist">
                   <Image
                     src={step.image}
@@ -69,7 +81,7 @@ export default function HowItWorks() {
                     className="object-cover"
                   />
                 </div>
-              </div>
+              </AnimatedSection>
             </div>
           ))}
         </div>
