@@ -77,17 +77,15 @@ export default function Navbar() {
           : "bg-transparent py-6 sm:py-8"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="relative flex items-center">
+          <Link href="/" className="relative flex items-center z-10 -ml-2 sm:ml-0">
             <img 
               src="/logo2.PNG" 
               alt="WeLens" 
-              className="h-[140px] w-auto absolute top-1/2 left-0 transform -translate-y-1/2" 
+              className="h-[120px] sm:h-[140px] w-auto" 
             />
-            {/* Invisible spacer to maintain layout */}
-            <div className="w-36 h-8"></div>
           </Link>
 
           {/* Navigation Links - Hidden on mobile */}
