@@ -81,7 +81,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <img src="/logo2.PNG" alt="WeLens" className="h-[60px] w-auto" />
+            <img src="/logo2.PNG" alt="WeLens" className="h-[150px] w-auto" />
           </Link>
 
           {/* Navigation Links - Hidden on mobile */}

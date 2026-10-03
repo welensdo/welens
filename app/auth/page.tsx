@@ -204,8 +204,13 @@ function AuthContent() {
             </div>
           </div>
 
+          {/* Logo for desktop */}
+          <div className="hidden lg:block text-center mb-8">
+            <img src="/logo2.PNG" alt="WeLens" className="h-[120px] w-auto mx-auto" />
+          </div>
+
           {/* Form Header */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-8 -mt-8">
             <h1 className="text-2xl font-light text-gray-900 mb-2">
               {isLogin ? "Welcome back" : "Create account"}
             </h1>

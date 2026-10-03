@@ -122,10 +122,10 @@ export default function ScrollVideoHero() {
       <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden">
         {/* Product Label */}
         <div className="absolute top-32 sm:top-40 text-center z-10 px-4">
-          <div className="mb-2 sm:mb-4 flex justify-center">
-            <img src="/logo4.PNG" alt="WeLens" className="h-[120px] w-auto" />
+          <div className="mb-2 sm:mb-4 flex justify-center relative">
+            <img src="/logo4.PNG" alt="WeLens" className="h-[250px] w-auto" />
           </div>
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-semibold text-ink tracking-tight sm:whitespace-nowrap">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-semibold text-ink tracking-tight sm:whitespace-nowrap -mt-16">
             Cualquier gafa, adaptada a ti.
           </h1>
           <p className="text-body-small sm:text-body text-slate mt-6 max-w-2xl mx-auto">
