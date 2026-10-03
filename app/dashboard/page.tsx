@@ -64,32 +64,32 @@ export default function DashboardPage() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        // Check auth
+        const userRes = await fetch("/api/auth/me");
+        if (!userRes.ok) {
+          router.push("/auth");
+          return;
+        }
+        const userData = await userRes.json();
+        setUser(userData.user);
+
+        // Load orders
+        const ordersRes = await fetch("/api/orders");
+        if (ordersRes.ok) {
+          const ordersData = await ordersRes.json();
+          setOrders(ordersData.orders);
+        }
+      } catch (error) {
+        console.error("Error loading data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     loadUserData();
-  }, []);
-
-  const loadUserData = async () => {
-    try {
-      // Check auth
-      const userRes = await fetch("/api/auth/me");
-      if (!userRes.ok) {
-        router.push("/auth");
-        return;
-      }
-      const userData = await userRes.json();
-      setUser(userData.user);
-
-      // Load orders
-      const ordersRes = await fetch("/api/orders");
-      if (ordersRes.ok) {
-        const ordersData = await ordersRes.json();
-        setOrders(ordersData.orders);
-      }
-    } catch (error) {
-      console.error("Error loading data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [router]);
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });

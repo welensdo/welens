@@ -81,10 +81,6 @@ export default function AdminDashboard() {
     note: "",
   });
 
-  useEffect(() => {
-    loadOrders();
-  }, []);
-
   const loadOrders = async () => {
     try {
       const response = await fetch("/api/admin/orders");
@@ -101,6 +97,10 @@ export default function AdminDashboard() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadOrders();
+  }, []);
 
   const handleUpdateOrder = async (e: React.FormEvent) => {
     e.preventDefault();

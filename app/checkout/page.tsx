@@ -52,16 +52,16 @@ export default function CheckoutPage() {
       .then((data) => {
         if (data?.user) {
           setUser(data.user);
-          setShippingData({
-            ...shippingData,
+          setShippingData(prev => ({
+            ...prev,
             name: data.user.name,
-          });
+          }));
         }
       })
       .catch(() => {
         router.push("/auth?redirect=checkout");
       });
-  }, [cart, items]);
+  }, [cart, items, orderCompleted, router]); // Fixed dependencies
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

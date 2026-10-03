@@ -8,9 +8,10 @@ const JWT_SECRET = process.env.JWT_SECRET!;
 // Get order by order number
 export async function GET(
   request: NextRequest,
-  { params }: { params: { orderNumber: string } }
+  { params }: { params: Promise<{ orderNumber: string }> }
 ) {
   try {
+    const { orderNumber } = await params;
     const token = request.cookies.get('token')?.value;
     
     // Allow unauthenticated access for order lookup on thank-you page
@@ -27,7 +28,7 @@ export async function GET(
 
     await dbConnect();
 
-    const query: any = { orderNumber: params.orderNumber };
+    const query: any = { orderNumber };
     if (userId) {
       query.userId = userId;
     }
