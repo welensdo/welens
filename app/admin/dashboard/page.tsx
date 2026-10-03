@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
+import { EMAIL_ALIASES } from "@/lib/resend";
 
 export const dynamic = 'force-dynamic';
 
@@ -69,27 +70,31 @@ const statusColors: Record<string, string> = {
 
 export default function AdminDashboard() {
   const router = useRouter();
+  const pathname = usePathname();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [updateLoading, setUpdateLoading] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string>("all");
   
+  // Sidebar state
+  const [activeTab, setActiveTab] = useState("orders");
+  
   // Delete order states
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState<Order | null>(null);
   const [deletePassword, setDeletePassword] = useState("");
 
-  // Send email states
-  const [showEmailModal, setShowEmailModal] = useState(false);
-  const [emailLoading, setEmailLoading] = useState(false);
+  // Email composer states  
   const [emailForm, setEmailForm] = useState({
-    from: 'data' as keyof typeof import('@/lib/resend').EMAIL_ALIASES,
     to: '',
+    from: 'shipping@welens.org',
     subject: '',
     message: '',
-    senderName: 'WeLens Team',
   });
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [emailStatus, setEmailStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [emailStatusMessage, setEmailStatusMessage] = useState('');
 
   const [updateForm, setUpdateForm] = useState({
     status: "",
@@ -188,6 +193,62 @@ export default function AdminDashboard() {
     router.push("/admin/login");
   };
 
+  // Email handler
+  const handleSendEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setEmailLoading(true);
+    setEmailStatus('idle');
+
+    try {
+      const response = await fetch('/api/admin/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(emailForm),
+      });
+
+      if (response.ok) {
+        setEmailStatus('success');
+        setEmailStatusMessage('¡Correo enviado exitosamente!');
+        setEmailForm({
+          to: '',
+          from: 'shipping@welens.org',
+          subject: '',
+          message: '',
+        });
+      } else {
+        const error = await response.text();
+        setEmailStatus('error');
+        setEmailStatusMessage(`Error al enviar: ${error}`);
+      }
+    } catch (error) {
+      setEmailStatus('error');
+      setEmailStatusMessage('Error de conexión. Intenta nuevamente.');
+    } finally {
+      setEmailLoading(false);
+    }
+  };
+
+  const handleEmailInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setEmailForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const emailAliases = [
+    { value: 'shipping@welens.org', label: '📦 Envíos (shipping@welens.org)', description: 'Para notificaciones de pedidos y envíos' },
+    { value: 'soporte@welens.org', label: '🛟 Soporte (soporte@welens.org)', description: 'Para atención al cliente' },
+    { value: 'support@welens.org', label: '💬 Support (support@welens.org)', description: 'Para soporte técnico en inglés' },
+    { value: 'hola@welens.org', label: '👋 Hola (hola@welens.org)', description: 'Para mensajes generales y bienvenida' },
+    { value: 'data@welens.org', label: '📊 Data (data@welens.org)', description: 'Para notificaciones del sistema' },
+    { value: 'legal@welens.org', label: '⚖️ Legal (legal@welens.org)', description: 'Para asuntos legales' },
+    { value: 'privacy@welens.org', label: '🔒 Privacy (privacy@welens.org)', description: 'Para temas de privacidad' },
+    { value: 'careers@welens.org', label: '💼 Careers (careers@welens.org)', description: 'Para recursos humanos' },
+  ];
+
   const filteredOrders = filterStatus === "all" 
     ? orders 
     : orders.filter(o => o.status === filterStatus);
@@ -209,180 +270,357 @@ export default function AdminDashboard() {
   }
 
   return (
-    <main className="min-h-screen bg-gallery-white">
-      <div className="border-b border-hairline-silver bg-gallery-white/80 backdrop-blur-xl sticky top-0 z-40">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <span className="text-2xl font-semibold text-ink">WeLens Admin</span>
-            </div>
+    <main className="min-h-screen bg-gallery-white flex">
+      {/* Sidebar */}
+      <div className="w-64 bg-gallery-white border-r border-hairline-silver flex flex-col">
+        <div className="p-6 border-b border-hairline-silver">
+          <span className="text-xl font-semibold text-ink">WeLens Admin</span>
+        </div>
+        
+        <nav className="flex-1 p-4">
+          <div className="space-y-2">
             <button
-              onClick={handleLogout}
-              className="px-6 py-2 bg-studio-mist hover:bg-control-gray text-ink rounded-full font-medium transition-colors text-compact-control"
+              onClick={() => setActiveTab("orders")}
+              className={`w-full text-left px-4 py-3 rounded-2xl transition-colors ${
+                activeTab === "orders"
+                  ? "bg-ink text-gallery-white"
+                  : "text-ink hover:bg-studio-mist"
+              }`}
             >
-              Cerrar sesión
+              <div className="flex items-center gap-3">
+                <span className="text-lg">📦</span>
+                <span className="font-medium">Pedidos</span>
+              </div>
+            </button>
+            
+            <button
+              onClick={() => setActiveTab("emails")}
+              className={`w-full text-left px-4 py-3 rounded-2xl transition-colors ${
+                activeTab === "emails"
+                  ? "bg-ink text-gallery-white"
+                  : "text-ink hover:bg-studio-mist"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-lg">📧</span>
+                <span className="font-medium">Correos</span>
+              </div>
+            </button>
+            
+            <button
+              onClick={() => setActiveTab("analytics")}
+              className={`w-full text-left px-4 py-3 rounded-2xl transition-colors ${
+                activeTab === "analytics"
+                  ? "bg-ink text-gallery-white"
+                  : "text-ink hover:bg-studio-mist"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-lg">📊</span>
+                <span className="font-medium">Analíticas</span>
+              </div>
             </button>
           </div>
+        </nav>
+        
+        <div className="p-4 border-t border-hairline-silver">
+          <button
+            onClick={handleLogout}
+            className="w-full px-4 py-3 bg-studio-mist hover:bg-control-gray text-ink rounded-2xl font-medium transition-colors"
+          >
+            Cerrar sesión
+          </button>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Stats */}
-        <div className="mb-12">
-          <Badge variant="secondary" className="mb-4">
-            Dashboard
-          </Badge>
-          <h1 className="text-4xl font-semibold text-ink mb-8">
-            Panel de control
-          </h1>
-
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            <div className="bg-gallery-white border border-hairline-silver rounded-3xl p-6">
-              <p className="text-body-small text-slate mb-1">Total</p>
-              <p className="text-3xl font-semibold text-ink">{stats.total}</p>
-            </div>
-            <div className="bg-gallery-white border border-hairline-silver rounded-3xl p-6">
-              <p className="text-body-small text-slate mb-1">Pendientes</p>
-              <p className="text-3xl font-semibold text-yellow-600">{stats.pending}</p>
-            </div>
-            <div className="bg-gallery-white border border-hairline-silver rounded-3xl p-6">
-              <p className="text-body-small text-slate mb-1">En proceso</p>
-              <p className="text-3xl font-semibold text-blue-600">{stats.processing}</p>
-            </div>
-            <div className="bg-gallery-white border border-hairline-silver rounded-3xl p-6">
-              <p className="text-body-small text-slate mb-1">Enviados</p>
-              <p className="text-3xl font-semibold text-green-600">{stats.shipped}</p>
-            </div>
-            <div className="bg-gallery-white border border-hairline-silver rounded-3xl p-6">
-              <p className="text-body-small text-slate mb-1">Entregados</p>
-              <p className="text-3xl font-semibold text-green-800">{stats.delivered}</p>
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col">
+        {/* Header */}
+        <div className="border-b border-hairline-silver bg-gallery-white/80 backdrop-blur-xl p-6">
+          <div className="flex justify-between items-center">
+            <div>
+              <Badge variant="secondary" className="mb-2">
+                {activeTab === "orders" ? "Pedidos" : activeTab === "emails" ? "Correos" : "Analíticas"}
+              </Badge>
+              <h1 className="text-3xl font-semibold text-ink">
+                {activeTab === "orders" ? "Gestión de pedidos" : activeTab === "emails" ? "Composer de correos" : "Analíticas"}
+              </h1>
             </div>
           </div>
         </div>
 
-        {/* Filters */}
-        <div className="mb-6">
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => setFilterStatus("all")}
-              className={`px-4 py-2 rounded-full text-compact-control font-medium transition-colors ${
-                filterStatus === "all"
-                  ? "bg-ink text-gallery-white"
-                  : "bg-studio-mist text-ink hover:bg-control-gray"
-              }`}
-            >
-              Todos ({orders.length})
-            </button>
-            {statusOptions.map((status) => {
-              const count = orders.filter(o => o.status === status.value).length;
-              return (
-                <button
-                  key={status.value}
-                  onClick={() => setFilterStatus(status.value)}
-                  className={`px-4 py-2 rounded-full text-compact-control font-medium transition-colors ${
-                    filterStatus === status.value
-                      ? "bg-ink text-gallery-white"
-                      : "bg-studio-mist text-ink hover:bg-control-gray"
-                  }`}
-                >
-                  {status.label} ({count})
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        {/* Content Area */}
+        <div className="flex-1 p-6 overflow-y-auto">
+          {activeTab === "orders" && (
+            <div>
+              {/* Stats */}
+              <div className="mb-8">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                  <div className="bg-gallery-white border border-hairline-silver rounded-3xl p-6">
+                    <p className="text-body-small text-slate mb-1">Total</p>
+                    <p className="text-3xl font-semibold text-ink">{stats.total}</p>
+                  </div>
+                  <div className="bg-gallery-white border border-hairline-silver rounded-3xl p-6">
+                    <p className="text-body-small text-slate mb-1">Pendientes</p>
+                    <p className="text-3xl font-semibold text-yellow-600">{stats.pending}</p>
+                  </div>
+                  <div className="bg-gallery-white border border-hairline-silver rounded-3xl p-6">
+                    <p className="text-body-small text-slate mb-1">En proceso</p>
+                    <p className="text-3xl font-semibold text-blue-600">{stats.processing}</p>
+                  </div>
+                  <div className="bg-gallery-white border border-hairline-silver rounded-3xl p-6">
+                    <p className="text-body-small text-slate mb-1">Enviados</p>
+                    <p className="text-3xl font-semibold text-green-600">{stats.shipped}</p>
+                  </div>
+                  <div className="bg-gallery-white border border-hairline-silver rounded-3xl p-6">
+                    <p className="text-body-small text-slate mb-1">Entregados</p>
+                    <p className="text-3xl font-semibold text-green-800">{stats.delivered}</p>
+                  </div>
+                </div>
+              </div>
 
-        {/* Orders Table */}
-        <div className="bg-gallery-white border border-hairline-silver rounded-3xl overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-studio-mist">
-                <tr>
-                  <th className="text-left px-6 py-4 text-body-small font-semibold text-ink">
-                    Pedido
-                  </th>
-                  <th className="text-left px-6 py-4 text-body-small font-semibold text-ink">
-                    Cliente
-                  </th>
-                  <th className="text-left px-6 py-4 text-body-small font-semibold text-ink">
-                    Estado
-                  </th>
-                  <th className="text-left px-6 py-4 text-body-small font-semibold text-ink">
-                    Total
-                  </th>
-                  <th className="text-left px-6 py-4 text-body-small font-semibold text-ink">
-                    Fecha
-                  </th>
-                  <th className="text-left px-6 py-4 text-body-small font-semibold text-ink">
-                    Acciones
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-hairline-silver">
-                {filteredOrders.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-slate">
-                      No hay pedidos con este filtro
-                    </td>
-                  </tr>
-                ) : (
-                  filteredOrders.map((order) => (
-                    <tr key={order._id} className="hover:bg-studio-mist/30 transition-colors">
-                      <td className="px-6 py-4">
-                        <p className="font-semibold text-ink">#{order.orderNumber}</p>
-                        {order.trackingNumber && (
-                          <p className="text-compact-control text-slate">
-                            📦 {order.trackingNumber}
-                          </p>
-                        )}
-                      </td>
-                      <td className="px-6 py-4">
-                        <p className="text-ink">{order.userId.name}</p>
-                        <p className="text-compact-control text-slate">{order.userId.email}</p>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`inline-block px-3 py-1 rounded-full text-compact-control font-medium ${statusColors[order.status]}`}>
-                          {statusOptions.find(s => s.value === order.status)?.label}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <p className="font-semibold text-ink">${order.totalPrice}</p>
-                      </td>
-                      <td className="px-6 py-4">
-                        <p className="text-ink">
-                          {new Date(order.createdAt).toLocaleDateString("es-MX")}
-                        </p>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => {
-                              setSelectedOrder(order);
-                              setUpdateForm({
-                                status: order.status,
-                                trackingNumber: order.trackingNumber || "",
-                                note: "",
-                                sendEmail: true,
-                              });
-                            }}
-                            className="px-4 py-2 bg-pricing-blue hover:bg-pricing-blue/90 text-gallery-white rounded-full text-compact-control font-medium transition-colors"
-                          >
-                            Ver / Editar
-                          </button>
-                          <button
-                            onClick={() => setShowDeleteModal(order)}
-                            className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-full text-compact-control font-medium transition-colors"
-                          >
-                            Eliminar
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+              {/* Filters */}
+              <div className="mb-6">
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => setFilterStatus("all")}
+                    className={`px-4 py-2 rounded-full text-compact-control font-medium transition-colors ${
+                      filterStatus === "all"
+                        ? "bg-ink text-gallery-white"
+                        : "bg-studio-mist text-ink hover:bg-control-gray"
+                    }`}
+                  >
+                    Todos ({orders.length})
+                  </button>
+                  {statusOptions.map((status) => {
+                    const count = orders.filter(o => o.status === status.value).length;
+                    return (
+                      <button
+                        key={status.value}
+                        onClick={() => setFilterStatus(status.value)}
+                        className={`px-4 py-2 rounded-full text-compact-control font-medium transition-colors ${
+                          filterStatus === status.value
+                            ? "bg-ink text-gallery-white"
+                            : "bg-studio-mist text-ink hover:bg-control-gray"
+                        }`}
+                      >
+                        {status.label} ({count})
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Orders Table */}
+              <div className="bg-gallery-white border border-hairline-silver rounded-3xl overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-studio-mist">
+                      <tr>
+                        <th className="text-left px-6 py-4 text-body-small font-semibold text-ink">
+                          Pedido
+                        </th>
+                        <th className="text-left px-6 py-4 text-body-small font-semibold text-ink">
+                          Cliente
+                        </th>
+                        <th className="text-left px-6 py-4 text-body-small font-semibold text-ink">
+                          Estado
+                        </th>
+                        <th className="text-left px-6 py-4 text-body-small font-semibold text-ink">
+                          Total
+                        </th>
+                        <th className="text-left px-6 py-4 text-body-small font-semibold text-ink">
+                          Fecha
+                        </th>
+                        <th className="text-left px-6 py-4 text-body-small font-semibold text-ink">
+                          Acciones
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-hairline-silver">
+                      {filteredOrders.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className="px-6 py-12 text-center text-slate">
+                            No hay pedidos con este filtro
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredOrders.map((order) => (
+                          <tr key={order._id} className="hover:bg-studio-mist/30 transition-colors">
+                            <td className="px-6 py-4">
+                              <p className="font-semibold text-ink">#{order.orderNumber}</p>
+                              {order.trackingNumber && (
+                                <p className="text-compact-control text-slate">
+                                  📦 {order.trackingNumber}
+                                </p>
+                              )}
+                            </td>
+                            <td className="px-6 py-4">
+                              <p className="text-ink">{order.userId.name}</p>
+                              <p className="text-compact-control text-slate">{order.userId.email}</p>
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className={`inline-block px-3 py-1 rounded-full text-compact-control font-medium ${statusColors[order.status]}`}>
+                                {statusOptions.find(s => s.value === order.status)?.label}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <p className="font-semibold text-ink">${order.totalPrice}</p>
+                            </td>
+                            <td className="px-6 py-4">
+                              <p className="text-ink">
+                                {new Date(order.createdAt).toLocaleDateString("es-MX")}
+                              </p>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => {
+                                    setSelectedOrder(order);
+                                    setUpdateForm({
+                                      status: order.status,
+                                      trackingNumber: order.trackingNumber || "",
+                                      note: "",
+                                      sendEmail: true,
+                                    });
+                                  }}
+                                  className="px-4 py-2 bg-pricing-blue hover:bg-pricing-blue/90 text-gallery-white rounded-full text-compact-control font-medium transition-colors"
+                                >
+                                  Ver / Editar
+                                </button>
+                                <button
+                                  onClick={() => setShowDeleteModal(order)}
+                                  className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-full text-compact-control font-medium transition-colors"
+                                >
+                                  Eliminar
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "emails" && (
+            <div className="max-w-4xl mx-auto">
+              {/* Status Messages */}
+              {emailStatus !== 'idle' && (
+                <div className={`mb-6 p-4 rounded-2xl ${
+                  emailStatus === 'success' 
+                    ? 'bg-green-50 border border-green-200 text-green-700' 
+                    : 'bg-red-50 border border-red-200 text-red-700'
+                }`}>
+                  <p className="font-medium">{emailStatusMessage}</p>
+                </div>
+              )}
+
+              {/* Email Form */}
+              <form onSubmit={handleSendEmail} className="space-y-6">
+                {/* Recipient */}
+                <div className="bg-gallery-white border border-hairline-silver rounded-3xl p-6">
+                  <label className="block text-body-small font-semibold text-ink mb-3">
+                    Destinatario
+                  </label>
+                  <input
+                    type="email"
+                    name="to"
+                    value={emailForm.to}
+                    onChange={handleEmailInputChange}
+                    placeholder="correo@ejemplo.com"
+                    required
+                    className="w-full px-4 py-3 rounded-2xl border-2 border-hairline-silver focus:border-pricing-blue focus:outline-none"
+                  />
+                  <p className="mt-2 text-compact-control text-slate">
+                    Ingresa el correo electrónico del destinatario
+                  </p>
+                </div>
+
+                {/* From Alias */}
+                <div className="bg-gallery-white border border-hairline-silver rounded-3xl p-6">
+                  <label className="block text-body-small font-semibold text-ink mb-3">
+                    Enviar desde (Alias)
+                  </label>
+                  <select
+                    name="from"
+                    value={emailForm.from}
+                    onChange={handleEmailInputChange}
+                    className="w-full px-4 py-3 rounded-2xl border-2 border-hairline-silver focus:border-pricing-blue focus:outline-none bg-white"
+                  >
+                    {emailAliases.map((alias) => (
+                      <option key={alias.value} value={alias.value}>
+                        {alias.label}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="mt-3 p-3 bg-studio-mist rounded-2xl">
+                    <p className="text-compact-control text-slate">
+                      {emailAliases.find(a => a.value === emailForm.from)?.description}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Subject */}
+                <div className="bg-gallery-white border border-hairline-silver rounded-3xl p-6">
+                  <label className="block text-body-small font-semibold text-ink mb-3">
+                    Asunto
+                  </label>
+                  <input
+                    type="text"
+                    name="subject"
+                    value={emailForm.subject}
+                    onChange={handleEmailInputChange}
+                    placeholder="Asunto del correo..."
+                    required
+                    className="w-full px-4 py-3 rounded-2xl border-2 border-hairline-silver focus:border-pricing-blue focus:outline-none"
+                  />
+                </div>
+
+                {/* Message */}
+                <div className="bg-gallery-white border border-hairline-silver rounded-3xl p-6">
+                  <label className="block text-body-small font-semibold text-ink mb-3">
+                    Mensaje
+                  </label>
+                  <textarea
+                    name="message"
+                    value={emailForm.message}
+                    onChange={handleEmailInputChange}
+                    placeholder="Escribe tu mensaje aquí...&#10;&#10;Este correo se enviará con el diseño premium de WeLens."
+                    required
+                    rows={8}
+                    className="w-full px-4 py-3 rounded-2xl border-2 border-hairline-silver focus:border-pricing-blue focus:outline-none resize-y"
+                  />
+                  <div className="mt-3 p-4 bg-studio-mist rounded-2xl">
+                    <p className="text-compact-control text-slate">
+                      <strong>✨ Diseño automático:</strong> Tu mensaje se enviará con la plantilla premium de WeLens, 
+                      incluyendo nuestro logo y el diseño de clase mundial.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Send Button */}
+                <div className="text-center">
+                  <button
+                    type="submit"
+                    disabled={emailLoading}
+                    className="px-8 py-4 bg-ink hover:bg-ink/90 text-gallery-white font-semibold rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {emailLoading ? 'Enviando...' : 'Enviar correo'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {activeTab === "analytics" && (
+            <div className="text-center py-12">
+              <p className="text-slate">Analíticas próximamente...</p>
+            </div>
+          )}
         </div>
       </div>
 
