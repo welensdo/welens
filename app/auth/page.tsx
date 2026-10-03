@@ -196,12 +196,10 @@ function AuthContent() {
 
       {/* Right Side - Auth Form */}
       <div className="w-full lg:w-2/5 xl:w-1/3 flex items-center justify-center bg-white">
-        <div className="w-full max-w-sm px-8">
+        <div className="w-full max-w-sm px-8 py-12">
           {/* Logo for mobile */}
-          <div className="lg:hidden text-center mb-12">
-            <div className="text-3xl font-light tracking-wider text-gray-900">
-              WeLens
-            </div>
+          <div className="lg:hidden text-center mb-8">
+            <img src="/logo2.PNG" alt="WeLens" className="h-[160px] w-auto mx-auto" />
           </div>
 
           {/* Logo for desktop */}
@@ -210,7 +208,7 @@ function AuthContent() {
           </div>
 
           {/* Form Header */}
-          <div className="text-center mb-8 -mt-20">
+          <div className="text-center mb-8">
             <h1 className="text-2xl font-light text-gray-900 mb-2">
               {isLogin ? "Welcome back" : "Create account"}
             </h1>
