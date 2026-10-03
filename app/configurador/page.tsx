@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import { useCart } from "@/contexts/CartContext";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
@@ -69,14 +70,52 @@ export default function ConfiguradorPage() {
     }
   };
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.6,
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: "easeOut" }
+    }
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, scale: 0.9 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.5, ease: "easeOut" }
+    }
+  };
+
   return (
     <main className="min-h-screen bg-gallery-white">
       <Navbar />
 
-      <div className="pt-24 pb-20 lg:pt-32 lg:pb-40">
+      <motion.div 
+        className="pt-24 pb-20 lg:pt-32 lg:pb-40"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
-          <div className="flex flex-col gap-4 mb-12 text-center">
+          <motion.div 
+            className="flex flex-col gap-4 mb-12 text-center"
+            variants={itemVariants}
+          >
             <div className="flex justify-center">
               <Badge variant="secondary">Configurador</Badge>
             </div>
@@ -86,15 +125,17 @@ export default function ConfiguradorPage() {
             <p className="text-body max-w-2xl mx-auto text-slate">
               Selecciona el tipo de corrección y la graduación para cada ojo.
             </p>
-          </div>
+          </motion.div>
 
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 max-w-6xl mx-auto">
             {/* Product Preview */}
-            <div className="order-2 lg:order-1">
+            <motion.div 
+              className="order-2 lg:order-1"
+              variants={itemVariants}
+            >
               <div className="sticky top-24">
                 <div className="bg-studio-mist rounded-3xl p-8 lg:p-12 w-full aspect-[16/9] flex items-center justify-center">
                   <div className="relative w-full h-full flex items-center justify-center">
-                    {/* Mockup 3D placeholder */}
                     <div className="relative w-full h-full">
                       <div className="absolute inset-0 flex items-center justify-center">
                         <svg
@@ -131,7 +172,10 @@ export default function ConfiguradorPage() {
                 </div>
 
                 {/* Current Selection Summary */}
-                <div className="mt-6 bg-gallery-white border border-hairline-silver rounded-3xl p-6">
+                <motion.div 
+                  className="mt-6 bg-gallery-white border border-hairline-silver rounded-3xl p-6"
+                  variants={cardVariants}
+                >
                   <h3 className="text-xl font-semibold text-ink mb-4">
                     Tu configuración
                   </h3>
@@ -179,13 +223,11 @@ export default function ConfiguradorPage() {
                       )}
                     </div>
                   </div>
-                  
-                  {/* Price Breakdown */}
                   {(leftEye.type || rightEye.type) && (
-                    <div className="pt-4 border-t border-hairline-silver space-y-2">
+                    <div className="space-y-2">
                       <div className="flex justify-between text-body-small">
-                        <span className="text-slate">Precio base</span>
-                        <span className="text-ink font-medium">$50</span>
+                        <span className="text-slate">Lentes base (par)</span>
+                        <span className="text-ink">$50.00</span>
                       </div>
                       {(calculateExtraCost(leftEye.value) > 0 || calculateExtraCost(rightEye.value) > 0) && (
                         <div className="flex justify-between text-body-small">
@@ -201,15 +243,23 @@ export default function ConfiguradorPage() {
                       </div>
                     </div>
                   )}
-                </div>
+                </motion.div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Configuration Form */}
-            <div className="order-1 lg:order-2">
+            <motion.div 
+              className="order-1 lg:order-2"
+              variants={itemVariants}
+            >
               <div className="space-y-6">
                 {/* Left Eye */}
-                <div className="bg-gallery-white border border-hairline-silver rounded-3xl p-6 lg:p-10">
+                <motion.div 
+                  className="bg-gallery-white border border-hairline-silver rounded-3xl p-6 lg:p-10"
+                  variants={cardVariants}
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.2 }}
+                >
                   <div className="flex justify-between items-start mb-8">
                     <div>
                       <h3 className="text-2xl lg:text-3xl font-semibold text-ink mb-1">
@@ -267,54 +317,42 @@ export default function ConfiguradorPage() {
                       </button>
                     </div>
 
-                    {/* Value Slider */}
+                    {/* Value Selection */}
                     {leftEye.type && (
-                      <div className="pt-4">
-                        <div className="flex justify-between items-baseline mb-6">
-                          <span className="text-body-small text-slate">Graduación</span>
-                          <div className="text-right">
-                            <span className="text-3xl font-semibold text-ink">
-                              {leftEye.value > 0 ? "+" : ""}
-                              {leftEye.value.toFixed(2)}
-                            </span>
-                            {calculateExtraCost(leftEye.value) > 0 && (
-                              <p className="text-compact-control text-pricing-blue mt-1">
-                                +${calculateExtraCost(leftEye.value)} extra
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                        <div className="relative">
-                          <input
-                            type="range"
-                            min="0"
-                            max={getOptionsForType(leftEye.type).length - 1}
-                            step="1"
-                            value={getOptionsForType(leftEye.type).indexOf(leftEye.value)}
-                            onChange={(e) => {
-                              const options = getOptionsForType(leftEye.type);
-                              setLeftEye({ ...leftEye, value: options[parseInt(e.target.value)] });
-                            }}
-                            className="w-full h-2 bg-studio-mist rounded-full appearance-none cursor-pointer slider"
-                          />
-                          <div className="flex justify-between mt-3 text-compact-control text-slate">
-                            <span>
-                              {getOptionsForType(leftEye.type)[0] > 0 ? "+" : ""}
-                              {getOptionsForType(leftEye.type)[0].toFixed(2)}
-                            </span>
-                            <span>
-                              {getOptionsForType(leftEye.type)[getOptionsForType(leftEye.type).length - 1] > 0 ? "+" : ""}
-                              {getOptionsForType(leftEye.type)[getOptionsForType(leftEye.type).length - 1].toFixed(2)}
-                            </span>
-                          </div>
+                      <div>
+                        <label className="block text-body-small font-medium text-ink mb-4">
+                          Graduación
+                        </label>
+                        <div className="grid grid-cols-4 gap-2">
+                          {getOptionsForType(leftEye.type).map((option) => (
+                            <button
+                              key={option}
+                              onClick={() =>
+                                setLeftEye({ ...leftEye, value: option })
+                              }
+                              className={`px-3 py-3 rounded-2xl text-compact-control font-medium transition-all ${
+                                leftEye.value === option
+                                  ? "bg-pricing-blue text-gallery-white shadow-lg"
+                                  : "bg-studio-mist text-ink hover:bg-control-gray"
+                              }`}
+                            >
+                              {option > 0 ? "+" : ""}
+                              {option.toFixed(2)}
+                            </button>
+                          ))}
                         </div>
                       </div>
                     )}
                   </div>
-                </div>
+                </motion.div>
 
                 {/* Right Eye */}
-                <div className="bg-gallery-white border border-hairline-silver rounded-3xl p-6 lg:p-10">
+                <motion.div 
+                  className="bg-gallery-white border border-hairline-silver rounded-3xl p-6 lg:p-10"
+                  variants={cardVariants}
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.2 }}
+                >
                   <div className="flex justify-between items-start mb-8">
                     <div>
                       <h3 className="text-2xl lg:text-3xl font-semibold text-ink mb-1">
@@ -372,61 +410,49 @@ export default function ConfiguradorPage() {
                       </button>
                     </div>
 
-                    {/* Value Slider */}
+                    {/* Value Selection */}
                     {rightEye.type && (
-                      <div className="pt-4">
-                        <div className="flex justify-between items-baseline mb-6">
-                          <span className="text-body-small text-slate">Graduación</span>
-                          <div className="text-right">
-                            <span className="text-3xl font-semibold text-ink">
-                              {rightEye.value > 0 ? "+" : ""}
-                              {rightEye.value.toFixed(2)}
-                            </span>
-                            {calculateExtraCost(rightEye.value) > 0 && (
-                              <p className="text-compact-control text-pricing-blue mt-1">
-                                +${calculateExtraCost(rightEye.value)} extra
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                        <div className="relative">
-                          <input
-                            type="range"
-                            min="0"
-                            max={getOptionsForType(rightEye.type).length - 1}
-                            step="1"
-                            value={getOptionsForType(rightEye.type).indexOf(rightEye.value)}
-                            onChange={(e) => {
-                              const options = getOptionsForType(rightEye.type);
-                              setRightEye({ ...rightEye, value: options[parseInt(e.target.value)] });
-                            }}
-                            className="w-full h-2 bg-studio-mist rounded-full appearance-none cursor-pointer slider"
-                          />
-                          <div className="flex justify-between mt-3 text-compact-control text-slate">
-                            <span>
-                              {getOptionsForType(rightEye.type)[0] > 0 ? "+" : ""}
-                              {getOptionsForType(rightEye.type)[0].toFixed(2)}
-                            </span>
-                            <span>
-                              {getOptionsForType(rightEye.type)[getOptionsForType(rightEye.type).length - 1] > 0 ? "+" : ""}
-                              {getOptionsForType(rightEye.type)[getOptionsForType(rightEye.type).length - 1].toFixed(2)}
-                            </span>
-                          </div>
+                      <div>
+                        <label className="block text-body-small font-medium text-ink mb-4">
+                          Graduación
+                        </label>
+                        <div className="grid grid-cols-4 gap-2">
+                          {getOptionsForType(rightEye.type).map((option) => (
+                            <button
+                              key={option}
+                              onClick={() =>
+                                setRightEye({ ...rightEye, value: option })
+                              }
+                              className={`px-3 py-3 rounded-2xl text-compact-control font-medium transition-all ${
+                                rightEye.value === option
+                                  ? "bg-pricing-blue text-gallery-white shadow-lg"
+                                  : "bg-studio-mist text-ink hover:bg-control-gray"
+                              }`}
+                            >
+                              {option > 0 ? "+" : ""}
+                              {option.toFixed(2)}
+                            </button>
+                          ))}
                         </div>
                       </div>
                     )}
                   </div>
-                </div>
+                </motion.div>
 
                 {/* CTA Buttons */}
-                <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                  <button
+                <motion.div 
+                  className="flex flex-col sm:flex-row gap-4 pt-4"
+                  variants={itemVariants}
+                >
+                  <motion.button
                     className={`flex-1 text-center py-5 rounded-full font-semibold transition-all text-lg ${
                       leftEye.type && rightEye.type
                         ? "bg-pricing-blue hover:bg-pricing-blue/90 text-gallery-white shadow-lg hover:shadow-xl cursor-pointer"
                         : "bg-studio-mist text-slate cursor-not-allowed"
                     }`}
                     disabled={!leftEye.type || !rightEye.type}
+                    whileHover={leftEye.type && rightEye.type ? { scale: 1.02 } : {}}
+                    whileTap={leftEye.type && rightEye.type ? { scale: 0.98 } : {}}
                     onClick={() => {
                       if (leftEye.type && rightEye.type) {
                         addToCart({
@@ -442,7 +468,7 @@ export default function ConfiguradorPage() {
                     }}
                   >
                     Continuar al checkout • ${calculateTotalPrice()}
-                  </button>
+                  </motion.button>
                   <button
                     onClick={() => {
                       setLeftEye({ type: null, value: 0 });
@@ -452,12 +478,12 @@ export default function ConfiguradorPage() {
                   >
                     Reiniciar
                   </button>
-                </div>
+                </motion.div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       <Footer />
 

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/contexts/CartContext";
+import { PayPalButtons } from "@paypal/react-paypal-js";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { Badge } from "@/components/ui/badge";
@@ -62,6 +63,113 @@ export default function CheckoutPage() {
         router.push("/auth?redirect=checkout");
       });
   }, [cart, items, orderCompleted, router]); // Fixed dependencies
+
+  const createWeLensOrder = async (paymentData: any) => {
+    try {
+      // Prepare all items for the order (same logic as before)
+      const orderItems = [];
+
+      // Add legacy cart items (backward compatibility)
+      if (cart) {
+        if (cart.leftEye.type) {
+          orderItems.push({
+            itemType: 'lens',
+            eye: "left",
+            type: cart.leftEye.type,
+            value: cart.leftEye.value,
+            price: cart.rightEye.type ? cart.price / 2 : cart.price,
+          });
+        }
+
+        if (cart.rightEye.type) {
+          orderItems.push({
+            itemType: 'lens',
+            eye: "right",
+            type: cart.rightEye.type,
+            value: cart.rightEye.value,
+            price: cart.leftEye.type ? cart.price / 2 : cart.price,
+          });
+        }
+      }
+
+      // Add new cart items (lenses + accessories)
+      items.forEach((item) => {
+        if (item.type === 'lens') {
+          const hasLeftEye = item.leftEye.type;
+          const hasRightEye = item.rightEye.type;
+          const eyeCount = (hasLeftEye ? 1 : 0) + (hasRightEye ? 1 : 0);
+          const pricePerEye = eyeCount > 1 ? item.price / 2 : item.price;
+
+          if (hasLeftEye) {
+            orderItems.push({
+              itemType: 'lens',
+              eye: "left",
+              type: item.leftEye.type,
+              value: item.leftEye.value,
+              price: pricePerEye,
+            });
+          }
+          if (hasRightEye) {
+            orderItems.push({
+              itemType: 'lens',
+              eye: "right",
+              type: item.rightEye.type,
+              value: item.rightEye.value,
+              price: pricePerEye,
+            });
+          }
+        } else if (item.type === 'accessory') {
+          orderItems.push({
+            itemType: 'accessory',
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price * item.quantity,
+          });
+        }
+      });
+
+      if (orderItems.length === 0) {
+        throw new Error("El carrito está vacío");
+      }
+
+      // Create order in our database
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: orderItems,
+          totalPrice: totalPrice,
+          shippingAddress: shippingData,
+          paymentMethod: 'paypal',
+          paymentDetails: {
+            captureID: paymentData.captureID,
+            payerEmail: paymentData.payerEmail,
+            amount: paymentData.amount,
+          }
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Error al crear el pedido");
+      }
+
+      console.log('Order created successfully:', data.order);
+      console.log('Redirecting to:', `/thank-you?order=${data.order.orderNumber}`);
+      
+      // Mark order as completed to prevent useEffect redirect
+      setOrderCompleted(true);
+      
+      // Clear cart and redirect
+      clearCart();
+      router.push(`/thank-you?order=${data.order.orderNumber}`);
+      
+    } catch (err: any) {
+      setError(err.message);
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -347,13 +455,79 @@ export default function CheckoutPage() {
                     </div>
                   </div>
 
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full py-4 bg-pricing-blue hover:bg-pricing-blue/90 disabled:bg-studio-mist disabled:text-slate text-gallery-white rounded-full font-semibold transition-all shadow-lg hover:shadow-xl"
-                  >
-                    {loading ? "Procesando..." : `Confirmar pedido • $${totalPrice.toFixed(2)}`}
-                  </button>
+                  {/* Payment Methods */}
+                  <div className="space-y-4">
+                    <h4 className="text-body-small font-medium text-ink mb-3">
+                      Método de pago
+                    </h4>
+                    
+                    {/* PayPal Buttons */}
+                    <div className="w-full">
+                      <PayPalButtons
+                        style={{
+                          layout: "vertical",
+                          color: "gold",
+                          shape: "pill",
+                          label: "paypal",
+                        }}
+                        createOrder={async () => {
+                          try {
+                            const response = await fetch('/api/paypal/create-order', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ amount: totalPrice }),
+                            });
+                            const data = await response.json();
+                            return data.orderID;
+                          } catch (error) {
+                            console.error('Error creating PayPal order:', error);
+                            setError('Error al crear el pedido de PayPal');
+                          }
+                        }}
+                        onApprove={async (data) => {
+                          setLoading(true);
+                          try {
+                            // Capture PayPal payment
+                            const captureResponse = await fetch('/api/paypal/capture-order', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ orderID: data.orderID }),
+                            });
+                            
+                            const captureData = await captureResponse.json();
+                            
+                            if (captureData.success) {
+                              // Create order in our database
+                              await createWeLensOrder(captureData);
+                            } else {
+                              throw new Error('Error processing PayPal payment');
+                            }
+                          } catch (error: any) {
+                            setError(error.message);
+                            setLoading(false);
+                          }
+                        }}
+                        onError={(err) => {
+                          console.error('PayPal error:', err);
+                          setError('Error en el proceso de pago de PayPal');
+                        }}
+                        onCancel={() => {
+                          console.log('PayPal payment cancelled');
+                        }}
+                      />
+                    </div>
+
+                    {/* Alternative Manual Checkout */}
+                    <div className="pt-4 border-t border-hairline-silver">
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full py-4 bg-studio-mist hover:bg-control-gray disabled:bg-studio-mist disabled:text-slate text-ink rounded-full font-semibold transition-all border-2 border-hairline-silver hover:border-steel"
+                      >
+                        {loading ? "Procesando..." : `Pagar contra entrega • $${totalPrice.toFixed(2)}`}
+                      </button>
+                    </div>
+                  </div>
                 </form>
               </div>
             </div>

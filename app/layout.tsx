@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { CartProvider } from "@/contexts/CartContext";
+import PayPalProvider from "@/components/PayPalProvider";
 
 export const metadata: Metadata = {
   title: "WeLens - Cualquier gafa. Tu graduación.",
@@ -16,7 +17,9 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <body className="antialiased" suppressHydrationWarning>
-        <CartProvider>{children}</CartProvider>
+        <PayPalProvider>
+          <CartProvider>{children}</CartProvider>
+        </PayPalProvider>
       </body>
     </html>
   );

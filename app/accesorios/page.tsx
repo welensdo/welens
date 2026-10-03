@@ -94,7 +94,7 @@ export default function AccesoriosPage() {
                 <p className="text-compact text-slate mb-4 flex-grow">{product.description}</p>
                 <div className="flex items-center justify-between mt-4 pt-4 border-t border-hairline-silver">
                   <span className="text-body-emphasized font-semibold text-ink">
-                    €{product.price.toFixed(2)}
+                    ${product.price.toFixed(2)}
                   </span>
                   <button
                     onClick={() => handleAddToCart(product)}
@@ -119,8 +119,8 @@ export default function AccesoriosPage() {
               <span className="font-semibold">25% de descuento</span>
             </p>
             <div className="flex items-center justify-center gap-4 mb-8">
-              <span className="text-body-large text-gallery-white/70 line-through">€83.94</span>
-              <span className="text-display-medium font-semibold text-gallery-white">€62.95</span>
+              <span className="text-body-large text-gallery-white/70 line-through">$83.94</span>
+              <span className="text-display-medium font-semibold text-gallery-white">$62.95</span>
             </div>
             <button
               onClick={handleAddBundle}
