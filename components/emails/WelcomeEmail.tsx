@@ -18,7 +18,7 @@ export default function WelcomeEmail({ name, email }: WelcomeEmailProps) {
     <WeLensEmail previewText={`Bienvenido a WeLens, ${name}`}>
       
       {/* Headline */}
-      <div style={{ textAlign: 'center', marginBottom: EmailDesignSystem.spacing.xl }}>
+      <div style={{ textAlign: 'center', marginBottom: EmailDesignSystem.spacing.lg }}>
         <EmailHeadline>
           Bienvenido a WeLens
         </EmailHeadline>

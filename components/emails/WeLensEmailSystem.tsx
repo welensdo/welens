@@ -163,7 +163,7 @@ export default function WeLensEmail({ children, previewText }: WeLensEmailProps)
                     {/* Logo */}
                     <div style={{ 
                       textAlign: 'center',
-                      marginBottom: spacing.xl
+                      marginBottom: spacing.sm
                     }}>
                       <img 
                         src="https://welens.org/og-image.png" 
