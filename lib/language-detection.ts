@@ -340,5 +340,3 @@ export function detectLanguageForEmail({
     country: userCountry
   });
 }
-
-export { LanguageDetectionService };
