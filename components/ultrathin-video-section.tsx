@@ -9,6 +9,8 @@ export default function UltrathinVideoSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVideoComplete, setIsVideoComplete] = useState(false);
   const [isVideoReady, setIsVideoReady] = useState(false);
+  const [isScrollLocked, setIsScrollLocked] = useState(false);
+  const [lockedScrollPosition, setLockedScrollPosition] = useState(0);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -28,35 +30,47 @@ export default function UltrathinVideoSection() {
       const containerRect = container.getBoundingClientRect();
       const containerTop = scrollPosition + containerRect.top;
       
-      // Use much larger animation range for stronger scroll control effect
-      const animationStart = Math.max(0, containerTop - (windowHeight * 2));
-      const animationEnd = containerTop + (windowHeight * 3);
-      const animationRange = animationEnd - animationStart;
+      // Define when video animation should start and end
+      const videoTriggerStart = containerTop - (windowHeight * 0.8);
+      const videoTriggerEnd = containerTop - (windowHeight * 0.2);
       
-      // Calculate progress based on current scroll position
-      let scrollProgress = 0;
-      if (animationRange > 0) {
-        scrollProgress = (scrollPosition - animationStart) / animationRange;
+      // Check if we're in the video animation zone
+      const isInVideoZone = scrollPosition >= videoTriggerStart && scrollPosition <= videoTriggerEnd;
+      
+      if (isInVideoZone && !isScrollLocked && !isVideoComplete) {
+        // Lock scroll when entering video zone
+        setIsScrollLocked(true);
+        setLockedScrollPosition(scrollPosition);
       }
 
-      // Clamp between 0 and 1
-      const clampedProgress = Math.max(0, Math.min(1, scrollProgress));
-
-      // Update video time based on scroll progress
-      if (video.duration && isFinite(video.duration) && video.readyState >= 2) {
-        const newTime = clampedProgress * video.duration;
-        try {
-          video.currentTime = newTime;
-        } catch (error) {
-          console.error("Error updating video time:", error);
+      // Calculate video progress when in locked mode
+      if (isScrollLocked && !isVideoComplete) {
+        // Use scroll delta from locked position to control video
+        const scrollDelta = scrollPosition - lockedScrollPosition;
+        const maxScrollForVideo = windowHeight * 1.5; // How much scroll needed to complete video
+        
+        const videoProgress = Math.max(0, Math.min(1, scrollDelta / maxScrollForVideo));
+        
+        // Update video time
+        if (video.duration && isFinite(video.duration) && video.readyState >= 2) {
+          const newTime = videoProgress * video.duration;
+          try {
+            video.currentTime = newTime;
+          } catch (error) {
+            console.error("Error updating video time:", error);
+          }
         }
-      }
-
-      // Check if video animation is complete (at 90% to allow smooth transition)
-      if (clampedProgress >= 0.9) {
-        setIsVideoComplete(true);
-      } else {
-        setIsVideoComplete(false);
+        
+        // Check if video is complete
+        if (videoProgress >= 0.95) {
+          setIsVideoComplete(true);
+          setIsScrollLocked(false);
+        }
+        
+        // Prevent actual scroll when locked (reset to locked position)
+        if (scrollPosition !== lockedScrollPosition && videoProgress < 0.95) {
+          window.scrollTo(0, lockedScrollPosition);
+        }
       }
     };
 
@@ -74,8 +88,8 @@ export default function UltrathinVideoSection() {
     handleScroll();
     
     // Add scroll listeners
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("touchmove", onScroll, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: false });
+    window.addEventListener("touchmove", onScroll, { passive: false });
     window.addEventListener("resize", handleScroll, { passive: true });
 
     // Video event handlers
@@ -130,7 +144,7 @@ export default function UltrathinVideoSection() {
       window.removeEventListener("touchmove", onScroll);
       window.removeEventListener("resize", handleScroll);
     };
-  }, [isVideoReady]);
+  }, [isVideoReady, isScrollLocked, lockedScrollPosition, isVideoComplete]);
 
   return (
     <div className="w-full py-20 lg:py-40 bg-gallery-white" id="como-funciona">
@@ -169,7 +183,16 @@ export default function UltrathinVideoSection() {
             </video>
 
             {/* Progress indicator */}
-            {!isVideoComplete && (
+            {isScrollLocked && !isVideoComplete && (
+              <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-pricing-blue/90 backdrop-blur-sm px-6 py-3 rounded-full z-10">
+                <p className="text-compact-control font-semibold text-gallery-white">
+                  🎬 Sigue scrolleando para animar
+                </p>
+              </div>
+            )}
+
+            {/* Initial instruction */}
+            {!isScrollLocked && !isVideoComplete && (
               <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-gallery-white/90 backdrop-blur-sm px-4 py-2 rounded-full z-10">
                 <p className="text-compact-control font-semibold text-ink">
                   Desliza para ver la transformación
