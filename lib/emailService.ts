@@ -61,29 +61,42 @@ export const emailService = {
     to,
     name,
     orderNumber,
+    orderDate,
     items,
-    totalPrice,
+    subtotal,
+    shipping,
+    tax,
+    total,
     shippingAddress,
-    paymentMethod = 'PayPal'
+    estimatedDelivery,
   }: {
     to: string;
     name: string;
     orderNumber: string;
+    orderDate: string;
     items: OrderItem[];
-    totalPrice: number;
+    subtotal: number;
+    shipping: number;
+    tax: number;
+    total: number;
     shippingAddress: ShippingAddress;
-    paymentMethod?: string;
+    estimatedDelivery: string;
   }) {
     try {
       const { default: OrderConfirmationEmailComponent } = await import('@/components/emails/OrderConfirmationEmail');
       const html = await renderEmailToString(
         React.createElement(OrderConfirmationEmailComponent, {
           customerName: name,
+          customerEmail: to,
           orderNumber,
-          totalPrice,
+          orderDate,
           items,
+          subtotal,
+          shipping,
+          tax,
+          total,
           shippingAddress,
-          paymentMethod,
+          estimatedDelivery,
         })
       );
 
@@ -195,66 +208,6 @@ export const emailService = {
       return data;
     } catch (error) {
       console.error('Password reset email service error:', error);
-      throw error;
-    }
-  },
-
-  // Nueva función para envío de correos personalizados desde admin
-  async sendCustomEmail({
-    from,
-    to,
-    subject,
-    message,
-    senderName = 'WeLens Team'
-  }: {
-    from: keyof typeof EMAIL_ALIASES;
-    to: string;
-    subject: string;
-    message: string;
-    senderName?: string;
-  }) {
-    try {
-      const { default: EmailTemplateComponent } = await import('@/components/emails/EmailTemplate');
-      
-      // Crear contenido HTML personalizado usando el template base
-      const customContent = `
-        <div style="padding: 24px; text-align: left;">
-          <p style="color: #374151; font-size: 16px; line-height: 1.6; margin-bottom: 16px;">
-            ${message.replace(/\n/g, '<br>')}
-          </p>
-          <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
-            <p style="color: #6b7280; font-size: 14px; margin: 0;">
-              Saludos cordiales,<br>
-              <strong>${senderName}</strong>
-            </p>
-          </div>
-        </div>
-      `;
-
-      const html = await renderEmailToString(
-        React.createElement(EmailTemplateComponent, null,
-          React.createElement('div', {
-            dangerouslySetInnerHTML: { __html: customContent }
-          })
-        )
-      );
-
-      const { data, error } = await resend.emails.send({
-        from: EMAIL_ALIASES[from],
-        to: [to],
-        subject,
-        html,
-      });
-
-      if (error) {
-        console.error('Error sending custom email:', error);
-        throw new Error('Failed to send custom email');
-      }
-
-      console.log('Custom email sent successfully:', data);
-      return data;
-    } catch (error) {
-      console.error('Custom email service error:', error);
       throw error;
     }
   },

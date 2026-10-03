@@ -64,9 +64,14 @@ export async function POST(request: NextRequest) {
           to: user.email,
           name: user.name,
           orderNumber,
+          orderDate: new Date().toISOString(),
           items,
-          totalPrice,
+          subtotal: totalPrice * 0.9, // Ejemplo de cálculo
+          shipping: totalPrice * 0.05,
+          tax: totalPrice * 0.05,
+          total: totalPrice,
           shippingAddress,
+          estimatedDelivery: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 días
         });
       } catch (emailError) {
         console.error('Error enviando email de confirmación:', emailError);
