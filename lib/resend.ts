@@ -6,16 +6,16 @@ if (!process.env.RESEND_API_KEY) {
 
 export const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Email aliases disponibles
+// Email configuration with proper sender names
 export const EMAIL_ALIASES = {
-  data: 'data@welens.org',
-  shipping: 'shipping@welens.org',
-  soporte: 'soporte@welens.org', 
-  careers: 'careers@welens.org',
-  support: 'support@welens.org',
-  legal: 'legal@welens.org',
-  privacy: 'privacy@welens.org',
-  hola: 'hola@welens.org',
+  data: 'WeLens <data@welens.org>',
+  shipping: 'WeLens Shipping <shipping@welens.org>',
+  soporte: 'WeLens Soporte <soporte@welens.org>', 
+  careers: 'WeLens Careers <careers@welens.org>',
+  support: 'WeLens Support <support@welens.org>',
+  legal: 'WeLens Legal <legal@welens.org>',
+  privacy: 'WeLens Privacy <privacy@welens.org>',
+  hola: 'WeLens <hola@welens.org>',
 } as const;
 
 export const FROM_EMAIL = process.env.FROM_EMAIL || EMAIL_ALIASES.data;
