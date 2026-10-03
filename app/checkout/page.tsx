@@ -2,12 +2,25 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { useCart } from "@/contexts/CartContext";
-import { PayPalButtons } from "@paypal/react-paypal-js";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { Badge } from "@/components/ui/badge";
 import { countries } from "@/lib/countries";
+
+// Lazy load PayPal buttons to avoid SSR issues
+const PayPalButtons = dynamic(
+  () => import("@paypal/react-paypal-js").then((mod) => ({ default: mod.PayPalButtons })),
+  { 
+    ssr: false,
+    loading: () => (
+      <div className="w-full py-4 bg-studio-mist rounded-full text-center text-slate">
+        Cargando PayPal...
+      </div>
+    )
+  }
+);
 
 export const dynamic = 'force-dynamic';
 
