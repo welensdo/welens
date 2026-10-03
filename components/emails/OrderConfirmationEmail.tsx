@@ -1,6 +1,5 @@
-import React from 'react';
-import EmailTemplate from './EmailTemplate';
-import EmailButton from './EmailButton';
+import * as React from 'react';
+import PremiumEmailTemplate from './PremiumEmailTemplate';
 
 interface OrderItem {
   itemType: 'lens' | 'accessory';
@@ -36,302 +35,319 @@ export default function OrderConfirmationEmail({
   shippingAddress,
   paymentMethod
 }: OrderConfirmationEmailProps) {
-  return (
-    <EmailTemplate previewText={`Orden ${orderNumber} confirmada - WeLens`}>
-      <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+  const emailContent = (
+    <>
+      {/* Success Hero Section */}
+      <div style={{ textAlign: 'center', marginBottom: '50px' }}>
+        {/* Success Animation Circle */}
         <div style={{
-          backgroundColor: '#10B981',
+          width: '120px',
+          height: '120px',
+          background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
           borderRadius: '50%',
-          width: '80px',
-          height: '80px',
-          margin: '0 auto 24px',
+          margin: '0 auto 30px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          boxShadow: '0 20px 40px rgba(16, 185, 129, 0.4)'
         }}>
-          <div style={{
-            color: '#FFFFFF',
-            fontSize: '32px',
-            fontWeight: 'bold',
-          }}>
-            ✓
-          </div>
+          <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path 
+              d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" 
+              stroke="white" 
+              strokeWidth="3" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            />
+          </svg>
         </div>
         
         <h1 style={{
-          color: '#1E293B',
-          fontSize: '32px',
-          fontWeight: '600',
-          letterSpacing: '-0.025em',
-          lineHeight: '40px',
-          margin: '0 0 16px',
+          fontSize: '36px',
+          fontWeight: '800',
+          background: 'linear-gradient(135deg, #1f2937 0%, #374151 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          margin: '0 0 20px 0',
+          lineHeight: '1.2'
         }}>
-          ¡Pago exitoso!
+          ¡Pago Exitoso!
         </h1>
+        
         <p style={{
-          color: '#64748B',
-          fontSize: '18px',
-          lineHeight: '28px',
-          margin: '0',
-        }}>
-          Tu orden ha sido confirmada y procesada
-        </p>
-      </div>
-
-      <div style={{
-        backgroundColor: '#F8FAFC',
-        borderRadius: '16px',
-        padding: '32px',
-        marginBottom: '32px',
-      }}>
-        <h2 style={{
-          color: '#1E293B',
           fontSize: '20px',
-          fontWeight: '600',
-          margin: '0 0 16px',
+          lineHeight: '1.6',
+          color: '#374151',
+          margin: '0 0 12px 0',
+          fontWeight: '500'
         }}>
-          Hola {customerName},
-        </h2>
-        <p style={{
-          color: '#475569',
-          fontSize: '16px',
-          lineHeight: '24px',
-          margin: '0 0 16px',
-        }}>
-          ¡Gracias por tu compra! Hemos recibido tu pago y tu orden está siendo procesada.
+          Hola <strong style={{color: '#3b82f6'}}>{customerName}</strong>, tu orden ha sido confirmada
         </p>
-        <p style={{
-          color: '#475569',
-          fontSize: '16px',
-          lineHeight: '24px',
-          margin: '0',
+        
+        <div style={{
+          display: 'inline-block',
+          background: 'linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)',
+          padding: '12px 24px',
+          borderRadius: '25px',
+          border: '2px solid #3b82f6'
         }}>
-          Te notificaremos cuando tu orden esté lista para envío.
-        </p>
+          <p style={{
+            fontSize: '16px',
+            color: '#3730a3',
+            margin: '0',
+            fontWeight: '600'
+          }}>
+            Orden #{orderNumber} • {new Date().toLocaleDateString('es-ES', {
+              weekday: 'long',
+              year: 'numeric', 
+              month: 'long',
+              day: 'numeric'
+            })}
+          </p>
+        </div>
       </div>
 
-      {/* Factura */}
+      {/* Premium Order Summary */}
       <div style={{
-        border: '2px solid #E2E8F0',
-        borderRadius: '16px',
-        overflow: 'hidden',
-        marginBottom: '32px',
+        background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+        border: '3px solid transparent',
+        backgroundClip: 'padding-box',
+        borderRadius: '20px',
+        padding: '40px',
+        margin: '40px 0',
+        position: 'relative',
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)'
       }}>
-        {/* Header de factura */}
         <div style={{
-          backgroundColor: '#1E293B',
-          color: '#FFFFFF',
-          padding: '24px',
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h3 style={{
-              fontSize: '20px',
-              fontWeight: '600',
-              margin: '0',
-            }}>
-              Factura
-            </h3>
-            <div style={{ textAlign: 'right' }}>
-              <p style={{
-                fontSize: '16px',
-                fontWeight: '600',
-                margin: '0 0 4px',
-              }}>
-                Orden #{orderNumber}
-              </p>
-              <p style={{
-                fontSize: '14px',
-                color: '#94A3B8',
-                margin: '0',
-              }}>
-                {new Date().toLocaleDateString('es-ES')}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Detalles de la orden */}
-        <div style={{ padding: '32px' }}>
-          <h4 style={{
-            color: '#1E293B',
-            fontSize: '16px',
-            fontWeight: '600',
-            margin: '0 0 16px',
-          }}>
-            Detalles del pedido
-          </h4>
-          
-          <div style={{ marginBottom: '24px' }}>
-            {items.map((item, index) => (
-              <div key={index} style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-start',
-                padding: '12px 0',
-                borderBottom: index < items.length - 1 ? '1px solid #F1F5F9' : 'none',
-              }}>
-                <div style={{ flex: 1 }}>
-                  {item.itemType === 'lens' ? (
-                    <>
-                      <p style={{
-                        color: '#1E293B',
-                        fontSize: '16px',
-                        fontWeight: '600',
-                        margin: '0 0 4px',
-                      }}>
-                        Lente {item.eye === 'left' ? 'izquierdo' : 'derecho'}
-                      </p>
-                      <p style={{
-                        color: '#64748B',
-                        fontSize: '14px',
-                        margin: '0',
-                      }}>
-                        {item.type} • {item.value && item.value > 0 ? '+' : ''}{item.value?.toFixed(2)}
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <p style={{
-                        color: '#1E293B',
-                        fontSize: '16px',
-                        fontWeight: '600',
-                        margin: '0 0 4px',
-                      }}>
-                        {item.name}
-                      </p>
-                      <p style={{
-                        color: '#64748B',
-                        fontSize: '14px',
-                        margin: '0',
-                      }}>
-                        Cantidad: {item.quantity}
-                      </p>
-                    </>
-                  )}
-                </div>
-                <p style={{
-                  color: '#1E293B',
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  margin: '0',
-                }}>
-                  ${item.price.toFixed(2)}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          {/* Total */}
+          position: 'absolute',
+          top: '0',
+          left: '0',
+          right: '0',
+          height: '6px',
+          background: 'linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4, #10b981)',
+          borderRadius: '20px 20px 0 0'
+        }}></div>
+        
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '30px' }}>
           <div style={{
-            backgroundColor: '#F8FAFC',
-            borderRadius: '12px',
-            padding: '20px',
-            marginBottom: '24px',
+            width: '50px',
+            height: '50px',
+            background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)',
+            borderRadius: '15px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginRight: '16px'
           }}>
-            <div style={{
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 11V7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7V11M5 11H19L18 21H6L5 11Z" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <h2 style={{
+            fontSize: '24px',
+            fontWeight: '700',
+            color: '#1f2937',
+            margin: '0'
+          }}>
+            Resumen del Pedido
+          </h2>
+        </div>
+        {/* Order Items */}
+        <div style={{ marginBottom: '30px' }}>
+          {items.map((item, index) => (
+            <div key={index} style={{
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
+              padding: '20px 0',
+              borderBottom: index < items.length - 1 ? '2px solid #f1f5f9' : 'none'
             }}>
-              <p style={{
-                color: '#1E293B',
-                fontSize: '18px',
-                fontWeight: '600',
-                margin: '0',
-              }}>
-                Total pagado
-              </p>
-              <p style={{
-                color: '#1E293B',
-                fontSize: '24px',
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{
+                  width: '40px',
+                  height: '40px',
+                  background: 'linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginRight: '16px'
+                }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z" stroke="#6b7280" strokeWidth="2"/>
+                    <path d="M2.458 12C3.732 7.943 7.523 5 12 5C16.478 5 20.268 7.943 21.542 12C20.268 16.057 16.478 19 12 19C7.523 19 3.732 16.057 2.458 12Z" stroke="#6b7280" strokeWidth="2"/>
+                  </svg>
+                </div>
+                <div>
+                  {item.itemType === 'lens' ? (
+                    <>
+                      <div style={{ fontWeight: '600', color: '#1f2937', fontSize: '16px' }}>
+                        Lente {item.eye === 'left' ? 'Izquierdo' : 'Derecho'}
+                      </div>
+                      <div style={{ fontSize: '14px', color: '#6b7280' }}>
+                        {item.type} • {item.value && item.value > 0 ? '+' : ''}{item.value?.toFixed(2)}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div style={{ fontWeight: '600', color: '#1f2937', fontSize: '16px' }}>
+                        {item.name}
+                      </div>
+                      <div style={{ fontSize: '14px', color: '#6b7280' }}>
+                        Cantidad: {item.quantity}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+              <div style={{
                 fontWeight: '700',
-                margin: '0',
+                color: '#3b82f6',
+                fontSize: '18px',
+                background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)',
+                padding: '8px 16px',
+                borderRadius: '12px'
               }}>
-                ${totalPrice.toFixed(2)}
-              </p>
+                ${item.price.toFixed(2)}
+              </div>
             </div>
-          </div>
-
-          {/* Dirección de envío */}
-          <div style={{ marginBottom: '24px' }}>
-            <h4 style={{
-              color: '#1E293B',
-              fontSize: '16px',
-              fontWeight: '600',
-              margin: '0 0 12px',
-            }}>
-              Dirección de envío
-            </h4>
+          ))}
+        </div>
+        {/* Total Section */}
+        <div style={{
+          background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+          borderRadius: '16px',
+          padding: '24px',
+          border: '2px solid #e2e8f0'
+        }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}>
+            <div>
+              <span style={{
+                fontSize: '20px',
+                fontWeight: '700',
+                color: '#1f2937'
+              }}>
+                Total Pagado
+              </span>
+              <div style={{ fontSize: '14px', color: '#6b7280', marginTop: '4px' }}>
+                Procesado via {paymentMethod === 'paypal' ? 'PayPal' : paymentMethod}
+              </div>
+            </div>
             <div style={{
-              backgroundColor: '#F8FAFC',
-              borderRadius: '12px',
-              padding: '16px',
+              fontSize: '28px',
+              fontWeight: '800',
+              color: '#3b82f6',
+              textShadow: '0 2px 4px rgba(59, 130, 246, 0.2)'
             }}>
-              <p style={{
-                color: '#475569',
-                fontSize: '14px',
-                lineHeight: '20px',
-                margin: '0',
-              }}>
-                {shippingAddress.name}<br />
-                {shippingAddress.street}<br />
-                {shippingAddress.city}, {shippingAddress.state} {shippingAddress.zipCode}<br />
-                {shippingAddress.country}
-              </p>
+              ${totalPrice.toFixed(2)} USD
             </div>
-          </div>
-
-          {/* Método de pago */}
-          <div>
-            <h4 style={{
-              color: '#1E293B',
-              fontSize: '16px',
-              fontWeight: '600',
-              margin: '0 0 12px',
-            }}>
-              Método de pago
-            </h4>
-            <p style={{
-              color: '#475569',
-              fontSize: '14px',
-              margin: '0',
-            }}>
-              {paymentMethod === 'paypal' ? 'PayPal' : paymentMethod}
-            </p>
           </div>
         </div>
       </div>
 
-      <EmailButton href={`https://welens.com/dashboard`}>
-        Ver mi pedido
-      </EmailButton>
-
+      {/* Shipping Information Card */}
       <div style={{
-        backgroundColor: '#EFF6FF',
-        borderLeft: '4px solid #3B82F6',
-        borderRadius: '8px',
-        padding: '24px',
-        marginTop: '32px',
+        background: 'linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%)',
+        borderRadius: '16px',
+        padding: '30px',
+        margin: '30px 0',
+        border: '2px solid #f59e0b'
       }}>
-        <h3 style={{
-          color: '#1E293B',
-          fontSize: '16px',
-          fontWeight: '600',
-          margin: '0 0 12px',
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+          <div style={{
+            width: '40px',
+            height: '40px',
+            background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+            borderRadius: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginRight: '12px'
+          }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M13 16H21L19 21H7L5 16H13ZM13 16V12M13 16L9 12M13 12H9M9 12V8L11 6H15L17 8V12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <h3 style={{
+            fontSize: '18px',
+            fontWeight: '600',
+            color: '#92400e',
+            margin: '0'
+          }}>
+            Información de Envío
+          </h3>
+        </div>
+        
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.7)',
+          borderRadius: '12px',
+          padding: '20px',
+          border: '1px solid rgba(245, 158, 11, 0.3)'
         }}>
-          ¿Qué sigue?
-        </h3>
-        <p style={{
-          color: '#475569',
-          fontSize: '14px',
-          lineHeight: '20px',
-          margin: '0',
-        }}>
-          • Procesaremos tu orden en las próximas 24 horas<br />
-          • Te enviaremos actualizaciones del estado por email<br />
-          • Tiempo estimado de entrega: 1-3 semanas
-        </p>
+          <div style={{
+            fontSize: '15px',
+            lineHeight: '1.6',
+            color: '#92400e'
+          }}>
+            <strong>{shippingAddress.name}</strong><br />
+            {shippingAddress.street}<br />
+            {shippingAddress.city}, {shippingAddress.state} {shippingAddress.zipCode}<br />
+            {shippingAddress.country}
+          </div>
+        </div>
       </div>
-    </EmailTemplate>
+
+      {/* Action Buttons */}
+      <div style={{ textAlign: 'center', margin: '50px 0' }}>
+        <a 
+          href="https://welens.org/dashboard" 
+          style={{
+            display: 'inline-block',
+            background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+            color: 'white',
+            textDecoration: 'none',
+            padding: '18px 36px',
+            borderRadius: '16px',
+            fontWeight: '700',
+            fontSize: '16px',
+            margin: '12px',
+            boxShadow: '0 10px 25px rgba(59, 130, 246, 0.4)'
+          }}
+        >
+          🎯 Ver Estado del Pedido
+        </a>
+        
+        <a 
+          href="https://welens.org/configurador" 
+          style={{
+            display: 'inline-block',
+            background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+            color: '#3b82f6',
+            textDecoration: 'none',
+            padding: '18px 36px',
+            borderRadius: '16px',
+            fontWeight: '700',
+            fontSize: '16px',
+            margin: '12px',
+            border: '3px solid #3b82f6'
+          }}
+        >
+          ✨ Hacer Otro Pedido
+        </a>
+      </div>
+    </>
+  );
+
+  return (
+    <PremiumEmailTemplate 
+      title="¡Pago Exitoso!"
+      footerText="Gracias por confiar en WeLens para transformar tu visión perfecta."
+    >
+      {emailContent}
+    </PremiumEmailTemplate>
   );
 }

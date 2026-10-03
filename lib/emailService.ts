@@ -88,7 +88,7 @@ export const emailService = {
       );
 
       const { data, error } = await resend.emails.send({
-        from: EMAIL_ALIASES.data,
+        from: EMAIL_ALIASES.shipping, // Confirmaciones de orden desde shipping@welens.org
         to: [to],
         subject: `Orden ${orderNumber} confirmada - WeLens`,
         html,
@@ -259,3 +259,45 @@ export const emailService = {
     }
   },
 };
+
+// Función adicional exportada para uso directo de la API admin
+export async function sendCustomAdminEmail({
+  to,
+  from,
+  subject,
+  message,
+}: {
+  to: string;
+  from: string;
+  subject: string;
+  message: string;
+}) {
+  try {
+    const { default: CustomAdminEmailComponent } = await import('@/components/emails/CustomAdminEmail');
+    
+    const html = await renderEmailToString(
+      React.createElement(CustomAdminEmailComponent, {
+        subject,
+        message,
+      })
+    );
+
+    const { data, error } = await resend.emails.send({
+      from,
+      to: [to],
+      subject,
+      html,
+    });
+
+    if (error) {
+      console.error('Error sending custom admin email:', error);
+      throw new Error('Failed to send custom admin email');
+    }
+
+    console.log('Custom admin email sent successfully:', data);
+    return data;
+  } catch (error) {
+    console.error('Custom admin email service error:', error);
+    throw error;
+  }
+}
