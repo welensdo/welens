@@ -138,11 +138,11 @@ export default function UltrathinVideoSection() {
   return (
     <div
       ref={containerRef} 
-      className="relative w-full bg-gallery-white"
+      className="relative w-full bg-gallery-white pt-20"
       style={{ height: "300vh" }}
       id="como-funciona"
     >
-      <div className="sticky top-0 h-screen overflow-hidden">
+      <div className="sticky top-0 h-screen overflow-hidden z-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-center">
           <AnimatedSection animation="fade-up" className="flex flex-col gap-4 mb-8">
             <div>
