@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb/connection';
 import Order from '@/lib/models/Order';
 import User from '@/lib/models/User';
+import { emailService } from '@/lib/emailService';
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET!;
@@ -51,7 +52,7 @@ export async function PATCH(request: NextRequest) {
 
     await dbConnect();
 
-    const { orderId, status, trackingNumber, note } = await request.json();
+    const { orderId, status, trackingNumber, note, sendEmail } = await request.json();
 
     if (!orderId || !status) {
       return NextResponse.json(
@@ -86,6 +87,23 @@ export async function PATCH(request: NextRequest) {
         { error: 'Pedido no encontrado' },
         { status: 404 }
       );
+    }
+
+    // Send status update email if requested
+    if (sendEmail && order.userId) {
+      try {
+        await emailService.sendOrderStatusEmail({
+          to: order.userId.email,
+          name: order.userId.name,
+          orderNumber: order.orderNumber,
+          status,
+          trackingNumber: trackingNumber || order.trackingNumber,
+          note,
+        });
+      } catch (emailError) {
+        console.error('Error enviando email de actualización:', emailError);
+        // No fallar la actualización si el email no se puede enviar
+      }
     }
 
     return NextResponse.json(

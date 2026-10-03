@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb/connection';
 import Order from '@/lib/models/Order';
+import User from '@/lib/models/User';
+import { emailService } from '@/lib/emailService';
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET!;
@@ -51,6 +53,26 @@ export async function POST(request: NextRequest) {
         },
       ],
     });
+
+    // Get user data for email
+    const user = await User.findById(decoded.userId).select('name email');
+    
+    // Send order confirmation email
+    if (user) {
+      try {
+        await emailService.sendOrderConfirmationEmail({
+          to: user.email,
+          name: user.name,
+          orderNumber,
+          items,
+          totalPrice,
+          shippingAddress,
+        });
+      } catch (emailError) {
+        console.error('Error enviando email de confirmación:', emailError);
+        // No fallar la creación de orden si el email no se puede enviar
+      }
+    }
 
     return NextResponse.json(
       {

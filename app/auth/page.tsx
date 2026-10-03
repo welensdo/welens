@@ -43,6 +43,9 @@ function AuthContent() {
     name: "",
   });
 
+  const [forgotPasswordMode, setForgotPasswordMode] = useState(false);
+  const [forgotPasswordSuccess, setForgotPasswordSuccess] = useState(false);
+
   useEffect(() => {
     const redirectParam = searchParams?.get("redirect");
     if (redirectParam) {
@@ -81,6 +84,29 @@ function AuthContent() {
     setPasswordError("");
 
     try {
+      // Handle forgot password
+      if (forgotPasswordMode) {
+        if (!validateEmail(formData.email)) {
+          throw new Error("Por favor ingresa un correo electrónico válido");
+        }
+
+        const response = await fetch("/api/auth/forgot-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: formData.email.toLowerCase() }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Error enviando el email");
+        }
+
+        setForgotPasswordSuccess(true);
+        return;
+      }
+
+      // Handle normal login/register
       if (!validateEmail(formData.email)) {
         throw new Error("Por favor ingresa un correo electrónico válido");
       }
@@ -210,14 +236,35 @@ function AuthContent() {
           {/* Form Header */}
           <div className="text-center mb-8 -mt-20">
             <h1 className="text-2xl font-light text-gray-900 mb-2">
-              {isLogin ? "Welcome back" : "Create account"}
+              {forgotPasswordMode ? "Recover password" : 
+               isLogin ? "Welcome back" : "Create account"}
             </h1>
             <p className="text-sm text-gray-500">
-              {isLogin 
+              {forgotPasswordMode ? "Enter your email to receive a reset link" :
+               isLogin 
                 ? "Enter your credentials below to sign in" 
                 : "Enter your information to create an account"}
             </p>
           </div>
+
+          {/* Success Message for Forgot Password */}
+          {forgotPasswordSuccess && (
+            <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-green-800">Email enviado</p>
+                  <p className="text-sm text-green-700">
+                    Si existe una cuenta con ese email, recibirás un enlace de restablecimiento.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Error Message */}
           {error && (
@@ -228,7 +275,7 @@ function AuthContent() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
-            {!isLogin && (
+            {!isLogin && !forgotPasswordMode && (
               <div>
                 <input
                   type="text"
@@ -257,59 +304,95 @@ function AuthContent() {
               )}
             </div>
 
-            <div>
-              <input
-                type="password"
-                value={formData.password}
-                onChange={handlePasswordChange}
-                className={`w-full px-4 py-3 bg-gray-50 border-0 rounded-lg text-gray-900 placeholder-gray-400 focus:bg-white focus:ring-2 ${
-                  passwordError ? 'focus:ring-red-200 bg-red-50' : 'focus:ring-gray-200'
-                } focus:outline-none transition-all`}
-                placeholder="Password"
-                required
-              />
-              {passwordError && (
-                <p className="mt-1 text-xs text-red-500">{passwordError}</p>
-              )}
-            </div>
+            {!forgotPasswordMode && (
+              <div>
+                <input
+                  type="password"
+                  value={formData.password}
+                  onChange={handlePasswordChange}
+                  className={`w-full px-4 py-3 bg-gray-50 border-0 rounded-lg text-gray-900 placeholder-gray-400 focus:bg-white focus:ring-2 ${
+                    passwordError ? 'focus:ring-red-200 bg-red-50' : 'focus:ring-gray-200'
+                  } focus:outline-none transition-all`}
+                  placeholder="Password"
+                  required
+                />
+                {passwordError && (
+                  <p className="mt-1 text-xs text-red-500">{passwordError}</p>
+                )}
+              </div>
+            )}
 
             <button
               type="submit"
-              disabled={loading || !!emailError || !!passwordError}
+              disabled={loading || !!emailError || (!forgotPasswordMode && !!passwordError)}
               className="w-full py-3 bg-black hover:bg-gray-900 disabled:bg-gray-300 text-white rounded-lg font-medium transition-all disabled:cursor-not-allowed"
             >
-              {loading ? "..." : isLogin ? "Next" : "Create account"}
+              {loading ? "..." : 
+               forgotPasswordMode ? "Send reset link" :
+               isLogin ? "Next" : "Create account"}
             </button>
           </form>
 
           {/* Forgot Password */}
-          {isLogin && (
+          {isLogin && !forgotPasswordMode && (
             <div className="text-center mt-4">
-              <button className="text-sm text-gray-500 hover:text-gray-700 transition-colors">
+              <button 
+                type="button"
+                onClick={() => {
+                  setForgotPasswordMode(true);
+                  setError("");
+                  setEmailError("");
+                  setPasswordError("");
+                }}
+                className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+              >
                 Forgot password?
               </button>
             </div>
           )}
 
+          {/* Back from Forgot Password */}
+          {forgotPasswordMode && (
+            <div className="text-center mt-4">
+              <button 
+                type="button"
+                onClick={() => {
+                  setForgotPasswordMode(false);
+                  setForgotPasswordSuccess(false);
+                  setError("");
+                  setEmailError("");
+                  setPasswordError("");
+                  setFormData({ email: "", password: "", name: "" });
+                }}
+                className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                Back to sign in
+              </button>
+            </div>
+          )}
+
           {/* Toggle */}
-          <div className="mt-8 pt-6 border-t border-gray-100 text-center">
-            <button
-              onClick={() => {
-                setIsLogin(!isLogin);
-                setError("");
-                setEmailError("");
-                setPasswordError("");
-                setFormData({ email: "", password: "", name: "" });
-              }}
-              className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
-            >
-              {isLogin ? (
-                <>Don't have an account? <span className="font-medium">Sign up</span></>
-              ) : (
-                <>Already have an account? <span className="font-medium">Sign in</span></>
-              )}
-            </button>
-          </div>
+          {!forgotPasswordMode && (
+            <div className="mt-8 pt-6 border-t border-gray-100 text-center">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsLogin(!isLogin);
+                  setError("");
+                  setEmailError("");
+                  setPasswordError("");
+                  setFormData({ email: "", password: "", name: "" });
+                }}
+                className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                {isLogin ? (
+                  <>Don't have an account? <span className="font-medium">Sign up</span></>
+                ) : (
+                  <>Already have an account? <span className="font-medium">Sign in</span></>
+                )}
+              </button>
+            </div>
+          )}
 
           {/* Back Link */}
           <div className="mt-8 text-center">

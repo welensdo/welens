@@ -80,10 +80,22 @@ export default function AdminDashboard() {
   const [showDeleteModal, setShowDeleteModal] = useState<Order | null>(null);
   const [deletePassword, setDeletePassword] = useState("");
 
+  // Send email states
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [emailForm, setEmailForm] = useState({
+    from: 'data' as keyof typeof import('@/lib/resend').EMAIL_ALIASES,
+    to: '',
+    subject: '',
+    message: '',
+    senderName: 'WeLens Team',
+  });
+
   const [updateForm, setUpdateForm] = useState({
     status: "",
     trackingNumber: "",
     note: "",
+    sendEmail: true, // Por defecto activado
   });
 
   const loadOrders = async () => {
@@ -121,6 +133,7 @@ export default function AdminDashboard() {
           status: updateForm.status,
           trackingNumber: updateForm.trackingNumber || undefined,
           note: updateForm.note || undefined,
+          sendEmail: updateForm.sendEmail,
         }),
       });
 
@@ -128,7 +141,7 @@ export default function AdminDashboard() {
 
       await loadOrders();
       setSelectedOrder(null);
-      setUpdateForm({ status: "", trackingNumber: "", note: "" });
+      setUpdateForm({ status: "", trackingNumber: "", note: "", sendEmail: true });
     } catch (error) {
       alert("Error al actualizar el pedido");
     } finally {
@@ -349,6 +362,7 @@ export default function AdminDashboard() {
                                 status: order.status,
                                 trackingNumber: order.trackingNumber || "",
                                 note: "",
+                                sendEmail: true,
                               });
                             }}
                             className="px-4 py-2 bg-pricing-blue hover:bg-pricing-blue/90 text-gallery-white rounded-full text-compact-control font-medium transition-colors"
@@ -499,6 +513,20 @@ export default function AdminDashboard() {
                       rows={3}
                       placeholder="Información adicional..."
                     />
+                  </div>
+
+                  {/* Checkbox para enviar email de notificación */}
+                  <div className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      id="sendEmail"
+                      checked={updateForm.sendEmail}
+                      onChange={(e) => setUpdateForm({ ...updateForm, sendEmail: e.target.checked })}
+                      className="w-4 h-4 text-pricing-blue bg-gray-100 border-gray-300 rounded focus:ring-pricing-blue focus:ring-2"
+                    />
+                    <label htmlFor="sendEmail" className="text-body-small font-medium text-ink">
+                      Enviar notificación por correo al cliente
+                    </label>
                   </div>
 
                   <button

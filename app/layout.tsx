@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     description: "🥽 Transforma cualquier gafa en tu graduación de vista. Lentes adhesivos de alta calidad que se adaptan a cualquier montura.",
     images: [
       {
-        url: "/og-image.png",
+        url: "https://welens.org/og-image.png",
         width: 1200,
         height: 630,
         alt: "WeLens - Lentes adhesivos para cualquier gafa",
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     creator: "@welens",
     title: "WeLens - Cualquier gafa. Adaptada a ti.",
     description: "🥽 Transforma cualquier gafa en tu graduación de vista. Lentes adhesivos de alta calidad que se adaptan a cualquier montura.",
-    images: ["/og-image.png"],
+    images: ["https://welens.org/og-image.png"],
   },
   
   // Additional Meta Tags
@@ -56,6 +56,11 @@ export const metadata: Metadata = {
     "apple-mobile-web-app-capable": "yes",
     "apple-mobile-web-app-status-bar-style": "default",
     "apple-mobile-web-app-title": "WeLens",
+    // WhatsApp specific meta tags
+    "og:image": "https://welens.org/og-image.png",
+    "og:image:width": "1200",
+    "og:image:height": "630",
+    "og:image:type": "image/png",
   },
   
   // Icons

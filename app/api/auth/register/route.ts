@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb/connection';
 import User from '@/lib/models/User';
 import { validateEmail, sanitizeString, validatePassword, validateName, checkRateLimit } from '@/lib/utils/validation';
+import { emailService } from '@/lib/emailService';
 
 export async function POST(request: NextRequest) {
   try {
@@ -79,6 +80,17 @@ export async function POST(request: NextRequest) {
       password, // La contraseña se hashea automáticamente en el modelo
       name: sanitizedName,
     });
+
+    // Enviar email de bienvenida
+    try {
+      await emailService.sendWelcomeEmail({
+        to: sanitizedEmail,
+        name: sanitizedName,
+      });
+    } catch (emailError) {
+      console.error('Error enviando email de bienvenida:', emailError);
+      // No fallar el registro si el email no se puede enviar
+    }
 
     return NextResponse.json(
       {

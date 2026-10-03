@@ -1,36 +1,35 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { 
-  CheckCircle, 
-  Envelope, 
-  Package, 
-  Truck,
-  Phone,
   Headphones
 } from '@phosphor-icons/react';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
-import { Badge } from '@/components/ui/badge';
+import WeLensReceiptPrinter from '@/components/WeLensReceiptPrinter';
+import type { WeLensReceiptProps } from '@/components/WeLensReceipt';
 
-export default function ThankYouPage() {
+
+
+function ThankYouPageContent() {
   const router = useRouter();
-  const [orderNumber, setOrderNumber] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const orderNumber = searchParams.get('order');
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [receiptData, setReceiptData] = useState<WeLensReceiptProps | null>(null);
+  const [isPrinting, setIsPrinting] = useState(false);
+  const [printComplete, setPrintComplete] = useState(false);
+  const [printProgress, setPrintProgress] = useState(0);
 
   useEffect(() => {
-    // Get order number from URL manually to avoid Suspense issues
-    const urlParams = new URLSearchParams(window.location.search);
-    const orderParam = urlParams.get('order');
-    setOrderNumber(orderParam);
 
-    if (orderParam) {
+    if (orderNumber) {
       // Fetch order details
-      fetch(`/api/orders/${orderParam}`)
+      fetch(`/api/orders/${orderNumber}`)
         .then(res => {
           if (!res.ok) {
             console.error('Failed to fetch order:', res.status);
@@ -41,6 +40,19 @@ export default function ThankYouPage() {
         .then(data => {
           if (data?.order) {
             setOrder(data.order);
+            
+            // Prepare receipt data
+            const receipt: WeLensReceiptProps = {
+              orderNumber: data.order.orderNumber,
+              customerName: data.order.userId?.name || 'Cliente',
+              totalPrice: data.order.totalPrice,
+              items: data.order.items,
+              date: new Date(data.order.createdAt),
+              paymentMethod: 'PayPal',
+              last4Digits: '0000' // We don't store real card numbers
+            };
+            
+            setReceiptData(receipt);
           }
         })
         .catch(err => {
@@ -50,23 +62,44 @@ export default function ThankYouPage() {
           setLoading(false);
         });
     } else {
+      // Fallback data if no order number
+      const fallbackReceipt: WeLensReceiptProps = {
+        orderNumber: 'WL' + Date.now().toString().slice(-8),
+        customerName: 'Cliente',
+        totalPrice: 50.00,
+        items: [
+          {
+            itemType: 'lens',
+            eye: 'left',
+            type: 'miopía',
+            value: -2.5,
+            price: 25.00
+          },
+          {
+            itemType: 'lens', 
+            eye: 'right',
+            type: 'miopía',
+            value: -2.0,
+            price: 25.00
+          }
+        ],
+        date: new Date(),
+        paymentMethod: 'PayPal',
+        last4Digits: '0000'
+      };
+      
+      setReceiptData(fallbackReceipt);
       setLoading(false);
     }
-  }, []);
-
-  // Prevent any automatic redirects
-  useEffect(() => {
-    console.log('Thank you page loaded with order:', orderNumber);
   }, [orderNumber]);
 
-  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
         duration: 0.6,
-        staggerChildren: 0.2
+        staggerChildren: 0.3
       }
     }
   };
@@ -80,35 +113,23 @@ export default function ThankYouPage() {
     }
   };
 
-  const iconVariants = {
-    hidden: { scale: 0, rotate: -180 },
-    visible: {
-      scale: 1,
-      rotate: 0,
-      transition: { 
-        duration: 0.8, 
-        ease: "easeOut",
-        type: "spring",
-        stiffness: 100
-      }
-    }
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5, ease: "easeOut" }
-    }
-  };
+  if (loading || !receiptData) {
+    return (
+      <main className="min-h-screen bg-gallery-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-pricing-blue/20 rounded-full mx-auto mb-4 animate-pulse" />
+          <p className="text-slate">Cargando tu recibo...</p>
+        </div>
+      </main>
+    );
+  }
 
   return (
-    <main className="min-h-screen bg-gallery-white overflow-hidden">
+    <main className="min-h-screen bg-gallery-white relative overflow-hidden">
       <Navbar />
       
-      <div className="pt-24 pb-20 lg:pt-32 lg:pb-40">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+      <div className="pt-24 pb-20 lg:pt-32 lg:pb-32 relative z-10">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
           <motion.div 
             className="text-center"
             variants={containerVariants}
@@ -116,216 +137,116 @@ export default function ThankYouPage() {
             animate="visible"
           >
             {/* Header Section */}
-            <motion.div className="mb-12" variants={itemVariants}>
-              <Badge variant="secondary" className="mb-4">
-                Pedido confirmado
-              </Badge>
-              <h1 className="text-4xl sm:text-5xl font-semibold text-ink tracking-tight mb-6">
-                ¡Gracias por tu pedido!
+            <motion.div className="mb-0" variants={itemVariants}>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-ink tracking-tight mb-4">
+                ¡Pago exitoso!
               </h1>
-              <p className="text-body text-slate mb-8">
-                Tu pedido ha sido procesado exitosamente. Te enviaremos un correo con los detalles y el seguimiento.
+              <p className="text-lg sm:text-xl text-slate mb-0 max-w-2xl mx-auto">
+                Tu pedido ha sido procesado correctamente. Aquí tienes tu recibo oficial.
               </p>
             </motion.div>
 
-            {/* Loading State */}
-            {loading ? (
+            {/* Receipt Printer */}
+            <motion.div 
+              className="flex justify-center mb-4 -mt-6"
+              variants={itemVariants}
+            >
+              <WeLensReceiptPrinter
+                receiptData={receiptData}
+                autoStart={true}
+                onPrintComplete={() => {
+                  console.log('Recibo impreso completamente');
+                  setPrintComplete(true);
+                  setIsPrinting(false);
+                }}
+                onTearComplete={() => {
+                  console.log('Recibo arrancado completamente');
+                }}
+              />
+            </motion.div>
+
+            {/* Action Buttons - solo aparecen cuando el recibo está completo */}
+            {printComplete && (
               <motion.div 
-                className="mb-12"
+                className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12 mt-40"
                 variants={itemVariants}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
               >
-                <div className="bg-studio-mist rounded-3xl p-8">
-                  <motion.div 
-                    className="w-16 h-16 bg-pricing-blue/20 rounded-full mx-auto mb-4"
-                    animate={{ 
-                      scale: [1, 1.1, 1],
-                      opacity: [0.5, 1, 0.5]
-                    }}
-                    transition={{
-                      duration: 1.5,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  />
-                  <h3 className="font-semibold text-ink mb-2">Cargando detalles del pedido...</h3>
-                </div>
-              </motion.div>
-            ) : (
-              /* Order Confirmation */
-              <motion.div 
-                className="bg-studio-mist rounded-3xl p-8 mb-12"
-                variants={itemVariants}
-              >
-                <motion.div 
-                  className="flex items-center justify-center mb-6"
-                  variants={iconVariants}
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  <div className="w-16 h-16 bg-pricing-blue rounded-full flex items-center justify-center">
-                    <CheckCircle size={32} weight="fill" className="text-gallery-white" />
-                  </div>
+                  <Link 
+                    href="/configurador"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-pricing-blue hover:bg-pricing-blue/90 text-gallery-white rounded-full font-medium transition-all shadow-lg hover:shadow-xl text-sm"
+                  >
+                    Crear otro pedido
+                  </Link>
                 </motion.div>
                 
-                <motion.h2 
-                  className="text-2xl font-semibold text-ink mb-4"
-                  variants={itemVariants}
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  Número de pedido
-                </motion.h2>
-                
-                <motion.p 
-                  className="text-3xl font-bold text-pricing-blue mb-6"
-                  variants={itemVariants}
-                >
-                  {orderNumber || 'WL' + Date.now().toString().slice(-8)}
-                </motion.p>
-                
-                <motion.div 
-                  className="space-y-3 text-left max-w-md mx-auto"
-                  variants={itemVariants}
-                >
-                  <div className="flex justify-between">
-                    <span className="text-slate">Total:</span>
-                    <span className="font-semibold text-ink">${order?.totalPrice?.toFixed(2) || '50.00'}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate">Envío:</span>
-                    <span className="text-pricing-blue font-medium">Gratis</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate">Tiempo estimado:</span>
-                    <span className="text-ink">1-3 semanas</span>
-                  </div>
+                  <Link 
+                    href="/dashboard"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-gallery-white border-2 border-pricing-blue text-pricing-blue hover:bg-pricing-blue hover:text-gallery-white rounded-full font-medium transition-all text-sm"
+                  >
+                    Ver mis pedidos
+                  </Link>
                 </motion.div>
               </motion.div>
             )}
 
-            {/* Process Steps */}
-            <motion.div 
-              className="grid md:grid-cols-3 gap-6 mb-12"
-              variants={containerVariants}
-            >
+            {/* Contact Section - solo aparece cuando el recibo está completo */}
+            {printComplete && (
               <motion.div 
-                className="bg-gallery-white border border-hairline-silver rounded-2xl p-6"
-                variants={cardVariants}
-                whileHover={{ 
-                  scale: 1.02,
-                  transition: { duration: 0.2 }
-                }}
+                className="bg-pricing-blue/5 rounded-xl p-4 max-w-lg mx-auto"
+                variants={itemVariants}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
               >
-                <motion.div 
-                  className="w-12 h-12 bg-pricing-blue/10 rounded-xl flex items-center justify-center mx-auto mb-4"
-                  whileHover={{ rotate: 5 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Envelope size={24} weight="duotone" className="text-pricing-blue" />
-                </motion.div>
-                <h3 className="font-semibold text-ink mb-2">Confirmación por email</h3>
-                <p className="text-compact-control text-slate">
-                  Recibirás un correo con todos los detalles de tu pedido
-                </p>
-              </motion.div>
-
-              <motion.div 
-                className="bg-gallery-white border border-hairline-silver rounded-2xl p-6"
-                variants={cardVariants}
-                whileHover={{ 
-                  scale: 1.02,
-                  transition: { duration: 0.2 }
-                }}
-              >
-                <motion.div 
-                  className="w-12 h-12 bg-pricing-blue/10 rounded-xl flex items-center justify-center mx-auto mb-4"
-                  whileHover={{ rotate: 5 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Package size={24} weight="duotone" className="text-pricing-blue" />
-                </motion.div>
-                <h3 className="font-semibold text-ink mb-2">Preparación</h3>
-                <p className="text-compact-control text-slate">
-                  Comenzamos a preparar tus lentes personalizados
-                </p>
-              </motion.div>
-
-              <motion.div 
-                className="bg-gallery-white border border-hairline-silver rounded-2xl p-6"
-                variants={cardVariants}
-                whileHover={{ 
-                  scale: 1.02,
-                  transition: { duration: 0.2 }
-                }}
-              >
-                <motion.div 
-                  className="w-12 h-12 bg-pricing-blue/10 rounded-xl flex items-center justify-center mx-auto mb-4"
-                  whileHover={{ rotate: 5 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Truck size={24} weight="duotone" className="text-pricing-blue" />
-                </motion.div>
-                <h3 className="font-semibold text-ink mb-2">Envío gratuito</h3>
-                <p className="text-compact-control text-slate">
-                  Enviamos gratis a todo el Caribe en 1-3 semanas
-                </p>
-              </motion.div>
-            </motion.div>
-
-            {/* Action Buttons */}
-            <motion.div 
-              className="space-y-4 mb-12"
-              variants={itemVariants}
-            >
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Link 
-                  href="/configurador"
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-pricing-blue hover:bg-pricing-blue/90 text-gallery-white rounded-full font-semibold transition-all shadow-lg hover:shadow-xl"
-                >
-                  Crear otro pedido
-                </Link>
-              </motion.div>
-              
-              <div className="text-center">
-                <Link 
-                  href="/"
-                  className="text-pricing-blue hover:text-pricing-blue/80 font-medium transition-colors"
-                >
-                  Volver al inicio
-                </Link>
-              </div>
-            </motion.div>
-
-            {/* Contact Section */}
-            <motion.div 
-              className="p-6 bg-pricing-blue/5 rounded-2xl"
-              variants={itemVariants}
-            >
-              <div className="flex items-center justify-center gap-2 mb-3">
-                <Headphones size={24} weight="duotone" className="text-pricing-blue" />
-                <h3 className="font-semibold text-ink">¿Necesitas ayuda?</h3>
-              </div>
-              <p className="text-body-small text-slate mb-4">
-                Si tienes alguna pregunta sobre tu pedido, no dudes en contactarnos.
-              </p>
-              <div className="flex items-center justify-center gap-6 text-body-small text-slate">
-                <div className="flex items-center gap-1">
-                  <Envelope size={16} className="text-pricing-blue" />
-                  <strong>soporte@welens.com</strong>
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <Headphones size={16} weight="duotone" className="text-pricing-blue" />
+                  <h3 className="text-base font-semibold text-ink">¿Necesitas ayuda?</h3>
                 </div>
-                <div className="flex items-center gap-1">
-                  <Phone size={16} className="text-pricing-blue" />
-                  <strong>+1 (809) 555-0123</strong>
-                </div>
-              </div>
-            </motion.div>
+                <p className="text-slate text-xs mb-3 text-center">
+                  Si tienes alguna pregunta sobre tu pedido o necesitas soporte,{' '}
+                  <Link 
+                    href="/soporte" 
+                    className="text-pricing-blue font-bold hover:text-pricing-blue/80 transition-colors underline"
+                  >
+                    estamos aquí para ayudarte
+                  </Link>
+                  .
+                </p>
+              </motion.div>
+            )}
           </motion.div>
         </div>
       </div>
 
       <Footer />
     </main>
+  );
+}
+
+export default function ThankYouPage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen bg-gallery-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-pricing-blue/20 rounded-full mx-auto mb-4 animate-pulse" />
+          <p className="text-slate">Cargando...</p>
+        </div>
+      </main>
+    }>
+      <ThankYouPageContent />
+    </Suspense>
   );
 }
