@@ -28,7 +28,7 @@ export default function UltrathinVideoSection() {
       const containerRect = container.getBoundingClientRect();
       const containerTop = scrollPosition + containerRect.top;
       
-      // START ANIMATION EARLIER so video reaches frame 0 sooner (copied from hero)
+      // Keep original animation range for proper video control  
       const animationStart = Math.max(0, containerTop - (windowHeight * 1.5));
       const animationEnd = containerTop + (windowHeight * 2);
       const animationRange = animationEnd - animationStart;
@@ -139,7 +139,7 @@ export default function UltrathinVideoSection() {
     <div
       ref={containerRef} 
       className="relative w-full bg-gallery-white"
-      style={{ height: "300vh" }}
+      style={{ height: "150vh" }}
       id="como-funciona"
     >
       <div className="sticky top-0 h-screen overflow-hidden">
@@ -179,15 +179,6 @@ export default function UltrathinVideoSection() {
                 <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-gallery-white/90 backdrop-blur-sm px-4 py-2 rounded-full z-10">
                   <p className="text-compact-control font-semibold text-ink">
                     Desliza para ver la transformación
-                  </p>
-                </div>
-              )}
-
-              {/* Completion indicator */}
-              {isVideoComplete && (
-                <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-pricing-blue/90 backdrop-blur-sm px-4 py-2 rounded-full z-10">
-                  <p className="text-compact-control font-semibold text-gallery-white">
-                    ✨ Transformación completa
                   </p>
                 </div>
               )}
