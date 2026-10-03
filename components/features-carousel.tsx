@@ -9,6 +9,7 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 import { ReactNode } from "react";
+import AnimatedSection from "@/components/ui/animated-section";
 
 interface CardItem {
   id: string;
@@ -87,67 +88,69 @@ export default function FeaturesCarousel() {
 
   return (
     <div className="w-full py-10 sm:py-20 bg-studio-mist" id="caracteristicas">
-      {/* Header */}
-      <div className="px-4 sm:px-8 mb-8 sm:mb-12 max-w-7xl mx-auto">
+      {/* Animated Header */}
+      <AnimatedSection animation="fade-up" className="px-4 sm:px-8 mb-8 sm:mb-12 max-w-7xl mx-auto">
         <h2 className="text-3xl sm:text-feature-heading font-semibold tracking-tight text-ink">
           Conoce WeLens
         </h2>
-      </div>
+      </AnimatedSection>
 
-      {/* Card Strip */}
-      <Carousel
-        setApi={setApi}
-        opts={{ align: "start", dragFree: true }}
-        className="w-full"
-      >
-        <CarouselContent className="-ml-6 px-4 sm:px-8 py-4">
-          {cards.map((card) => (
-            <CarouselItem key={card.id} className="pl-6 basis-auto">
-              <div className="group relative w-[320px] h-[500px] sm:w-80 sm:h-[520px] lg:w-[370px] lg:h-[600px] overflow-hidden flex flex-col justify-between p-6 sm:p-8 rounded-3xl hover:scale-102 transition-transform duration-300 cursor-pointer bg-gallery-white shadow-subtle">
-                <img
-                  src={card.src}
-                  alt={
-                    card.alt ||
-                    (typeof card.title === "string"
-                      ? card.title
-                      : card.category)
-                  }
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                <div className="relative z-10 flex flex-col gap-3 sm:gap-4 text-white">
-                  <p className="text-sm sm:text-base font-medium">
-                    {card.category}
-                  </p>
-                  <p className="text-2xl sm:text-3xl font-semibold tracking-tight leading-tight">
-                    {card.title}
-                  </p>
-                </div>
-                <div className="relative z-10 flex justify-end">
-                  <div className="h-10 w-10 rounded-full bg-white hover:bg-white/90 cursor-pointer flex items-center justify-center transition-colors">
-                    <svg
-                      className="h-5 w-5 text-black transition-transform duration-300 group-hover:rotate-45 will-change-transform"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M7 17L17 7M17 7H7M17 7V17"
-                      />
-                    </svg>
+      {/* Animated Card Strip */}
+      <AnimatedSection animation="fade-up" delay={200}>
+        <Carousel
+          setApi={setApi}
+          opts={{ align: "start", dragFree: true }}
+          className="w-full"
+        >
+          <CarouselContent className="-ml-6 px-4 sm:px-8 py-4">
+            {cards.map((card) => (
+              <CarouselItem key={card.id} className="pl-6 basis-auto">
+                <div className="group relative w-[320px] h-[500px] sm:w-80 sm:h-[520px] lg:w-[370px] lg:h-[600px] overflow-hidden flex flex-col justify-between p-6 sm:p-8 rounded-3xl hover:scale-102 transition-transform duration-300 cursor-pointer bg-gallery-white shadow-subtle">
+                  <img
+                    src={card.src}
+                    alt={
+                      card.alt ||
+                      (typeof card.title === "string"
+                        ? card.title
+                        : card.category)
+                    }
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                  <div className="relative z-10 flex flex-col gap-3 sm:gap-4 text-white">
+                    <p className="text-sm sm:text-base font-medium">
+                      {card.category}
+                    </p>
+                    <p className="text-2xl sm:text-3xl font-semibold tracking-tight leading-tight">
+                      {card.title}
+                    </p>
+                  </div>
+                  <div className="relative z-10 flex justify-end">
+                    <div className="h-10 w-10 rounded-full bg-white hover:bg-white/90 cursor-pointer flex items-center justify-center transition-colors">
+                      <svg
+                        className="h-5 w-5 text-black transition-transform duration-300 group-hover:rotate-45 will-change-transform"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M7 17L17 7M17 7H7M17 7V17"
+                        />
+                      </svg>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-      </Carousel>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
+      </AnimatedSection>
 
-      {/* Bottom-right controls */}
-      <div className="flex justify-end gap-2 px-4 sm:px-8 mt-6 max-w-7xl mx-auto">
+      {/* Animated Bottom-right controls */}
+      <AnimatedSection animation="fade-up" delay={400} className="flex justify-end gap-2 px-4 sm:px-8 mt-6 max-w-7xl mx-auto">
         <Button
           variant="outline"
           size="icon"
@@ -190,7 +193,7 @@ export default function FeaturesCarousel() {
             />
           </svg>
         </Button>
-      </div>
+      </AnimatedSection>
     </div>
   );
 }

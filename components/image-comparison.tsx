@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
+import AnimatedSection from "@/components/ui/animated-section";
 
 export default function ImageComparison() {
   const [inset, setInset] = useState<number>(50);
@@ -27,7 +28,7 @@ export default function ImageComparison() {
   return (
     <div className="w-full py-20 lg:py-40 bg-gallery-white" id="como-funciona">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-4">
+        <AnimatedSection animation="fade-up" className="flex flex-col gap-4">
           <div>
             <Badge variant="secondary">Versátil</Badge>
           </div>
@@ -40,78 +41,79 @@ export default function ImageComparison() {
               tus gafas favoritas sin graduación en lentes perfectos para tu visión.
             </p>
           </div>
-          <div className="pt-12 w-full">
+        </AnimatedSection>
+        
+        <AnimatedSection animation="fade-up" delay={300} className="pt-12 w-full">
+          <div
+            className="relative aspect-video w-full h-full overflow-hidden rounded-3xl select-none bg-studio-mist"
+            onMouseMove={onMouseMove}
+            onMouseUp={() => setOnMouseDown(false)}
+            onTouchMove={onMouseMove}
+            onTouchEnd={() => setOnMouseDown(false)}
+          >
             <div
-              className="relative aspect-video w-full h-full overflow-hidden rounded-3xl select-none bg-studio-mist"
-              onMouseMove={onMouseMove}
-              onMouseUp={() => setOnMouseDown(false)}
-              onTouchMove={onMouseMove}
-              onTouchEnd={() => setOnMouseDown(false)}
+              className="bg-ink/20 h-full w-1 absolute z-20 top-0 -ml-1 select-none"
+              style={{
+                left: inset + "%",
+              }}
             >
-              <div
-                className="bg-ink/20 h-full w-1 absolute z-20 top-0 -ml-1 select-none"
-                style={{
-                  left: inset + "%",
+              <button
+                className="bg-gallery-white rounded-full hover:scale-110 transition-all w-10 h-10 select-none -translate-y-1/2 absolute top-1/2 -ml-5 z-30 cursor-ew-resize flex justify-center items-center shadow-subtle-2"
+                onTouchStart={(e) => {
+                  setOnMouseDown(true);
+                  onMouseMove(e);
                 }}
+                onMouseDown={(e) => {
+                  setOnMouseDown(true);
+                  onMouseMove(e);
+                }}
+                onTouchEnd={() => setOnMouseDown(false)}
+                onMouseUp={() => setOnMouseDown(false)}
               >
-                <button
-                  className="bg-gallery-white rounded-full hover:scale-110 transition-all w-10 h-10 select-none -translate-y-1/2 absolute top-1/2 -ml-5 z-30 cursor-ew-resize flex justify-center items-center shadow-subtle-2"
-                  onTouchStart={(e) => {
-                    setOnMouseDown(true);
-                    onMouseMove(e);
-                  }}
-                  onMouseDown={(e) => {
-                    setOnMouseDown(true);
-                    onMouseMove(e);
-                  }}
-                  onTouchEnd={() => setOnMouseDown(false)}
-                  onMouseUp={() => setOnMouseDown(false)}
+                <svg
+                  className="h-5 w-5 text-ink select-none"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
                 >
-                  <svg
-                    className="h-5 w-5 text-ink select-none"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M8 9l4-4 4 4m0 6l-4 4-4-4"
-                    />
-                  </svg>
-                </button>
-              </div>
-              <Image
-                src="/after.png"
-                alt="Con WeLens"
-                width={1920}
-                height={1080}
-                priority
-                className="absolute left-0 top-0 z-10 w-full h-full object-cover rounded-3xl select-none"
-                style={{
-                  clipPath: "inset(0 0 0 " + inset + "%)",
-                }}
-              />
-              <Image
-                src="/before.jpg"
-                alt="Sin WeLens"
-                width={1920}
-                height={1080}
-                priority
-                className="absolute left-0 top-0 w-full h-full object-cover rounded-3xl select-none"
-              />
-              
-              {/* Labels */}
-              <div className="absolute top-6 left-6 bg-gallery-white/90 backdrop-blur-sm px-4 py-2 rounded-full z-15">
-                <p className="text-compact-control font-semibold text-ink">Sin WeLens</p>
-              </div>
-              <div className="absolute top-6 right-6 bg-gallery-white/90 backdrop-blur-sm px-4 py-2 rounded-full z-15">
-                <p className="text-compact-control font-semibold text-ink">Con WeLens</p>
-              </div>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M8 9l4-4 4 4m0 6l-4 4-4-4"
+                  />
+                </svg>
+              </button>
+            </div>
+            <Image
+              src="/after.png"
+              alt="Con WeLens"
+              width={1920}
+              height={1080}
+              priority
+              className="absolute left-0 top-0 z-10 w-full h-full object-cover rounded-3xl select-none"
+              style={{
+                clipPath: "inset(0 0 0 " + inset + "%)",
+              }}
+            />
+            <Image
+              src="/before.jpg"
+              alt="Sin WeLens"
+              width={1920}
+              height={1080}
+              priority
+              className="absolute left-0 top-0 w-full h-full object-cover rounded-3xl select-none"
+            />
+            
+            {/* Labels */}
+            <div className="absolute top-6 left-6 bg-gallery-white/90 backdrop-blur-sm px-4 py-2 rounded-full z-15">
+              <p className="text-compact-control font-semibold text-ink">Sin WeLens</p>
+            </div>
+            <div className="absolute top-6 right-6 bg-gallery-white/90 backdrop-blur-sm px-4 py-2 rounded-full z-15">
+              <p className="text-compact-control font-semibold text-ink">Con WeLens</p>
             </div>
           </div>
-        </div>
+        </AnimatedSection>
       </div>
     </div>
   );
