@@ -28,18 +28,18 @@ export default function UltrathinVideoSection() {
       const containerRect = container.getBoundingClientRect();
       const containerTop = scrollPosition + containerRect.top;
       
-      // Animation range - start earlier to engage user
-      const animationStart = Math.max(0, containerTop - (windowHeight * 0.5));
-      const animationEnd = containerTop + (windowHeight * 1.5);
+      // Use much larger animation range for stronger scroll control effect
+      const animationStart = Math.max(0, containerTop - (windowHeight * 2));
+      const animationEnd = containerTop + (windowHeight * 3);
+      const animationRange = animationEnd - animationStart;
       
-      const totalAnimationDistance = animationEnd - animationStart;
-      const currentAnimationPosition = scrollPosition - animationStart;
-      
-      // Calculate scroll progress (0 to 1)
-      const scrollProgress = Math.max(0, Math.min(1, 
-        currentAnimationPosition / totalAnimationDistance
-      ));
+      // Calculate progress based on current scroll position
+      let scrollProgress = 0;
+      if (animationRange > 0) {
+        scrollProgress = (scrollPosition - animationStart) / animationRange;
+      }
 
+      // Clamp between 0 and 1
       const clampedProgress = Math.max(0, Math.min(1, scrollProgress));
 
       // Update video time based on scroll progress
@@ -52,8 +52,8 @@ export default function UltrathinVideoSection() {
         }
       }
 
-      // Check if video animation is complete (at 95% to allow smooth transition)
-      if (clampedProgress >= 0.95) {
+      // Check if video animation is complete (at 90% to allow smooth transition)
+      if (clampedProgress >= 0.9) {
         setIsVideoComplete(true);
       } else {
         setIsVideoComplete(false);
