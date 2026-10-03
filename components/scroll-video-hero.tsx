@@ -123,7 +123,7 @@ export default function ScrollVideoHero() {
         {/* Product Label */}
         <div className="absolute top-32 sm:top-40 text-center z-10 px-4">
           <div className="mb-2 sm:mb-4 flex justify-center">
-            <img src="/logo4.PNG" alt="WeLens" className="h-12 sm:h-16 w-auto" />
+            <img src="/logo4.PNG" alt="WeLens" className="h-[120px] w-auto" />
           </div>
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-semibold text-ink tracking-tight sm:whitespace-nowrap">
             Cualquier gafa, adaptada a ti.

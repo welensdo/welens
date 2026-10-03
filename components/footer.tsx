@@ -64,7 +64,7 @@ export default function Footer() {
                 <img
                   src="/logo4.PNG"
                   alt="WeLens"
-                  className="h-8 w-auto"
+                  className="h-[40px] w-auto"
                 />
               </Link>
               <p className="text-compact-control text-slate">

@@ -148,267 +148,177 @@ function AuthContent() {
   };
 
   return (
-    <main className="min-h-screen bg-gallery-white flex">
-      {/* Left Side - Elegant Visual */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
-        {/* Gradient Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-pricing-blue via-pricing-blue/90 to-pricing-blue/70"></div>
+    <main className="min-h-screen bg-gray-50 flex">
+      {/* Left Side - Image Gallery */}
+      <div className="hidden lg:block lg:w-3/5 xl:w-2/3 relative">
+        {/* Main Hero Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&q=80')`,
+          }}
+        >
+          <div className="absolute inset-0 bg-black/20"></div>
+        </div>
         
-        {/* Subtle Pattern Overlay */}
-        <div className="absolute inset-0 opacity-10">
-          <div 
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `radial-gradient(circle at 25% 25%, rgba(255,255,255,0.3) 2px, transparent 2px)`,
-              backgroundSize: '60px 60px'
-            }}
-          ></div>
+        {/* Floating Image Cards */}
+        <div className="absolute top-16 right-16 w-64 h-40 rounded-2xl overflow-hidden shadow-2xl rotate-6 hover:rotate-3 transition-transform duration-500">
+          <img 
+            src="https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=400&q=80" 
+            alt="WeLens Product" 
+            className="w-full h-full object-cover"
+          />
+        </div>
+        
+        <div className="absolute bottom-32 left-16 w-80 h-52 rounded-2xl overflow-hidden shadow-2xl -rotate-3 hover:rotate-0 transition-transform duration-500">
+          <img 
+            src="https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=400&q=80" 
+            alt="Lifestyle" 
+            className="w-full h-full object-cover"
+          />
+        </div>
+        
+        <div className="absolute top-1/2 left-1/4 w-56 h-36 rounded-2xl overflow-hidden shadow-2xl rotate-12 hover:rotate-6 transition-transform duration-500">
+          <img 
+            src="https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?w=400&q=80" 
+            alt="Technology" 
+            className="w-full h-full object-cover"
+          />
         </div>
 
-        {/* Floating Elements */}
-        <div className="absolute top-20 right-20 w-96 h-96 bg-gradient-to-br from-gallery-white/20 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute bottom-32 left-16 w-80 h-80 bg-gradient-to-tr from-gallery-white/15 to-transparent rounded-full blur-3xl"></div>
-        
-        <div className="relative z-10 flex flex-col justify-between p-12 lg:p-16 w-full text-gallery-white">
-          {/* Logo */}
-          <div>
-            <Link href="/" className="inline-block group">
-              <span className="text-4xl font-semibold group-hover:opacity-80 transition-opacity">WeLens</span>
-            </Link>
-          </div>
-
-          {/* Main Content */}
-          <div className="space-y-8">
-            <div>
-              <h1 className="text-5xl lg:text-6xl font-semibold tracking-tight mb-6 leading-[1.1]">
-                Tus gafas.
-                <br />
-                <span className="text-gallery-white/80">Tu visión perfecta.</span>
-              </h1>
-              <p className="text-xl leading-relaxed text-gallery-white/90 max-w-md">
-                Lentillas adhesivas que transforman cualquier montura en tu graduación exacta.
-              </p>
-            </div>
-
-            {/* Feature Highlight */}
-            <div className="bg-gallery-white/10 backdrop-blur-sm rounded-3xl p-8 border border-gallery-white/20">
-              <div className="flex items-start gap-6">
-                <div className="flex-shrink-0">
-                  <div className="w-14 h-14 rounded-2xl bg-gallery-white/20 flex items-center justify-center">
-                    <svg className="w-7 h-7 text-gallery-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Proceso revolucionario</h3>
-                  <p className="text-gallery-white/80 leading-relaxed">
-                    Configura, ordena y recibe en 1-2 semanas. 
-                    <br />
-                    Instalación en 30 segundos, sin herramientas.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom Quote */}
-          <div className="border-t border-gallery-white/20 pt-8">
-            <blockquote className="text-lg text-gallery-white/90 italic">
-              "La manera más inteligente de usar cualquier gafa que ames."
-            </blockquote>
+        {/* Logo Overlay */}
+        <div className="absolute bottom-8 left-8 z-10">
+          <div className="text-white/90 text-2xl font-light tracking-wider">
+            WeLens
           </div>
         </div>
       </div>
 
       {/* Right Side - Auth Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-16">
-        <div className="w-full max-w-md">
-          {/* Mobile Logo */}
-          <div className="lg:hidden text-center mb-10">
-            <Link href="/" className="inline-block">
-              <span className="text-3xl font-semibold text-ink">WeLens</span>
-            </Link>
+      <div className="w-full lg:w-2/5 xl:w-1/3 flex items-center justify-center bg-white">
+        <div className="w-full max-w-sm px-8">
+          {/* Logo for mobile */}
+          <div className="lg:hidden text-center mb-12">
+            <div className="text-3xl font-light tracking-wider text-gray-900">
+              WeLens
+            </div>
           </div>
 
-          {/* Form Section */}
-          <div className="space-y-8">
-            {/* Header */}
-            <div className="space-y-3">
-              <h2 className="text-3xl lg:text-4xl font-semibold text-ink tracking-tight">
-                {isLogin ? "Bienvenido" : "Crear cuenta"}
-              </h2>
-              <p className="text-body text-slate">
-                {redirect === "checkout" 
-                  ? "Inicia sesión para completar tu compra"
-                  : isLogin
-                  ? "Accede a tu cuenta de WeLens"
-                  : "Únete a la revolución de la visión"}
-              </p>
+          {/* Form Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-light text-gray-900 mb-2">
+              {isLogin ? "Welcome back" : "Create account"}
+            </h1>
+            <p className="text-sm text-gray-500">
+              {isLogin 
+                ? "Enter your credentials below to sign in" 
+                : "Enter your information to create an account"}
+            </p>
+          </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-600">{error}</p>
             </div>
+          )}
 
-            {/* Redirect Alert */}
-            {redirect === "checkout" && (
-              <div className="bg-pricing-blue/5 border-l-4 border-pricing-blue rounded-2xl p-4">
-                <div className="flex items-start gap-3">
-                  <svg className="w-5 h-5 text-pricing-blue flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                  </svg>
-                  <div>
-                    <p className="text-sm font-medium text-ink">Tu configuración está guardada</p>
-                    <p className="text-xs text-slate mt-1">Solo necesitas iniciar sesión para continuar</p>
-                  </div>
-                </div>
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {!isLogin && (
+              <div>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: sanitizeInput(e.target.value) })}
+                  className="w-full px-4 py-3 bg-gray-50 border-0 rounded-lg text-gray-900 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-gray-200 focus:outline-none transition-all"
+                  placeholder="Nombre completo"
+                  required={!isLogin}
+                />
               </div>
             )}
 
-            {/* Error Alert */}
-            {error && (
-              <div className="bg-red-50 border-l-4 border-red-500 rounded-2xl p-4">
-                <div className="flex items-start gap-3">
-                  <svg className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <p className="text-sm text-red-700">{error}</p>
-                </div>
-              </div>
-            )}
-
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {!isLogin && (
-                <div className="space-y-2">
-                  <label htmlFor="name" className="block text-sm font-medium text-ink">
-                    Nombre completo
-                  </label>
-                  <input
-                    id="name"
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: sanitizeInput(e.target.value) })}
-                    className="w-full px-4 py-3.5 rounded-2xl border-2 border-hairline-silver focus:border-pricing-blue focus:outline-none bg-gallery-white text-ink transition-all hover:border-steel"
-                    placeholder="Juan Pérez"
-                    required={!isLogin}
-                    autoComplete="name"
-                  />
-                </div>
+            <div>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={handleEmailChange}
+                className={`w-full px-4 py-3 bg-gray-50 border-0 rounded-lg text-gray-900 placeholder-gray-400 focus:bg-white focus:ring-2 ${
+                  emailError ? 'focus:ring-red-200 bg-red-50' : 'focus:ring-gray-200'
+                } focus:outline-none transition-all`}
+                placeholder="Username or email"
+                required
+              />
+              {emailError && (
+                <p className="mt-1 text-xs text-red-500">{emailError}</p>
               )}
-
-              <div className="space-y-2">
-                <label htmlFor="email" className="block text-sm font-medium text-ink">
-                  Correo electrónico
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleEmailChange}
-                  className={`w-full px-4 py-3.5 rounded-2xl border-2 ${
-                    emailError 
-                      ? 'border-red-500 focus:border-red-500' 
-                      : 'border-hairline-silver focus:border-pricing-blue hover:border-steel'
-                  } focus:outline-none bg-gallery-white text-ink transition-all`}
-                  placeholder="tu@email.com"
-                  required
-                  autoComplete="email"
-                />
-                {emailError && (
-                  <p className="text-sm text-red-600">{emailError}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="password" className="block text-sm font-medium text-ink">
-                  Contraseña
-                </label>
-                <input
-                  id="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={handlePasswordChange}
-                  className={`w-full px-4 py-3.5 rounded-2xl border-2 ${
-                    passwordError 
-                      ? 'border-red-500 focus:border-red-500' 
-                      : 'border-hairline-silver focus:border-pricing-blue hover:border-steel'
-                  } focus:outline-none bg-gallery-white text-ink transition-all`}
-                  placeholder="••••••••"
-                  required
-                  minLength={6}
-                  autoComplete={isLogin ? "current-password" : "new-password"}
-                />
-                {passwordError && (
-                  <p className="text-sm text-red-600">{passwordError}</p>
-                )}
-                {!isLogin && !passwordError && (
-                  <p className="text-sm text-slate">Mínimo 6 caracteres</p>
-                )}
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading || !!emailError || !!passwordError}
-                className="w-full py-4 bg-pricing-blue hover:bg-pricing-blue/90 disabled:bg-studio-mist disabled:text-slate text-gallery-white rounded-2xl font-semibold text-base transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 disabled:cursor-not-allowed"
-              >
-                {loading
-                  ? "Procesando..."
-                  : isLogin
-                  ? "Iniciar sesión"
-                  : "Crear cuenta"}
-              </button>
-            </form>
-
-            {/* Divider */}
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-hairline-silver"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-gallery-white text-slate">o</span>
-              </div>
             </div>
 
-            {/* Toggle Auth Mode */}
-            <div className="text-center">
-              <button
-                onClick={() => {
-                  setIsLogin(!isLogin);
-                  setError("");
-                  setEmailError("");
-                  setPasswordError("");
-                  setFormData({ email: "", password: "", name: "" });
-                }}
-                className="text-sm text-slate hover:text-ink transition-colors"
-              >
-                {isLogin ? (
-                  <>
-                    ¿No tienes cuenta?{" "}
-                    <span className="text-pricing-blue font-semibold hover:underline">
-                      Crear cuenta
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    ¿Ya tienes cuenta?{" "}
-                    <span className="text-pricing-blue font-semibold hover:underline">
-                      Iniciar sesión
-                    </span>
-                  </>
-                )}
+            <div>
+              <input
+                type="password"
+                value={formData.password}
+                onChange={handlePasswordChange}
+                className={`w-full px-4 py-3 bg-gray-50 border-0 rounded-lg text-gray-900 placeholder-gray-400 focus:bg-white focus:ring-2 ${
+                  passwordError ? 'focus:ring-red-200 bg-red-50' : 'focus:ring-gray-200'
+                } focus:outline-none transition-all`}
+                placeholder="Password"
+                required
+              />
+              {passwordError && (
+                <p className="mt-1 text-xs text-red-500">{passwordError}</p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading || !!emailError || !!passwordError}
+              className="w-full py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-300 text-white rounded-lg font-medium transition-all disabled:cursor-not-allowed"
+            >
+              {loading ? "..." : isLogin ? "Next" : "Create account"}
+            </button>
+          </form>
+
+          {/* Forgot Password */}
+          {isLogin && (
+            <div className="text-center mt-4">
+              <button className="text-sm text-gray-500 hover:text-gray-700 transition-colors">
+                Forgot password?
               </button>
             </div>
+          )}
 
-            {/* Back to Home */}
-            <div className="pt-6 text-center border-t border-hairline-silver">
-              <Link
-                href="/"
-                className="inline-flex items-center gap-2 text-sm text-slate hover:text-ink transition-colors group"
-              >
-                <svg className="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
-                Volver al inicio
-              </Link>
-            </div>
+          {/* Toggle */}
+          <div className="mt-8 pt-6 border-t border-gray-100 text-center">
+            <button
+              onClick={() => {
+                setIsLogin(!isLogin);
+                setError("");
+                setEmailError("");
+                setPasswordError("");
+                setFormData({ email: "", password: "", name: "" });
+              }}
+              className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+            >
+              {isLogin ? (
+                <>Don't have an account? <span className="font-medium">Sign up</span></>
+              ) : (
+                <>Already have an account? <span className="font-medium">Sign in</span></>
+              )}
+            </button>
+          </div>
+
+          {/* Back Link */}
+          <div className="mt-8 text-center">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+              </svg>
+              Back to home
+            </Link>
           </div>
         </div>
       </div>

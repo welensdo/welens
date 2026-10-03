@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/carousel";
 import { ReactNode } from "react";
 import AnimatedSection from "@/components/ui/animated-section";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface CardItem {
   id: string;
@@ -217,60 +218,108 @@ export default function FeaturesCarousel() {
       </div>
 
       {/* Modal */}
-      {selectedCard && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          {/* Backdrop */}
-          <div 
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            onClick={closeModal}
-          />
-          
-          {/* Modal Content */}
-          <div className="relative z-10 bg-white rounded-3xl p-8 mx-4 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-start mb-6">
-              <div className="flex-1 pr-4">
-                <h3 className="text-2xl font-semibold text-ink mb-2">
-                  {selectedCard.category}
-                </h3>
-                <div className="text-xl text-slate mb-4">
-                  {selectedCard.title}
+      <AnimatePresence>
+        {selectedCard && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-50 flex items-center justify-center"
+          >
+            {/* Backdrop */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              onClick={closeModal}
+            />
+            
+            {/* Modal Content */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ 
+                duration: 0.4,
+                type: "spring",
+                stiffness: 300,
+                damping: 30
+              }}
+              className="relative z-10 bg-white rounded-3xl p-8 mx-4 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            >
+              <div className="flex justify-between items-start mb-6">
+                <div className="flex-1 pr-4">
+                  <motion.h3 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1, duration: 0.3 }}
+                    className="text-2xl font-semibold text-ink mb-2"
+                  >
+                    {selectedCard.category}
+                  </motion.h3>
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.15, duration: 0.3 }}
+                    className="text-xl text-slate mb-4"
+                  >
+                    {selectedCard.title}
+                  </motion.div>
                 </div>
-              </div>
-              <button
-                onClick={closeModal}
-                className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
-                aria-label="Cerrar modal"
-              >
-                <svg
-                  className="w-6 h-6 text-gray-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.1, duration: 0.2 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={closeModal}
+                  className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                  aria-label="Cerrar modal"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-            
-            <div className="mb-6">
-              <img
-                src={selectedCard.src}
-                alt={selectedCard.category}
-                className="w-full h-64 object-cover rounded-2xl"
-              />
-            </div>
-            
-            <p className="text-base leading-relaxed text-slate">
-              {selectedCard.content}
-            </p>
-          </div>
-        </div>
-      )}
+                  <svg
+                    className="w-6 h-6 text-gray-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </motion.button>
+              </div>
+              
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.3 }}
+                className="mb-6"
+              >
+                <img
+                  src={selectedCard.src}
+                  alt={selectedCard.category}
+                  className="w-full h-64 object-cover rounded-2xl"
+                />
+              </motion.div>
+              
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25, duration: 0.3 }}
+                className="text-base leading-relaxed text-slate"
+              >
+                {selectedCard.content}
+              </motion.p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

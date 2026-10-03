@@ -70,13 +70,14 @@ export default function CheckoutPage() {
 
       // Add legacy cart items (backward compatibility)
       if (cart) {
+        // For legacy cart, the price is for both eyes combined, so we don't divide
         if (cart.leftEye.type) {
           orderItems.push({
             itemType: 'lens',
             eye: "left",
             type: cart.leftEye.type,
             value: cart.leftEye.value,
-            price: cart.price / 2,
+            price: cart.rightEye.type ? cart.price / 2 : cart.price, // Only divide if both eyes exist
           });
         }
 
@@ -86,7 +87,7 @@ export default function CheckoutPage() {
             eye: "right",
             type: cart.rightEye.type,
             value: cart.rightEye.value,
-            price: cart.price / 2,
+            price: cart.leftEye.type ? cart.price / 2 : cart.price, // Only divide if both eyes exist
           });
         }
       }
@@ -94,23 +95,28 @@ export default function CheckoutPage() {
       // Add new cart items (lenses + accessories)
       items.forEach((item) => {
         if (item.type === 'lens') {
-          // Add lens items
-          if (item.leftEye.type) {
+          // For new cart items, the price should be divided only if both eyes exist
+          const hasLeftEye = item.leftEye.type;
+          const hasRightEye = item.rightEye.type;
+          const eyeCount = (hasLeftEye ? 1 : 0) + (hasRightEye ? 1 : 0);
+          const pricePerEye = eyeCount > 1 ? item.price / 2 : item.price;
+
+          if (hasLeftEye) {
             orderItems.push({
               itemType: 'lens',
               eye: "left",
               type: item.leftEye.type,
               value: item.leftEye.value,
-              price: item.price / 2,
+              price: pricePerEye,
             });
           }
-          if (item.rightEye.type) {
+          if (hasRightEye) {
             orderItems.push({
               itemType: 'lens',
               eye: "right",
               type: item.rightEye.type,
               value: item.rightEye.value,
-              price: item.price / 2,
+              price: pricePerEye,
             });
           }
         } else if (item.type === 'accessory') {
@@ -145,7 +151,7 @@ export default function CheckoutPage() {
       }
 
       clearCart();
-      router.push(`/dashboard?order=${data.order.orderNumber}`);
+      router.push(`/thank-you?order=${data.order.orderNumber}`);
     } catch (err: any) {
       setError(err.message);
     } finally {
