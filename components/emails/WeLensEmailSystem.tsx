@@ -166,7 +166,7 @@ export default function WeLensEmail({ children, previewText }: WeLensEmailProps)
                       marginBottom: spacing.xl
                     }}>
                       <img 
-                        src="https://welens.org/logo3.PNG" 
+                        src="https://welens.org/logo2.PNG" 
                         alt="WeLens" 
                         width="28"
                         height="28"
