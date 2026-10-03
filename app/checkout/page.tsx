@@ -16,6 +16,7 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [error, setError] = useState("");
+  const [orderCompleted, setOrderCompleted] = useState(false);
 
   const [shippingData, setShippingData] = useState({
     name: "",
@@ -29,6 +30,9 @@ export default function CheckoutPage() {
   });
 
   useEffect(() => {
+    // Don't redirect if order was just completed
+    if (orderCompleted) return;
+    
     // Check if cart is empty first (no cart and no items)
     if (!cart && items.length === 0) {
       router.push("/configurador");
@@ -150,8 +154,19 @@ export default function CheckoutPage() {
         throw new Error(data.error || "Error al crear el pedido");
       }
 
-      clearCart();
+      console.log('Order created successfully:', data.order);
+      console.log('Redirecting to:', `/thank-you?order=${data.order.orderNumber}`);
+      
+      // Mark order as completed to prevent useEffect redirect
+      setOrderCompleted(true);
+      
+      // Redirect to thank you page
       router.push(`/thank-you?order=${data.order.orderNumber}`);
+      
+      // Clear cart after redirect
+      setTimeout(() => {
+        clearCart();
+      }, 500);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -351,90 +366,108 @@ export default function CheckoutPage() {
                 </h2>
 
                 <div className="space-y-4 mb-6">
-                  {/* Legacy cart items */}
-                  {cart && cart.leftEye.type && (
-                    <div className="bg-gallery-white rounded-2xl p-4">
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <p className="font-semibold text-ink">Ojo izquierdo</p>
-                          <p className="text-body-small text-slate capitalize">
-                            {cart.leftEye.type}
-                          </p>
-                        </div>
-                        <p className="font-semibold text-ink">
-                          {cart.leftEye.value > 0 ? "+" : ""}
-                          {cart.leftEye.value.toFixed(2)}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {cart && cart.rightEye.type && (
-                    <div className="bg-gallery-white rounded-2xl p-4">
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <p className="font-semibold text-ink">Ojo derecho</p>
-                          <p className="text-body-small text-slate capitalize">
-                            {cart.rightEye.type}
-                          </p>
-                        </div>
-                        <p className="font-semibold text-ink">
-                          {cart.rightEye.value > 0 ? "+" : ""}
-                          {cart.rightEye.value.toFixed(2)}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* New cart items */}
-                  {items.map((item) => (
-                    <div key={item.id} className="bg-gallery-white rounded-2xl p-4">
-                      {item.type === 'lens' ? (
-                        <>
-                          {item.leftEye.type && (
-                            <div className="flex justify-between items-start mb-3 pb-3 border-b border-hairline-silver">
-                              <div>
-                                <p className="font-semibold text-ink">Lentes - Ojo izquierdo</p>
-                                <p className="text-body-small text-slate capitalize">
-                                  {item.leftEye.type}
-                                </p>
-                              </div>
-                              <p className="font-semibold text-ink">
-                                {item.leftEye.value > 0 ? "+" : ""}
-                                {item.leftEye.value.toFixed(2)}
+                  {/* Show legacy cart items OR new cart items, not both */}
+                  {cart && (cart.leftEye.type || cart.rightEye.type) ? (
+                    /* Legacy cart display */
+                    <>
+                      {cart.leftEye.type && (
+                        <div className="bg-gallery-white rounded-2xl p-4">
+                          <div className="flex justify-between items-start mb-2">
+                            <div>
+                              <p className="font-semibold text-ink">Ojo izquierdo</p>
+                              <p className="text-body-small text-slate capitalize">
+                                {cart.leftEye.type}
                               </p>
                             </div>
-                          )}
-                          {item.rightEye.type && (
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <p className="font-semibold text-ink">Lentes - Ojo derecho</p>
-                                <p className="text-body-small text-slate capitalize">
-                                  {item.rightEye.type}
-                                </p>
-                              </div>
-                              <p className="font-semibold text-ink">
-                                {item.rightEye.value > 0 ? "+" : ""}
-                                {item.rightEye.value.toFixed(2)}
-                              </p>
-                            </div>
-                          )}
-                          <div className="flex justify-between items-center mt-3 pt-3 border-t border-hairline-silver">
-                            <p className="text-body-small text-slate">Precio</p>
-                            <p className="font-semibold text-ink">${item.price.toFixed(2)}</p>
+                            <p className="font-semibold text-ink">
+                              {cart.leftEye.value > 0 ? "+" : ""}
+                              {cart.leftEye.value.toFixed(2)}
+                            </p>
                           </div>
-                        </>
-                      ) : (
-                        <div className="flex justify-between items-start">
-                          <div className="flex-1">
-                            <p className="font-semibold text-ink">{item.name}</p>
-                            <p className="text-body-small text-slate">Cantidad: {item.quantity}</p>
-                          </div>
-                          <p className="font-semibold text-ink">
-                            ${(item.price * item.quantity).toFixed(2)}
-                          </p>
                         </div>
                       )}
+
+                      {cart.rightEye.type && (
+                        <div className="bg-gallery-white rounded-2xl p-4">
+                          <div className="flex justify-between items-start mb-2">
+                            <div>
+                              <p className="font-semibold text-ink">Ojo derecho</p>
+                              <p className="text-body-small text-slate capitalize">
+                                {cart.rightEye.type}
+                              </p>
+                            </div>
+                            <p className="font-semibold text-ink">
+                              {cart.rightEye.value > 0 ? "+" : ""}
+                              {cart.rightEye.value.toFixed(2)}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    /* New cart items display */
+                    items.map((item) => (
+                      <div key={item.id} className="bg-gallery-white rounded-2xl p-4">
+                        {item.type === 'lens' ? (
+                          <>
+                            {item.leftEye.type && (
+                              <div className="flex justify-between items-start mb-3 pb-3 border-b border-hairline-silver">
+                                <div>
+                                  <p className="font-semibold text-ink">Ojo izquierdo</p>
+                                  <p className="text-body-small text-slate capitalize">
+                                    {item.leftEye.type}
+                                  </p>
+                                </div>
+                                <p className="font-semibold text-ink">
+                                  {item.leftEye.value > 0 ? "+" : ""}
+                                  {item.leftEye.value.toFixed(2)}
+                                </p>
+                              </div>
+                            )}
+                            {item.rightEye.type && (
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <p className="font-semibold text-ink">Ojo derecho</p>
+                                  <p className="text-body-small text-slate capitalize">
+                                    {item.rightEye.type}
+                                  </p>
+                                </div>
+                                <p className="font-semibold text-ink">
+                                  {item.rightEye.value > 0 ? "+" : ""}
+                                  {item.rightEye.value.toFixed(2)}
+                                </p>
+                              </div>
+                            )}
+                            {/* Remove price display for lens items - only show graduations */}
+                          </>
+                        ) : (
+                          /* Only show accessories with price */
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <p className="font-semibold text-ink">{item.name}</p>
+                              <p className="text-body-small text-slate">Cantidad: {item.quantity}</p>
+                            </div>
+                            <p className="font-semibold text-ink">
+                              ${(item.price * item.quantity).toFixed(2)}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  )}
+
+                  {/* Additional accessories from new cart (if any exist alongside legacy cart) */}
+                  {cart && (cart.leftEye.type || cart.rightEye.type) && items.filter(item => item.type === 'accessory').map((item) => (
+                    <div key={item.id} className="bg-gallery-white rounded-2xl p-4">
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <p className="font-semibold text-ink">{item.name}</p>
+                          <p className="text-body-small text-slate">Cantidad: {item.quantity}</p>
+                        </div>
+                        <p className="font-semibold text-ink">
+                          ${(item.price * item.quantity).toFixed(2)}
+                        </p>
+                      </div>
                     </div>
                   ))}
                 </div>

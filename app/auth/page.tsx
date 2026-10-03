@@ -206,11 +206,11 @@ function AuthContent() {
 
           {/* Logo for desktop */}
           <div className="hidden lg:block text-center mb-8">
-            <img src="/logo2.PNG" alt="WeLens" className="h-[120px] w-auto mx-auto" />
+            <img src="/logo2.PNG" alt="WeLens" className="h-[220px] w-auto mx-auto" />
           </div>
 
           {/* Form Header */}
-          <div className="text-center mb-8 -mt-8">
+          <div className="text-center mb-8 -mt-20">
             <h1 className="text-2xl font-light text-gray-900 mb-2">
               {isLogin ? "Welcome back" : "Create account"}
             </h1>
@@ -278,7 +278,7 @@ function AuthContent() {
             <button
               type="submit"
               disabled={loading || !!emailError || !!passwordError}
-              className="w-full py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-300 text-white rounded-lg font-medium transition-all disabled:cursor-not-allowed"
+              className="w-full py-3 bg-black hover:bg-gray-900 disabled:bg-gray-300 text-white rounded-lg font-medium transition-all disabled:cursor-not-allowed"
             >
               {loading ? "..." : isLogin ? "Next" : "Create account"}
             </button>

@@ -86,7 +86,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const addToCart = (item: LensCartItem) => {
     setCart(item); // Legacy compatibility
-    setItems([...items, item]); // New system - add to items array
+    // Don't add to items array to prevent duplication
+    // setItems([...items, item]); 
   };
 
   const addAccessory = (accessory: Omit<AccessoryCartItem, 'id' | 'type'>) => {
@@ -121,11 +122,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setItems([]);
   };
 
-  const cartCount = (cart ? 1 : 0) + items.reduce((sum, item) => sum + item.quantity, 0);
+  const cartCount = (cart ? 1 : 0) + items.filter(item => item.type === 'accessory').reduce((sum, item) => sum + item.quantity, 0);
   
   const totalPrice = 
     (cart?.price || 0) + 
-    items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    items.filter(item => item.type === 'accessory').reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
     <CartContext.Provider value={{ 

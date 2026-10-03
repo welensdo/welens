@@ -78,10 +78,16 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center">
-            <img src="/logo2.PNG" alt="WeLens" className="h-[150px] w-auto" />
+          <Link href="/" className="relative flex items-center">
+            <img 
+              src="/logo2.PNG" 
+              alt="WeLens" 
+              className="h-[140px] w-auto absolute top-1/2 left-0 transform -translate-y-1/2" 
+            />
+            {/* Invisible spacer to maintain layout */}
+            <div className="w-36 h-8"></div>
           </Link>
 
           {/* Navigation Links - Hidden on mobile */}

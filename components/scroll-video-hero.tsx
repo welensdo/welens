@@ -20,24 +20,30 @@ export default function ScrollVideoHero() {
     const handleScroll = () => {
       if (!video || !container || !isVideoReady) return;
 
-      const containerRect = container.getBoundingClientRect();
       const scrollPosition = window.scrollY;
       const windowHeight = window.innerHeight;
 
-      // Calculate scroll progress within the container
+      // Get the absolute position of the video container
+      const containerRect = container.getBoundingClientRect();
       const containerTop = scrollPosition + containerRect.top;
-      const scrollStart = containerTop - windowHeight;
-      const scrollEnd = containerTop + containerRect.height - windowHeight;
-      const scrollRange = scrollEnd - scrollStart;
-      const scrollProgress = (scrollPosition - scrollStart) / scrollRange;
+      
+      // START ANIMATION EARLIER so video reaches frame 0 sooner
+      const animationStart = Math.max(0, containerTop - (windowHeight * 1.5));
+      const animationEnd = containerTop + (windowHeight * 2);
+      const animationRange = animationEnd - animationStart;
+      
+      // ALWAYS calculate progress based on current scroll position (not conditional)
+      let scrollProgress = 0;
+      if (animationRange > 0) {
+        scrollProgress = (scrollPosition - animationStart) / animationRange;
+      }
 
       // Clamp between 0 and 1
       const clampedProgress = Math.max(0, Math.min(1, scrollProgress));
 
-      // Update video time based on scroll progress
+      // ALWAYS update video time regardless of direction (up or down scroll)
       if (video.duration && isFinite(video.duration) && video.readyState >= 2) {
         const newTime = clampedProgress * video.duration;
-        // Update video time - removed the threshold check to allow backwards scrolling
         try {
           video.currentTime = newTime;
         } catch (error) {
@@ -55,7 +61,7 @@ export default function ScrollVideoHero() {
       ticking = false;
     };
 
-    // Use requestAnimationFrame for smoother updates
+    // Use requestAnimationFrame for smoother updates AND ensure scroll always works
     const onScroll = () => {
       if (!ticking) {
         requestAnimationFrame(handleScroll);
@@ -63,23 +69,38 @@ export default function ScrollVideoHero() {
       }
     };
 
+    // MULTIPLE scroll event listeners to ensure it never loses reception
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("touchmove", onScroll, { passive: true }); // For mobile
+    document.addEventListener("scroll", onScroll, { passive: true }); // Backup
+    window.addEventListener("resize", handleScroll, { passive: true });
+
     // Load video metadata and data
     const handleLoadedMetadata = () => {
       console.log("Video metadata loaded");
       setIsVideoReady(true);
-      handleScroll();
+      // Set video to start at time 0 (case closed) and keep it there
+      if (video.duration && isFinite(video.duration)) {
+        video.currentTime = 0;
+      }
     };
 
     const handleLoadedData = () => {
       console.log("Video data loaded");
       setIsVideoReady(true);
-      handleScroll();
+      // Set video to start at time 0 (case closed) and keep it there
+      if (video.duration && isFinite(video.duration)) {
+        video.currentTime = 0;
+      }
     };
 
     const handleCanPlay = () => {
       console.log("Video can play");
       setIsVideoReady(true);
-      handleScroll();
+      // Set video to start at time 0 (case closed) and keep it there
+      if (video.duration && isFinite(video.duration)) {
+        video.currentTime = 0;
+      }
     };
 
     const handleError = (e: Event) => {
@@ -96,11 +117,12 @@ export default function ScrollVideoHero() {
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", handleScroll, { passive: true });
 
-    // Initial call with a small delay to ensure layout is ready
-    const timeoutId = setTimeout(handleScroll, 100);
-
-    // Force load the video
+    // Force load the video and set initial time
     video.load();
+    video.addEventListener('loadstart', () => {
+      console.log("Video load started");
+      video.currentTime = 0;
+    });
 
     return () => {
       video.removeEventListener("loadedmetadata", handleLoadedMetadata);
@@ -108,8 +130,9 @@ export default function ScrollVideoHero() {
       video.removeEventListener("canplay", handleCanPlay);
       video.removeEventListener("error", handleError);
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("touchmove", onScroll);
+      document.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", handleScroll);
-      clearTimeout(timeoutId);
     };
   }, [isVideoReady]);
 
@@ -121,11 +144,11 @@ export default function ScrollVideoHero() {
     >
       <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden">
         {/* Product Label */}
-        <div className="absolute top-32 sm:top-40 text-center z-10 px-4">
-          <div className="mb-2 sm:mb-4 flex justify-center relative">
+        <div className="absolute top-20 sm:top-24 text-center z-10 px-4">
+          <div className="mb-2 sm:mb-4 flex justify-center relative -mt-8">
             <img src="/logo4.PNG" alt="WeLens" className="h-[250px] w-auto" />
           </div>
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-semibold text-ink tracking-tight sm:whitespace-nowrap -mt-16">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-semibold text-ink tracking-tight sm:whitespace-nowrap -mt-20">
             Cualquier gafa, adaptada a ti.
           </h1>
           <p className="text-body-small sm:text-body text-slate mt-6 max-w-2xl mx-auto">
@@ -145,7 +168,7 @@ export default function ScrollVideoHero() {
             preload="auto"
             crossOrigin="anonymous"
           >
-            <source src="/lensvideo.mp4" type="video/mp4" />
+            <source src="/product-new.mp4" type="video/mp4" />
           </video>
         </div>
 

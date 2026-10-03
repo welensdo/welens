@@ -60,14 +60,14 @@ export default function Footer() {
         <div className="border-t border-hairline-silver pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-6">
-              <Link href="/" className="flex items-center gap-3 relative">
+              <Link href="/" className="flex items-center gap-3">
                 <img
                   src="/logo4.PNG"
                   alt="WeLens"
                   className="h-[250px] w-auto"
                 />
               </Link>
-              <p className="text-compact-control text-slate -ml-20">
+              <p className="text-compact-control text-slate -ml-32">
                 © 2026 WeLens. Todos los derechos reservados.
               </p>
             </div>
