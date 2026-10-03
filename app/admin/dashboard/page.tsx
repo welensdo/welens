@@ -239,14 +239,14 @@ export default function AdminDashboard() {
   };
 
   const emailAliases = [
-    { value: 'shipping@welens.org', label: '📦 Envíos (shipping@welens.org)', description: 'Para notificaciones de pedidos y envíos' },
-    { value: 'soporte@welens.org', label: '🛟 Soporte (soporte@welens.org)', description: 'Para atención al cliente' },
-    { value: 'support@welens.org', label: '💬 Support (support@welens.org)', description: 'Para soporte técnico en inglés' },
-    { value: 'hola@welens.org', label: '👋 Hola (hola@welens.org)', description: 'Para mensajes generales y bienvenida' },
-    { value: 'data@welens.org', label: '📊 Data (data@welens.org)', description: 'Para notificaciones del sistema' },
-    { value: 'legal@welens.org', label: '⚖️ Legal (legal@welens.org)', description: 'Para asuntos legales' },
-    { value: 'privacy@welens.org', label: '🔒 Privacy (privacy@welens.org)', description: 'Para temas de privacidad' },
-    { value: 'careers@welens.org', label: '💼 Careers (careers@welens.org)', description: 'Para recursos humanos' },
+    { value: 'shipping@welens.org', label: 'Envíos (shipping@welens.org)', description: 'Para notificaciones de pedidos y envíos' },
+    { value: 'soporte@welens.org', label: 'Soporte (soporte@welens.org)', description: 'Para atención al cliente' },
+    { value: 'support@welens.org', label: 'Support (support@welens.org)', description: 'Para soporte técnico en inglés' },
+    { value: 'hola@welens.org', label: 'Hola (hola@welens.org)', description: 'Para mensajes generales y bienvenida' },
+    { value: 'data@welens.org', label: 'Data (data@welens.org)', description: 'Para notificaciones del sistema' },
+    { value: 'legal@welens.org', label: 'Legal (legal@welens.org)', description: 'Para asuntos legales' },
+    { value: 'privacy@welens.org', label: 'Privacy (privacy@welens.org)', description: 'Para temas de privacidad' },
+    { value: 'careers@welens.org', label: 'Careers (careers@welens.org)', description: 'Para recursos humanos' },
   ];
 
   const filteredOrders = filterStatus === "all" 
@@ -288,7 +288,9 @@ export default function AdminDashboard() {
               }`}
             >
               <div className="flex items-center gap-3">
-                <span className="text-lg">📦</span>
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
                 <span className="font-medium">Pedidos</span>
               </div>
             </button>
@@ -302,7 +304,9 @@ export default function AdminDashboard() {
               }`}
             >
               <div className="flex items-center gap-3">
-                <span className="text-lg">📧</span>
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
                 <span className="font-medium">Correos</span>
               </div>
             </button>
@@ -316,7 +320,9 @@ export default function AdminDashboard() {
               }`}
             >
               <div className="flex items-center gap-3">
-                <span className="text-lg">📊</span>
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
                 <span className="font-medium">Analíticas</span>
               </div>
             </button>
@@ -451,7 +457,7 @@ export default function AdminDashboard() {
                               <p className="font-semibold text-ink">#{order.orderNumber}</p>
                               {order.trackingNumber && (
                                 <p className="text-compact-control text-slate">
-                                  📦 {order.trackingNumber}
+                                  Tracking: {order.trackingNumber}
                                 </p>
                               )}
                             </td>
@@ -596,7 +602,7 @@ export default function AdminDashboard() {
                   />
                   <div className="mt-3 p-4 bg-studio-mist rounded-2xl">
                     <p className="text-compact-control text-slate">
-                      <strong>✨ Diseño automático:</strong> Tu mensaje se enviará con la plantilla premium de WeLens, 
+                      <strong>Diseño automático:</strong> Tu mensaje se enviará con la plantilla premium de WeLens, 
                       incluyendo nuestro logo y el diseño de clase mundial.
                     </p>
                   </div>
