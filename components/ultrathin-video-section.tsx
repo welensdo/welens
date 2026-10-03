@@ -136,60 +136,64 @@ export default function UltrathinVideoSection() {
   }, [isVideoReady]);
 
   return (
-    <div className="w-full py-20 lg:py-40 bg-gallery-white" id="como-funciona">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <AnimatedSection animation="fade-up" className="flex flex-col gap-4">
-          <div>
-            <Badge variant="secondary">Ultra Delgado</Badge>
-          </div>
-          <div className="flex gap-2 flex-col">
-            <h2 className="text-3xl sm:text-5xl tracking-tight lg:max-w-xl font-semibold text-ink">
-              Tecnología invisible, resultados visibles
-            </h2>
-            <p className="text-body max-w-xl lg:max-w-xl leading-relaxed text-slate">
-              Descubre la revolución en lentes. Nuestra tecnología ultra delgada 
-              transforma cualquier gafa en tu graduación perfecta, sin comprometer el estilo.
-            </p>
-          </div>
-        </AnimatedSection>
-        
-        <AnimatedSection animation="fade-up" delay={300} className="pt-12 w-full">
-          <div 
-            ref={containerRef}
-            className="relative aspect-video w-full h-full overflow-hidden rounded-3xl select-none bg-studio-mist"
-          >
-            {/* Video Container */}
-            <video
-              ref={videoRef}
-              muted
-              playsInline
-              preload="auto"
-              className="w-full h-full object-cover rounded-3xl"
-              crossOrigin="anonymous"
-            >
-              <source src="/ultrathin.MP4" type="video/mp4" />
-              Tu navegador no soporta videos HTML5.
-            </video>
+    <div
+      ref={containerRef} 
+      className="relative w-full bg-gallery-white"
+      style={{ height: "300vh" }}
+      id="como-funciona"
+    >
+      <div className="sticky top-0 h-screen overflow-hidden">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-center">
+          <AnimatedSection animation="fade-up" className="flex flex-col gap-4 mb-8">
+            <div>
+              <Badge variant="secondary">Ultra Delgado</Badge>
+            </div>
+            <div className="flex gap-2 flex-col">
+              <h2 className="text-3xl sm:text-5xl tracking-tight lg:max-w-xl font-semibold text-ink">
+                Tecnología invisible, resultados visibles
+              </h2>
+              <p className="text-body max-w-xl lg:max-w-xl leading-relaxed text-slate">
+                Descubre la revolución en lentes. Nuestra tecnología ultra delgada 
+                transforma cualquier gafa en tu graduación perfecta, sin comprometer el estilo.
+              </p>
+            </div>
+          </AnimatedSection>
+          
+          <AnimatedSection animation="fade-up" delay={300} className="flex-1 w-full flex items-center">
+            <div className="relative aspect-video w-full h-full max-h-[60vh] overflow-hidden rounded-3xl select-none bg-studio-mist">
+              {/* Video Container */}
+              <video
+                ref={videoRef}
+                muted
+                playsInline
+                preload="auto"
+                className="w-full h-full object-cover rounded-3xl"
+                crossOrigin="anonymous"
+              >
+                <source src="/ultrathin.MP4" type="video/mp4" />
+                Tu navegador no soporta videos HTML5.
+              </video>
 
-            {/* Progress indicator - simple like hero video */}
-            {!isVideoComplete && (
-              <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-gallery-white/90 backdrop-blur-sm px-4 py-2 rounded-full z-10">
-                <p className="text-compact-control font-semibold text-ink">
-                  Desliza para ver la transformación
-                </p>
-              </div>
-            )}
+              {/* Progress indicator - simple like hero video */}
+              {!isVideoComplete && (
+                <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-gallery-white/90 backdrop-blur-sm px-4 py-2 rounded-full z-10">
+                  <p className="text-compact-control font-semibold text-ink">
+                    Desliza para ver la transformación
+                  </p>
+                </div>
+              )}
 
-            {/* Completion indicator */}
-            {isVideoComplete && (
-              <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-pricing-blue/90 backdrop-blur-sm px-4 py-2 rounded-full z-10">
-                <p className="text-compact-control font-semibold text-gallery-white">
-                  ✨ Transformación completa
-                </p>
-              </div>
-            )}
-          </div>
-        </AnimatedSection>
+              {/* Completion indicator */}
+              {isVideoComplete && (
+                <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-pricing-blue/90 backdrop-blur-sm px-4 py-2 rounded-full z-10">
+                  <p className="text-compact-control font-semibold text-gallery-white">
+                    ✨ Transformación completa
+                  </p>
+                </div>
+              )}
+            </div>
+          </AnimatedSection>
+        </div>
       </div>
     </div>
   );
