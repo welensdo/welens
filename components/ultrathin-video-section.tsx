@@ -9,8 +9,6 @@ export default function UltrathinVideoSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVideoComplete, setIsVideoComplete] = useState(false);
   const [isVideoReady, setIsVideoReady] = useState(false);
-  const [isScrollLocked, setIsScrollLocked] = useState(false);
-  const [lockedScrollPosition, setLockedScrollPosition] = useState(0);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -26,60 +24,48 @@ export default function UltrathinVideoSection() {
       const scrollPosition = window.scrollY;
       const windowHeight = window.innerHeight;
 
-      // Get the absolute position of the video container
+      // Get the absolute position of the video container (same logic as hero video)
       const containerRect = container.getBoundingClientRect();
       const containerTop = scrollPosition + containerRect.top;
       
-      // Define when video animation should start and end
-      const videoTriggerStart = containerTop - (windowHeight * 0.8);
-      const videoTriggerEnd = containerTop - (windowHeight * 0.2);
+      // START ANIMATION EARLIER so video reaches frame 0 sooner (copied from hero)
+      const animationStart = Math.max(0, containerTop - (windowHeight * 1.5));
+      const animationEnd = containerTop + (windowHeight * 2);
+      const animationRange = animationEnd - animationStart;
       
-      // Check if we're in the video animation zone
-      const isInVideoZone = scrollPosition >= videoTriggerStart && scrollPosition <= videoTriggerEnd;
-      
-      if (isInVideoZone && !isScrollLocked && !isVideoComplete) {
-        // Lock scroll when entering video zone
-        setIsScrollLocked(true);
-        setLockedScrollPosition(scrollPosition);
+      // ALWAYS calculate progress based on current scroll position (not conditional)
+      let scrollProgress = 0;
+      if (animationRange > 0) {
+        scrollProgress = (scrollPosition - animationStart) / animationRange;
       }
 
-      // Calculate video progress when in locked mode
-      if (isScrollLocked && !isVideoComplete) {
-        // Use scroll delta from locked position to control video
-        const scrollDelta = scrollPosition - lockedScrollPosition;
-        const maxScrollForVideo = windowHeight * 1.5; // How much scroll needed to complete video
-        
-        const videoProgress = Math.max(0, Math.min(1, scrollDelta / maxScrollForVideo));
-        
-        // Update video time
-        if (video.duration && isFinite(video.duration) && video.readyState >= 2) {
-          const newTime = videoProgress * video.duration;
-          try {
-            video.currentTime = newTime;
-          } catch (error) {
-            console.error("Error updating video time:", error);
-          }
-        }
-        
-        // Check if video is complete
-        if (videoProgress >= 0.95) {
-          setIsVideoComplete(true);
-          setIsScrollLocked(false);
-        }
-        
-        // Prevent actual scroll when locked (reset to locked position)
-        if (scrollPosition !== lockedScrollPosition && videoProgress < 0.95) {
-          window.scrollTo(0, lockedScrollPosition);
+      // Clamp between 0 and 1
+      const clampedProgress = Math.max(0, Math.min(1, scrollProgress));
+
+      // ALWAYS update video time regardless of direction (up or down scroll)
+      if (video.duration && isFinite(video.duration) && video.readyState >= 2) {
+        const newTime = clampedProgress * video.duration;
+        try {
+          video.currentTime = newTime;
+        } catch (error) {
+          console.error("Error updating video time:", error);
         }
       }
+
+      // Check if video animation is complete (at 95% to allow smooth transition)
+      if (clampedProgress >= 0.95) {
+        setIsVideoComplete(true);
+      } else {
+        setIsVideoComplete(false);
+      }
+
+      ticking = false;
     };
 
+    // Use requestAnimationFrame for smoother updates AND ensure scroll always works
     const onScroll = () => {
       if (!ticking) {
-        requestAnimationFrame(() => {
-          handleScroll();
-          ticking = false;
-        });
+        requestAnimationFrame(handleScroll);
         ticking = true;
       }
     };
@@ -87,15 +73,16 @@ export default function UltrathinVideoSection() {
     // Initial call
     handleScroll();
     
-    // Add scroll listeners
-    window.addEventListener("scroll", onScroll, { passive: false });
-    window.addEventListener("touchmove", onScroll, { passive: false });
+    // Add scroll listeners (same as hero video)
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("touchmove", onScroll, { passive: true });
     window.addEventListener("resize", handleScroll, { passive: true });
 
-    // Video event handlers
+    // Load video metadata and data (copied from hero video)
     const handleLoadedMetadata = () => {
       console.log("Ultrathin video metadata loaded");
       setIsVideoReady(true);
+      // Set video to start at time 0 and keep it there
       if (video.duration && isFinite(video.duration)) {
         video.currentTime = 0;
       }
@@ -104,6 +91,7 @@ export default function UltrathinVideoSection() {
     const handleLoadedData = () => {
       console.log("Ultrathin video data loaded");
       setIsVideoReady(true);
+      // Set video to start at time 0 and keep it there
       if (video.duration && isFinite(video.duration)) {
         video.currentTime = 0;
       }
@@ -112,6 +100,7 @@ export default function UltrathinVideoSection() {
     const handleCanPlay = () => {
       console.log("Ultrathin video can play");
       setIsVideoReady(true);
+      // Set video to start at time 0 and keep it there
       if (video.duration && isFinite(video.duration)) {
         video.currentTime = 0;
       }
@@ -122,13 +111,13 @@ export default function UltrathinVideoSection() {
       setIsVideoReady(false);
     };
 
-    // Add video event listeners
+    // Add all event listeners (same as hero video)
     video.addEventListener("loadedmetadata", handleLoadedMetadata);
     video.addEventListener("loadeddata", handleLoadedData);
     video.addEventListener("canplay", handleCanPlay);
     video.addEventListener("error", handleError);
 
-    // Force load the video and set initial time
+    // Force load the video and set initial time (same as hero video)
     video.load();
     video.addEventListener('loadstart', () => {
       console.log("Ultrathin video load started");
@@ -144,7 +133,7 @@ export default function UltrathinVideoSection() {
       window.removeEventListener("touchmove", onScroll);
       window.removeEventListener("resize", handleScroll);
     };
-  }, [isVideoReady, isScrollLocked, lockedScrollPosition, isVideoComplete]);
+  }, [isVideoReady]);
 
   return (
     <div className="w-full py-20 lg:py-40 bg-gallery-white" id="como-funciona">
@@ -182,17 +171,8 @@ export default function UltrathinVideoSection() {
               Tu navegador no soporta videos HTML5.
             </video>
 
-            {/* Progress indicator */}
-            {isScrollLocked && !isVideoComplete && (
-              <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-pricing-blue/90 backdrop-blur-sm px-6 py-3 rounded-full z-10">
-                <p className="text-compact-control font-semibold text-gallery-white">
-                  🎬 Sigue scrolleando para animar
-                </p>
-              </div>
-            )}
-
-            {/* Initial instruction */}
-            {!isScrollLocked && !isVideoComplete && (
+            {/* Progress indicator - simple like hero video */}
+            {!isVideoComplete && (
               <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-gallery-white/90 backdrop-blur-sm px-4 py-2 rounded-full z-10">
                 <p className="text-compact-control font-semibold text-ink">
                   Desliza para ver la transformación
