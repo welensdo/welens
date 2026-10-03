@@ -178,8 +178,8 @@ export default function UltrathinVideoSection() {
 
               {/* Progress indicator */}
               {!isVideoComplete && (
-                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-gallery-white/80 backdrop-blur-sm px-2 py-1 rounded-full z-10">
-                  <p className="text-[10px] font-normal text-ink">
+                <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-gallery-white/90 backdrop-blur-sm px-1 py-0.5 rounded-md z-10">
+                  <p className="text-[8px] font-light text-ink">
                     Desliza para ver la transformación
                   </p>
                 </div>
