@@ -1,4 +1,4 @@
-import { resend, EMAIL_ALIASES } from './resend';
+import { resend, EMAIL_ALIASES, getFromEmail } from './resend';
 import React from 'react';
 
 // Render email templates to string (server-side only)
@@ -38,7 +38,7 @@ export const emailService = {
       );
 
       const { data, error } = await resend.emails.send({
-        from: EMAIL_ALIASES.data,
+        from: getFromEmail('data'),
         to: [to],
         subject: '¡Bienvenido a WeLens! Tu cuenta ha sido creada',
         html,
@@ -101,7 +101,7 @@ export const emailService = {
       );
 
       const { data, error } = await resend.emails.send({
-        from: EMAIL_ALIASES.shipping, // Confirmaciones de orden desde shipping@welens.org
+        from: getFromEmail('shipping'), // Confirmaciones de orden desde shipping@welens.org
         to: [to],
         subject: `Orden ${orderNumber} confirmada - WeLens`,
         html,
@@ -161,7 +161,7 @@ export const emailService = {
       const statusLabel = statusLabels[status] || status;
 
       const { data, error } = await resend.emails.send({
-        from: EMAIL_ALIASES.shipping, // Status updates desde shipping@welens.org
+        from: getFromEmail('shipping'), // Status updates desde shipping@welens.org
         to: [to],
         subject: `Actualización: Tu orden ${orderNumber} está ${statusLabel.toLowerCase()}`,
         html,
@@ -193,7 +193,7 @@ export const emailService = {
       );
 
       const { data, error } = await resend.emails.send({
-        from: EMAIL_ALIASES.support, // Password reset desde support@welens.org
+        from: getFromEmail('support'), // Password reset desde support@welens.org
         to: [to],
         subject: 'Restablecer contraseña - WeLens',
         html,

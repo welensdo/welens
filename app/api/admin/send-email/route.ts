@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { EMAIL_ALIASES } from '@/lib/resend';
+import { EMAIL_ADDRESSES, getFromEmail } from '@/lib/resend';
 import { sendCustomAdminEmail } from '@/lib/emailService';
 
 export async function POST(request: NextRequest) {
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate from alias
-    const validAliases = Object.values(EMAIL_ALIASES);
+    const validAliases = Object.values(EMAIL_ADDRESSES);
     if (!validAliases.includes(from as any)) {
       return NextResponse.json(
         { error: 'Alias de envío no válido' }, 
@@ -32,10 +32,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Send email using the custom admin service
+    // Send email using the custom admin service with proper display name
+    const fromEmail = Object.keys(EMAIL_ADDRESSES).find(key => 
+      EMAIL_ADDRESSES[key as keyof typeof EMAIL_ADDRESSES] === from
+    );
+    
+    const properFromAddress = fromEmail ? getFromEmail(fromEmail as keyof typeof EMAIL_ADDRESSES) : from;
+
     const data = await sendCustomAdminEmail({
       to,
-      from,
+      from: properFromAddress,
       subject,
       message,
     });

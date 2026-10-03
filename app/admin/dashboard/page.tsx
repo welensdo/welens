@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { EMAIL_ALIASES } from "@/lib/resend";
+import { EMAIL_ADDRESSES, EMAIL_NAMES } from "@/lib/resend";
 
 export const dynamic = 'force-dynamic';
 
@@ -238,16 +238,20 @@ export default function AdminDashboard() {
     }));
   };
 
-  const emailAliases = [
-    { value: 'shipping@welens.org', label: 'Envíos (shipping@welens.org)', description: 'Para notificaciones de pedidos y envíos' },
-    { value: 'soporte@welens.org', label: 'Soporte (soporte@welens.org)', description: 'Para atención al cliente' },
-    { value: 'support@welens.org', label: 'Support (support@welens.org)', description: 'Para soporte técnico en inglés' },
-    { value: 'hola@welens.org', label: 'Hola (hola@welens.org)', description: 'Para mensajes generales y bienvenida' },
-    { value: 'data@welens.org', label: 'Data (data@welens.org)', description: 'Para notificaciones del sistema' },
-    { value: 'legal@welens.org', label: 'Legal (legal@welens.org)', description: 'Para asuntos legales' },
-    { value: 'privacy@welens.org', label: 'Privacy (privacy@welens.org)', description: 'Para temas de privacidad' },
-    { value: 'careers@welens.org', label: 'Careers (careers@welens.org)', description: 'Para recursos humanos' },
-  ];
+  const emailAliases = Object.entries(EMAIL_ADDRESSES).map(([key, email]) => ({
+    value: email,
+    label: `${EMAIL_NAMES[key as keyof typeof EMAIL_NAMES]} (${email})`,
+    description: {
+      data: 'Para notificaciones del sistema y cuenta principal',
+      shipping: 'Para notificaciones de pedidos y envíos',
+      soporte: 'Para atención al cliente',
+      support: 'Para soporte técnico en inglés',
+      hola: 'Para mensajes generales y bienvenida',
+      legal: 'Para asuntos legales',
+      privacy: 'Para temas de privacidad',
+      careers: 'Para recursos humanos'
+    }[key] || 'Email corporativo'
+  }));
 
   const filteredOrders = filterStatus === "all" 
     ? orders 
