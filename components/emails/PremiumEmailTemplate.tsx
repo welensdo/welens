@@ -130,9 +130,9 @@ export default function PremiumEmailTemplate({
           <div className="header">
             <div className="logo">
               <img 
-                src="https://welens.org/logo2.PNG" 
+                src="https://welens.org/og-image.png" 
                 alt="WeLens" 
-                style={{ height: '32px', width: 'auto' }}
+                style={{ height: '120px', width: 'auto' }}
               />
             </div>
             <h1>{title}</h1>
