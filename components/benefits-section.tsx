@@ -90,7 +90,7 @@ export default function BenefitsSection() {
 
   return (
     <>
-      <div className="w-full py-20 lg:py-40 bg-studio-mist">
+      <div className="w-full pt-32 pb-32 lg:pt-52 lg:pb-52 bg-studio-mist">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection animation="fade-up" className="flex flex-col gap-4 mb-12">
             <Badge variant="secondary">Por qué WeLens</Badge>

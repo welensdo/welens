@@ -24,11 +24,11 @@ export default function UltrathinVideoSection() {
       const scrollPosition = window.scrollY;
       const windowHeight = window.innerHeight;
 
-      // Get the absolute position of the video container (same logic as hero video)
+      // Get the absolute position of the video container (EXACT same logic as hero)
       const containerRect = container.getBoundingClientRect();
       const containerTop = scrollPosition + containerRect.top;
       
-      // Restore proper animation range that worked before
+      // START ANIMATION EARLIER so video reaches frame 0 sooner (EXACT same as hero)
       const animationStart = Math.max(0, containerTop - (windowHeight * 1.5));
       const animationEnd = containerTop + (windowHeight * 2);
       const animationRange = animationEnd - animationStart;
@@ -70,19 +70,17 @@ export default function UltrathinVideoSection() {
       }
     };
 
-    // Initial call
-    handleScroll();
-    
-    // Add scroll listeners (same as hero video)
+    // MULTIPLE scroll event listeners to ensure it never loses reception (EXACT same as hero)
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("touchmove", onScroll, { passive: true });
+    window.addEventListener("touchmove", onScroll, { passive: true }); // For mobile
+    document.addEventListener("scroll", onScroll, { passive: true }); // Backup
     window.addEventListener("resize", handleScroll, { passive: true });
 
-    // Load video metadata and data (copied from hero video)
+    // Load video metadata and data (copied exactly from hero video)
     const handleLoadedMetadata = () => {
       console.log("Ultrathin video metadata loaded");
       setIsVideoReady(true);
-      // Set video to start at time 0 and keep it there
+      // Set video to start at time 0 (case closed) and keep it there
       if (video.duration && isFinite(video.duration)) {
         video.currentTime = 0;
       }
@@ -91,7 +89,7 @@ export default function UltrathinVideoSection() {
     const handleLoadedData = () => {
       console.log("Ultrathin video data loaded");
       setIsVideoReady(true);
-      // Set video to start at time 0 and keep it there
+      // Set video to start at time 0 (case closed) and keep it there
       if (video.duration && isFinite(video.duration)) {
         video.currentTime = 0;
       }
@@ -100,7 +98,7 @@ export default function UltrathinVideoSection() {
     const handleCanPlay = () => {
       console.log("Ultrathin video can play");
       setIsVideoReady(true);
-      // Set video to start at time 0 and keep it there
+      // Set video to start at time 0 (case closed) and keep it there
       if (video.duration && isFinite(video.duration)) {
         video.currentTime = 0;
       }
@@ -116,6 +114,9 @@ export default function UltrathinVideoSection() {
     video.addEventListener("loadeddata", handleLoadedData);
     video.addEventListener("canplay", handleCanPlay);
     video.addEventListener("error", handleError);
+    
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", handleScroll, { passive: true });
 
     // Force load the video and set initial time (same as hero video)
     video.load();
@@ -131,15 +132,16 @@ export default function UltrathinVideoSection() {
       video.removeEventListener("error", handleError);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("touchmove", onScroll);
+      document.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", handleScroll);
     };
   }, [isVideoReady]);
 
   return (
     <div
-      ref={containerRef} 
+      ref={containerRef}
       className="relative w-full bg-gallery-white"
-      style={{ height: "200vh" }}
+      style={{ height: "300vh" }}
       id="como-funciona"
     >
       <div className="sticky top-0 h-screen overflow-hidden z-10">
@@ -159,8 +161,8 @@ export default function UltrathinVideoSection() {
             </div>
           </AnimatedSection>
           
-          <AnimatedSection animation="fade-up" delay={300} className="flex-1 w-full flex items-center">
-            <div className="relative aspect-video w-full h-full max-h-[60vh] overflow-hidden rounded-3xl select-none bg-studio-mist">
+          <AnimatedSection animation="fade-up" delay={300} className="w-full">
+            <div className="relative aspect-video w-full overflow-hidden rounded-3xl select-none bg-studio-mist">
               {/* Video Container */}
               <video
                 ref={videoRef}
@@ -174,7 +176,7 @@ export default function UltrathinVideoSection() {
                 Tu navegador no soporta videos HTML5.
               </video>
 
-              {/* Progress indicator - simple like hero video */}
+              {/* Progress indicator */}
               {!isVideoComplete && (
                 <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-gallery-white/90 backdrop-blur-sm px-4 py-2 rounded-full z-10">
                   <p className="text-compact-control font-semibold text-ink">
