@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://welens.com/sitemap.xml
+
+# Disallow admin and API routes
+Disallow: /admin/
+Disallow: /api/
+Disallow: /auth/
+
+# Allow important pages
+Allow: /
+Allow: /configurador
+Allow: /checkout
+Allow: /accesorios
+Allow: /soporte
+Allow: /contacto

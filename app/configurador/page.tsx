@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useCart } from "@/contexts/CartContext";
@@ -33,21 +33,20 @@ export default function ConfiguradorPage() {
   const hipermetropiaOptions = [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0];
   const presbiciaOptions = [1.0, 1.25, 1.5, 1.75, 2.0, 2.5, 2.75, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0];
 
-  const calculateExtraCost = (value: number): number => {
+  const calculateExtraCost = useCallback((value: number): number => {
     const absValue = Math.abs(value);
     if (absValue <= 4.0) return 0;
     
-    // Por cada 1.0 que pase de 4.0, cobramos $12
     const unitsOver = Math.ceil(absValue - 4.0);
     return unitsOver * 12;
-  };
+  }, []);
 
-  const calculateTotalPrice = (): number => {
+  const calculateTotalPrice = useCallback((): number => {
     const basePrice = 50;
     const leftExtraCost = leftEye.type ? calculateExtraCost(leftEye.value) : 0;
     const rightExtraCost = rightEye.type ? calculateExtraCost(rightEye.value) : 0;
     return basePrice + leftExtraCost + rightExtraCost;
-  };
+  }, [leftEye, rightEye, calculateExtraCost]);
 
   const getOptionsForType = (type: CorrectionType) => {
     switch (type) {
@@ -113,13 +112,13 @@ export default function ConfiguradorPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <motion.div 
-            className="flex flex-col gap-4 mb-12 text-center"
+            className="flex flex-col gap-3 mb-8 text-center"
             variants={itemVariants}
           >
             <div className="flex justify-center">
               <Badge variant="secondary">Configurador</Badge>
             </div>
-            <h1 className="text-4xl sm:text-6xl lg:text-hero-display font-semibold text-ink tracking-tight">
+            <h1 className="text-3xl sm:text-4xl font-semibold text-ink tracking-tight">
               Tu graduación perfecta
             </h1>
             <p className="text-body max-w-2xl mx-auto text-slate">
@@ -127,14 +126,14 @@ export default function ConfiguradorPage() {
             </p>
           </motion.div>
 
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
             {/* Product Preview */}
             <motion.div 
               className="order-2 lg:order-1"
               variants={itemVariants}
             >
               <div className="sticky top-24">
-                <div className="bg-studio-mist rounded-3xl p-8 lg:p-12 w-full aspect-[16/9] flex items-center justify-center">
+                <div className="bg-studio-mist rounded-3xl p-6 lg:p-8 w-full aspect-[16/9] flex items-center justify-center">
                   <div className="relative w-full h-full flex items-center justify-center">
                     <div className="relative w-full h-full">
                       <div className="absolute inset-0 flex items-center justify-center">
@@ -255,14 +254,14 @@ export default function ConfiguradorPage() {
               <div className="space-y-6">
                 {/* Left Eye */}
                 <motion.div 
-                  className="bg-gallery-white border border-hairline-silver rounded-3xl p-6 lg:p-10"
+                  className="bg-gallery-white border border-hairline-silver rounded-3xl p-5 lg:p-6"
                   variants={cardVariants}
                   whileHover={{ scale: 1.02 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <div className="flex justify-between items-start mb-8">
+                  <div className="flex justify-between items-start mb-6">
                     <div>
-                      <h3 className="text-2xl lg:text-3xl font-semibold text-ink mb-1">
+                      <h3 className="text-xl font-semibold text-ink mb-1">
                         Ojo izquierdo
                       </h3>
                       {leftEye.type && (
@@ -282,12 +281,12 @@ export default function ConfiguradorPage() {
                     )}
                   </div>
 
-                  <div className="space-y-8">
+                  <div className="space-y-6">
                     {/* Type Selection - Pills */}
-                    <div className="flex flex-wrap gap-3">
+                    <div className="flex flex-wrap gap-2">
                       <button
                         onClick={() => setLeftEye({ type: "miopia", value: -1.0 })}
-                        className={`flex-1 min-w-[140px] px-5 py-4 rounded-full text-center transition-all font-medium ${
+                        className={`flex-1 min-w-[120px] px-4 py-3 rounded-full text-center transition-all font-medium text-sm ${
                           leftEye.type === "miopia"
                             ? "bg-ink text-gallery-white shadow-lg"
                             : "bg-studio-mist text-ink hover:bg-control-gray"
@@ -297,7 +296,7 @@ export default function ConfiguradorPage() {
                       </button>
                       <button
                         onClick={() => setLeftEye({ type: "hipermetropia", value: 1.0 })}
-                        className={`flex-1 min-w-[140px] px-5 py-4 rounded-full text-center transition-all font-medium ${
+                        className={`flex-1 min-w-[120px] px-4 py-3 rounded-full text-center transition-all font-medium text-sm ${
                           leftEye.type === "hipermetropia"
                             ? "bg-ink text-gallery-white shadow-lg"
                             : "bg-studio-mist text-ink hover:bg-control-gray"
@@ -307,7 +306,7 @@ export default function ConfiguradorPage() {
                       </button>
                       <button
                         onClick={() => setLeftEye({ type: "presbicia", value: 1.0 })}
-                        className={`flex-1 min-w-[140px] px-5 py-4 rounded-full text-center transition-all font-medium ${
+                        className={`flex-1 min-w-[120px] px-4 py-3 rounded-full text-center transition-all font-medium text-sm ${
                           leftEye.type === "presbicia"
                             ? "bg-ink text-gallery-white shadow-lg"
                             : "bg-studio-mist text-ink hover:bg-control-gray"
@@ -321,17 +320,38 @@ export default function ConfiguradorPage() {
                     {leftEye.type && (
                       <div>
                         <label className="block text-body-small font-medium text-ink mb-4">
-                          Graduación
+                          Graduación: {leftEye.value > 0 ? "+" : ""}{leftEye.value.toFixed(2)}
                         </label>
+                        
+                        {/* Slider */}
+                        <div className="mb-6">
+                          <input
+                            type="range"
+                            min={leftEye.type === "miopia" ? -6.0 : leftEye.type === "hipermetropia" ? 1.0 : 1.0}
+                            max={leftEye.type === "miopia" ? -1.0 : leftEye.type === "hipermetropia" ? 6.0 : 6.0}
+                            step="0.25"
+                            value={leftEye.value}
+                            onChange={(e) =>
+                              setLeftEye({ ...leftEye, value: parseFloat(e.target.value) })
+                            }
+                            className="slider w-full h-2 bg-studio-mist rounded-lg appearance-none cursor-pointer"
+                          />
+                          <div className="flex justify-between text-compact-control text-slate mt-2">
+                            <span>{leftEye.type === "miopia" ? "-6.0" : "+1.0"}</span>
+                            <span>{leftEye.type === "miopia" ? "-1.0" : "+6.0"}</span>
+                          </div>
+                        </div>
+
+                        {/* Quick Options */}
                         <div className="grid grid-cols-4 gap-2">
-                          {getOptionsForType(leftEye.type).map((option) => (
+                          {getOptionsForType(leftEye.type).slice(0, 8).map((option) => (
                             <button
                               key={option}
                               onClick={() =>
                                 setLeftEye({ ...leftEye, value: option })
                               }
                               className={`px-3 py-3 rounded-2xl text-compact-control font-medium transition-all ${
-                                leftEye.value === option
+                                Math.abs(leftEye.value - option) < 0.01
                                   ? "bg-pricing-blue text-gallery-white shadow-lg"
                                   : "bg-studio-mist text-ink hover:bg-control-gray"
                               }`}
@@ -348,14 +368,14 @@ export default function ConfiguradorPage() {
 
                 {/* Right Eye */}
                 <motion.div 
-                  className="bg-gallery-white border border-hairline-silver rounded-3xl p-6 lg:p-10"
+                  className="bg-gallery-white border border-hairline-silver rounded-3xl p-5 lg:p-6"
                   variants={cardVariants}
                   whileHover={{ scale: 1.02 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <div className="flex justify-between items-start mb-8">
+                  <div className="flex justify-between items-start mb-6">
                     <div>
-                      <h3 className="text-2xl lg:text-3xl font-semibold text-ink mb-1">
+                      <h3 className="text-xl font-semibold text-ink mb-1">
                         Ojo derecho
                       </h3>
                       {rightEye.type && (
@@ -375,12 +395,12 @@ export default function ConfiguradorPage() {
                     )}
                   </div>
 
-                  <div className="space-y-8">
+                  <div className="space-y-6">
                     {/* Type Selection - Pills */}
-                    <div className="flex flex-wrap gap-3">
+                    <div className="flex flex-wrap gap-2">
                       <button
                         onClick={() => setRightEye({ type: "miopia", value: -1.0 })}
-                        className={`flex-1 min-w-[140px] px-5 py-4 rounded-full text-center transition-all font-medium ${
+                        className={`flex-1 min-w-[120px] px-4 py-3 rounded-full text-center transition-all font-medium text-sm ${
                           rightEye.type === "miopia"
                             ? "bg-ink text-gallery-white shadow-lg"
                             : "bg-studio-mist text-ink hover:bg-control-gray"
@@ -390,7 +410,7 @@ export default function ConfiguradorPage() {
                       </button>
                       <button
                         onClick={() => setRightEye({ type: "hipermetropia", value: 1.0 })}
-                        className={`flex-1 min-w-[140px] px-5 py-4 rounded-full text-center transition-all font-medium ${
+                        className={`flex-1 min-w-[120px] px-4 py-3 rounded-full text-center transition-all font-medium text-sm ${
                           rightEye.type === "hipermetropia"
                             ? "bg-ink text-gallery-white shadow-lg"
                             : "bg-studio-mist text-ink hover:bg-control-gray"
@@ -400,7 +420,7 @@ export default function ConfiguradorPage() {
                       </button>
                       <button
                         onClick={() => setRightEye({ type: "presbicia", value: 1.0 })}
-                        className={`flex-1 min-w-[140px] px-5 py-4 rounded-full text-center transition-all font-medium ${
+                        className={`flex-1 min-w-[120px] px-4 py-3 rounded-full text-center transition-all font-medium text-sm ${
                           rightEye.type === "presbicia"
                             ? "bg-ink text-gallery-white shadow-lg"
                             : "bg-studio-mist text-ink hover:bg-control-gray"
@@ -414,17 +434,38 @@ export default function ConfiguradorPage() {
                     {rightEye.type && (
                       <div>
                         <label className="block text-body-small font-medium text-ink mb-4">
-                          Graduación
+                          Graduación: {rightEye.value > 0 ? "+" : ""}{rightEye.value.toFixed(2)}
                         </label>
+                        
+                        {/* Slider */}
+                        <div className="mb-6">
+                          <input
+                            type="range"
+                            min={rightEye.type === "miopia" ? -6.0 : rightEye.type === "hipermetropia" ? 1.0 : 1.0}
+                            max={rightEye.type === "miopia" ? -1.0 : rightEye.type === "hipermetropia" ? 6.0 : 6.0}
+                            step="0.25"
+                            value={rightEye.value}
+                            onChange={(e) =>
+                              setRightEye({ ...rightEye, value: parseFloat(e.target.value) })
+                            }
+                            className="slider w-full h-2 bg-studio-mist rounded-lg appearance-none cursor-pointer"
+                          />
+                          <div className="flex justify-between text-compact-control text-slate mt-2">
+                            <span>{rightEye.type === "miopia" ? "-6.0" : "+1.0"}</span>
+                            <span>{rightEye.type === "miopia" ? "-1.0" : "+6.0"}</span>
+                          </div>
+                        </div>
+
+                        {/* Quick Options */}
                         <div className="grid grid-cols-4 gap-2">
-                          {getOptionsForType(rightEye.type).map((option) => (
+                          {getOptionsForType(rightEye.type).slice(0, 8).map((option) => (
                             <button
                               key={option}
                               onClick={() =>
                                 setRightEye({ ...rightEye, value: option })
                               }
                               className={`px-3 py-3 rounded-2xl text-compact-control font-medium transition-all ${
-                                rightEye.value === option
+                                Math.abs(rightEye.value - option) < 0.01
                                   ? "bg-pricing-blue text-gallery-white shadow-lg"
                                   : "bg-studio-mist text-ink hover:bg-control-gray"
                               }`}

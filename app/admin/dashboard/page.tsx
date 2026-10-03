@@ -74,6 +74,11 @@ export default function AdminDashboard() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [updateLoading, setUpdateLoading] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string>("all");
+  
+  // Delete order states
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState<Order | null>(null);
+  const [deletePassword, setDeletePassword] = useState("");
 
   const [updateForm, setUpdateForm] = useState({
     status: "",
@@ -128,6 +133,40 @@ export default function AdminDashboard() {
       alert("Error al actualizar el pedido");
     } finally {
       setUpdateLoading(false);
+    }
+  };
+
+  const handleDeleteOrder = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!showDeleteModal) return;
+
+    setDeleteLoading(true);
+    try {
+      const response = await fetch("/api/admin/delete-order", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderNumber: showDeleteModal.orderNumber,
+          password: deletePassword,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.error || "Error al eliminar el pedido");
+        return;
+      }
+
+      // Success
+      alert(`Orden ${showDeleteModal.orderNumber} eliminada exitosamente`);
+      await loadOrders();
+      setShowDeleteModal(null);
+      setDeletePassword("");
+    } catch (error) {
+      alert("Error al eliminar el pedido");
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -302,19 +341,27 @@ export default function AdminDashboard() {
                         </p>
                       </td>
                       <td className="px-6 py-4">
-                        <button
-                          onClick={() => {
-                            setSelectedOrder(order);
-                            setUpdateForm({
-                              status: order.status,
-                              trackingNumber: order.trackingNumber || "",
-                              note: "",
-                            });
-                          }}
-                          className="px-4 py-2 bg-pricing-blue hover:bg-pricing-blue/90 text-gallery-white rounded-full text-compact-control font-medium transition-colors"
-                        >
-                          Ver / Editar
-                        </button>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {
+                              setSelectedOrder(order);
+                              setUpdateForm({
+                                status: order.status,
+                                trackingNumber: order.trackingNumber || "",
+                                note: "",
+                              });
+                            }}
+                            className="px-4 py-2 bg-pricing-blue hover:bg-pricing-blue/90 text-gallery-white rounded-full text-compact-control font-medium transition-colors"
+                          >
+                            Ver / Editar
+                          </button>
+                          <button
+                            onClick={() => setShowDeleteModal(order)}
+                            className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-full text-compact-control font-medium transition-colors"
+                          >
+                            Eliminar
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -484,6 +531,72 @@ export default function AdminDashboard() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Order Modal */}
+      {showDeleteModal && (
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowDeleteModal(null)}
+        >
+          <div
+            className="bg-gallery-white rounded-3xl p-8 max-w-md w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-ink mb-2">
+                Eliminar pedido
+              </h3>
+              <p className="text-body-small text-slate mb-4">
+                ¿Estás seguro de que quieres eliminar el pedido <span className="font-semibold text-ink">#{showDeleteModal.orderNumber}</span>?
+              </p>
+              <p className="text-compact-control text-red-600 bg-red-50 rounded-2xl p-3">
+                ⚠️ Esta acción no se puede deshacer
+              </p>
+            </div>
+
+            <form onSubmit={handleDeleteOrder} className="space-y-5">
+              <div>
+                <label className="block text-body-small font-medium text-ink mb-2">
+                  Contraseña de confirmación
+                </label>
+                <input
+                  type="password"
+                  value={deletePassword}
+                  onChange={(e) => setDeletePassword(e.target.value)}
+                  className="w-full px-4 py-3 rounded-2xl border-2 border-hairline-silver focus:border-red-500 focus:outline-none"
+                  placeholder="Ingresa la contraseña"
+                  required
+                />
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowDeleteModal(null);
+                    setDeletePassword("");
+                  }}
+                  className="flex-1 py-3 bg-studio-mist hover:bg-control-gray text-ink rounded-full font-medium transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={deleteLoading}
+                  className="flex-1 py-3 bg-red-500 hover:bg-red-600 disabled:bg-red-300 text-white rounded-full font-medium transition-colors"
+                >
+                  {deleteLoading ? "Eliminando..." : "Eliminar"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

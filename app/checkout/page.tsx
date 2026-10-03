@@ -1,28 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, memo } from "react";
 import { useRouter } from "next/navigation";
-import dynamic from "next/dynamic";
 import { useCart } from "@/contexts/CartContext";
+import PayPalCheckout from "@/components/PayPalCheckout";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { Badge } from "@/components/ui/badge";
 import { countries } from "@/lib/countries";
-
-// Lazy load PayPal buttons to avoid SSR issues
-const PayPalButtons = dynamic(
-  () => import("@paypal/react-paypal-js").then((mod) => ({ default: mod.PayPalButtons })),
-  { 
-    ssr: false,
-    loading: () => (
-      <div className="w-full py-4 bg-studio-mist rounded-full text-center text-slate">
-        Cargando PayPal...
-      </div>
-    )
-  }
-);
-
-export const dynamic = 'force-dynamic';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -77,7 +62,8 @@ export default function CheckoutPage() {
       });
   }, [cart, items, orderCompleted, router]); // Fixed dependencies
 
-  const createWeLensOrder = async (paymentData: any) => {
+  const createWeLensOrder = useCallback(async (paymentData: any) => {
+    setLoading(true);
     try {
       // Prepare all items for the order (same logic as before)
       const orderItems = [];
@@ -182,7 +168,7 @@ export default function CheckoutPage() {
       setError(err.message);
       setLoading(false);
     }
-  };
+  }, [cart, items, totalPrice, shippingData, router, clearCart]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -467,80 +453,6 @@ export default function CheckoutPage() {
                       />
                     </div>
                   </div>
-
-                  {/* Payment Methods */}
-                  <div className="space-y-4">
-                    <h4 className="text-body-small font-medium text-ink mb-3">
-                      Método de pago
-                    </h4>
-                    
-                    {/* PayPal Buttons */}
-                    <div className="w-full">
-                      <PayPalButtons
-                        style={{
-                          layout: "vertical",
-                          color: "gold",
-                          shape: "pill",
-                          label: "paypal",
-                        }}
-                        createOrder={async () => {
-                          try {
-                            const response = await fetch('/api/paypal/create-order', {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({ amount: totalPrice }),
-                            });
-                            const data = await response.json();
-                            return data.orderID;
-                          } catch (error) {
-                            console.error('Error creating PayPal order:', error);
-                            setError('Error al crear el pedido de PayPal');
-                          }
-                        }}
-                        onApprove={async (data) => {
-                          setLoading(true);
-                          try {
-                            // Capture PayPal payment
-                            const captureResponse = await fetch('/api/paypal/capture-order', {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({ orderID: data.orderID }),
-                            });
-                            
-                            const captureData = await captureResponse.json();
-                            
-                            if (captureData.success) {
-                              // Create order in our database
-                              await createWeLensOrder(captureData);
-                            } else {
-                              throw new Error('Error processing PayPal payment');
-                            }
-                          } catch (error: any) {
-                            setError(error.message);
-                            setLoading(false);
-                          }
-                        }}
-                        onError={(err) => {
-                          console.error('PayPal error:', err);
-                          setError('Error en el proceso de pago de PayPal');
-                        }}
-                        onCancel={() => {
-                          console.log('PayPal payment cancelled');
-                        }}
-                      />
-                    </div>
-
-                    {/* Alternative Manual Checkout */}
-                    <div className="pt-4 border-t border-hairline-silver">
-                      <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full py-4 bg-studio-mist hover:bg-control-gray disabled:bg-studio-mist disabled:text-slate text-ink rounded-full font-semibold transition-all border-2 border-hairline-silver hover:border-steel"
-                      >
-                        {loading ? "Procesando..." : `Pagar contra entrega • $${totalPrice.toFixed(2)}`}
-                      </button>
-                    </div>
-                  </div>
                 </form>
               </div>
             </div>
@@ -674,16 +586,29 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                <div className="mt-6 p-4 bg-pricing-blue/10 rounded-2xl">
-                  <p className="text-compact-control text-ink">
-                    ✓ Envío gratuito a todo el Caribe
-                  </p>
-                  <p className="text-compact-control text-ink">
-                    ✓ Garantía de satisfacción de 30 días
-                  </p>
-                  <p className="text-compact-control text-ink">
-                    ✓ Tiempo estimado: 1-3 semanas
-                  </p>
+
+
+                {/* Payment Section */}
+                <div className="mt-8 pt-6 border-t border-hairline-silver">
+                  <h3 className="text-lg font-semibold text-ink mb-4">
+                    Finalizar pago
+                  </h3>
+                  
+                  {error && (
+                    <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-2xl">
+                      <p className="text-body-small text-red-600">{error}</p>
+                    </div>
+                  )}
+                  
+                  {/* PayPal Checkout */}
+                  <PayPalCheckout
+                    totalPrice={totalPrice}
+                    onSuccess={createWeLensOrder}
+                    onError={setError}
+                    disabled={!shippingData.name || !shippingData.address || loading}
+                  />
+
+
                 </div>
               </div>
             </div>

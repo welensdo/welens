@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 
 interface BenefitModalProps {
@@ -11,12 +12,13 @@ interface BenefitModalProps {
     description: string;
     icon: React.ReactNode;
     fullDescription: string;
-    features: string[];
     image?: string;
   };
 }
 
 export default function BenefitModal({ isOpen, onClose, benefit }: BenefitModalProps) {
+  const router = useRouter();
+  
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -88,37 +90,16 @@ export default function BenefitModal({ isOpen, onClose, benefit }: BenefitModalP
                 {benefit.fullDescription}
               </p>
 
-              {/* Features List */}
-              <div className="space-y-4 mb-10">
-                {benefit.features.map((feature, index) => (
-                  <div 
-                    key={index} 
-                    className="flex items-start gap-4 group animate-in slide-in-from-left duration-500"
-                    style={{ animationDelay: `${index * 100}ms` }}
-                  >
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-pricing-blue/10 flex items-center justify-center mt-1 group-hover:bg-pricing-blue/20 transition-colors">
-                      <svg 
-                        className="w-4 h-4 text-pricing-blue" 
-                        fill="none" 
-                        viewBox="0 0 24 24" 
-                        stroke="currentColor"
-                        strokeWidth={2.5}
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                    <p className="text-body text-ink flex-1">{feature}</p>
-                  </div>
-                ))}
-              </div>
-
               {/* CTA */}
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
-                  onClick={onClose}
+                  onClick={() => {
+                    onClose();
+                    router.push('/configurador');
+                  }}
                   className="flex-1 px-8 py-4 bg-pricing-blue hover:bg-pricing-blue/90 text-gallery-white rounded-full font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-105"
                 >
-                  Empezar ahora
+                  Ir a configurador
                 </button>
                 <button
                   onClick={onClose}

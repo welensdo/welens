@@ -23,8 +23,18 @@ async function getPayPalAccessToken() {
 export async function POST(request: NextRequest) {
   try {
     const { amount } = await request.json();
+    console.log('Creating PayPal order for amount:', amount);
+
+    if (!amount || amount <= 0) {
+      console.error('Invalid amount:', amount);
+      return NextResponse.json(
+        { error: 'Valid amount is required' },
+        { status: 400 }
+      );
+    }
 
     const accessToken = await getPayPalAccessToken();
+    console.log('Access token obtained successfully');
 
     const orderData = {
       intent: 'CAPTURE',
@@ -32,7 +42,7 @@ export async function POST(request: NextRequest) {
         {
           amount: {
             currency_code: 'USD',
-            value: amount.toString(),
+            value: amount.toFixed(2), // Ensure proper formatting
           },
         },
       ],
@@ -44,6 +54,8 @@ export async function POST(request: NextRequest) {
       },
     };
 
+    console.log('Order data:', JSON.stringify(orderData, null, 2));
+
     const response = await fetch(`${PAYPAL_BASE_URL}/v2/checkout/orders`, {
       method: 'POST',
       headers: {
@@ -54,12 +66,22 @@ export async function POST(request: NextRequest) {
     });
 
     const order = await response.json();
+    console.log('PayPal create order response:', JSON.stringify(order, null, 2));
 
+    if (!response.ok) {
+      console.error('PayPal API error:', response.status, order);
+      return NextResponse.json(
+        { error: `PayPal API error: ${order.message || 'Unknown error'}` },
+        { status: response.status }
+      );
+    }
+
+    console.log('Order created successfully:', order.id);
     return NextResponse.json({ orderID: order.id });
   } catch (error) {
     console.error('PayPal create order error:', error);
     return NextResponse.json(
-      { error: 'Error creating PayPal order' },
+      { error: `Error creating PayPal order: ${error instanceof Error ? error.message : 'Unknown error'}` },
       { status: 500 }
     );
   }
