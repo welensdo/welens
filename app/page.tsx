@@ -1,7 +1,7 @@
 import Navbar from "@/components/navbar";
 import ScrollVideoHero from "@/components/scroll-video-hero";
 import FeaturesCarousel from "@/components/features-carousel";
-import ImageComparison from "@/components/image-comparison";
+import UltrathinVideoSection from "@/components/ultrathin-video-section";
 import HowItWorks from "@/components/how-it-works";
 import BenefitsSection from "@/components/benefits-section";
 import Footer from "@/components/footer";
@@ -12,7 +12,7 @@ export default function Home() {
       <Navbar />
       <ScrollVideoHero />
       <FeaturesCarousel />
-      <ImageComparison />
+      <UltrathinVideoSection />
       <BenefitsSection />
       <HowItWorks />
       <Footer />
