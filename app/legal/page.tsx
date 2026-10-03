@@ -97,10 +97,10 @@ export default function LegalPage() {
               Para consultas legales, contacta con nuestro departamento legal
             </p>
             <a
-              href="mailto:legal@welens.com"
+              href="mailto:legal@welens.org"
               className="inline-block bg-gallery-white hover:bg-gallery-white/90 text-pricing-blue text-body-emphasized font-semibold px-8 py-4 rounded-full transition-colors"
             >
-              legal@welens.com
+              legal@welens.org
             </a>
           </div>
         </section>

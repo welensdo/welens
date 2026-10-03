@@ -15,7 +15,7 @@ export const EMAIL_ADDRESSES = {
   support: 'support@welens.org',
   legal: 'legal@welens.org',
   privacy: 'privacy@welens.org',
-  hola: 'hola@welens.org',
+  hello: 'hello@welens.org',
 } as const;
 
 // Display names for each email address
@@ -27,7 +27,7 @@ export const EMAIL_NAMES = {
   support: 'WeLens Support',
   legal: 'WeLens Legal',
   privacy: 'WeLens Privacy',
-  hola: 'WeLens',
+  hello: 'WeLens',
 } as const;
 
 // Combined email aliases with proper Resend format

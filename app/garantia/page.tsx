@@ -199,7 +199,7 @@ export default function GarantiaPage() {
                     Contacta con soporte
                   </h3>
                   <p className="text-body text-slate">
-                    Envía un email a garantia@welens.com o contacta por chat en vivo desde tu
+                    Envía un email a soporte@welens.org o contacta por chat en vivo desde tu
                     panel de control. Incluye tu número de pedido.
                   </p>
                 </div>

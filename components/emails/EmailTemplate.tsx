@@ -45,7 +45,7 @@ export default function EmailTemplate({ children, previewText }: EmailTemplatePr
                   <tr>
                     <td style={{ padding: '40px 40px 30px', textAlign: 'center' }}>
                       <img 
-                        src="https://welens.com/favicon.png" 
+                        src="https://welens.org/favicon.png" 
                         alt="WeLens" 
                         width="120" 
                         height="120"
@@ -115,13 +115,13 @@ export default function EmailTemplate({ children, previewText }: EmailTemplatePr
                       
                       {/* Social Links */}
                       <div style={{ marginBottom: '24px' }}>
-                        <a href="https://welens.com" style={{
+                        <a href="https://welens.org" style={{
                           color: '#3B82F6',
                           textDecoration: 'none',
                           fontSize: '14px',
                           fontWeight: '500',
                         }}>
-                          Visitar welens.com
+                          Visitar welens.org
                         </a>
                       </div>
 

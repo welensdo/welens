@@ -111,7 +111,7 @@ export default function TerminosPage() {
                 <strong className="text-ink">6.1. Right of Return:</strong> You have 30 days from receipt to return the product without explanation. The product must be in its original condition.
               </p>
               <p className="mb-4">
-                <strong className="text-ink">6.2. Process:</strong> Contact support@welens.com to initiate a return. We will provide instructions and a return label.
+                <strong className="text-ink">6.2. Process:</strong> Contact support@welens.org to initiate a return. We will provide instructions and a return label.
               </p>
               <p className="mb-4">
                 <strong className="text-ink">6.3. Refund:</strong> We will process the refund within 14 days of receiving the return, using the original payment method.
@@ -197,7 +197,7 @@ export default function TerminosPage() {
               <p>
                 For any questions about these terms:
                 <br />
-                Email: <a href="mailto:legal@welens.com" className="text-pricing-blue hover:text-pricing-blue/80 underline">legal@welens.com</a>
+                Email: <a href="mailto:legal@welens.org" className="text-pricing-blue hover:text-pricing-blue/80 underline">legal@welens.org</a>
                 <br />
                 Phone: +1 809 504 2837
               </p>

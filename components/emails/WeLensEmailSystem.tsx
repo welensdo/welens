@@ -1,4 +1,5 @@
 import React from 'react';
+import { SupportedLanguage, getEmailTranslations, EmailTranslations } from '@/lib/email-i18n';
 
 // Design System Configuration
 export const EmailDesignSystem = {
@@ -88,10 +89,16 @@ export const EmailDesignSystem = {
 interface WeLensEmailProps {
   children: React.ReactNode;
   previewText?: string;
+  language?: SupportedLanguage;
 }
 
-export default function WeLensEmail({ children, previewText }: WeLensEmailProps) {
+export default function WeLensEmail({ 
+  children, 
+  previewText, 
+  language = 'es' 
+}: WeLensEmailProps) {
   const { colors, container, typography, spacing } = EmailDesignSystem;
+  const translations = getEmailTranslations(language);
 
   return (
     <html>
@@ -194,7 +201,7 @@ export default function WeLensEmail({ children, previewText }: WeLensEmailProps)
                         color: colors.secondary,
                         margin: 0
                       }}>
-                        © {new Date().getFullYear()} WeLens
+                        {translations.footer.copyright}
                       </p>
                     </div>
 
@@ -303,3 +310,83 @@ export const EmailSpacer: React.FC<{ size?: keyof typeof EmailDesignSystem.spaci
     height: EmailDesignSystem.spacing[size] 
   }} />
 );
+
+// Localized Footer Links Component
+export const EmailFooterLinks: React.FC<{ 
+  language?: SupportedLanguage;
+  unsubscribeUrl?: string;
+  supportUrl?: string;
+  style?: React.CSSProperties;
+}> = ({ 
+  language = 'es',
+  unsubscribeUrl,
+  supportUrl,
+  style = {} 
+}) => {
+  const translations = getEmailTranslations(language);
+  
+  return (
+    <div style={{
+      marginTop: EmailDesignSystem.spacing.md,
+      textAlign: 'center',
+      ...style
+    }}>
+      {unsubscribeUrl && (
+        <>
+          <a 
+            href={unsubscribeUrl}
+            style={{
+              ...EmailDesignSystem.typography.legal,
+              color: EmailDesignSystem.colors.secondary,
+              textDecoration: 'underline',
+              marginRight: EmailDesignSystem.spacing.sm
+            }}
+          >
+            {translations.footer.unsubscribe}
+          </a>
+          <span style={{
+            ...EmailDesignSystem.typography.legal,
+            color: EmailDesignSystem.colors.tertiary,
+            marginRight: EmailDesignSystem.spacing.sm
+          }}>
+            |
+          </span>
+        </>
+      )}
+      {supportUrl && (
+        <a 
+          href={supportUrl}
+          style={{
+            ...EmailDesignSystem.typography.legal,
+            color: EmailDesignSystem.colors.secondary,
+            textDecoration: 'underline'
+          }}
+        >
+          {translations.footer.contact}
+        </a>
+      )}
+    </div>
+  );
+};
+
+// Context Provider for Language (for complex templates)
+export const EmailLanguageContext = React.createContext<{
+  language: SupportedLanguage;
+  translations: EmailTranslations;
+}>({
+  language: 'es',
+  translations: getEmailTranslations('es')
+});
+
+export const useEmailTranslations = (language?: SupportedLanguage) => {
+  const context = React.useContext(EmailLanguageContext);
+  
+  if (language) {
+    return {
+      language,
+      translations: getEmailTranslations(language)
+    };
+  }
+  
+  return context;
+};

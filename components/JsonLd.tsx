@@ -4,8 +4,8 @@ export default function JsonLd() {
     "@type": "Organization",
     "name": "WeLens",
     "description": "Lentillas adhesivas de goma que transforman cualquier lente o gafa de sol en tu graduación perfecta",
-    "url": "https://welens.com",
-    "logo": "https://welens.com/favicon.png",
+    "url": "https://welens.org",
+    "logo": "https://welens.org/favicon.png",
     "sameAs": [
       "https://www.instagram.com/welens",
       "https://www.facebook.com/welens",

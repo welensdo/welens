@@ -1,4 +1,6 @@
 import { resend, EMAIL_ALIASES, getFromEmail } from './resend';
+import { SupportedLanguage, getEmailTranslations } from './email-i18n';
+import { LanguageDetectionService, detectLanguageForEmail } from './language-detection';
 import React from 'react';
 
 // Render email templates to string (server-side only)
@@ -8,6 +10,20 @@ async function renderEmailToString(element: React.ReactElement): Promise<string>
     return renderToString(element);
   }
   throw new Error('Email rendering should only happen on server side');
+}
+
+// Enhanced email service interfaces with language support
+interface UserLanguageData {
+  email: string;
+  name?: string;
+  country?: string;
+  languagePreference?: SupportedLanguage;
+}
+
+interface EmailContextData {
+  userAgent?: string;
+  acceptLanguage?: string;
+  country?: string;
 }
 
 interface OrderItem {
@@ -27,6 +43,22 @@ interface ShippingAddress {
   state: string;
   zipCode: string;
   country: string;
+}
+
+// Helper function to detect language for emails
+async function detectEmailLanguage(
+  userData: UserLanguageData,
+  context?: EmailContextData
+): Promise<SupportedLanguage> {
+  
+  // Use smart detection with all available signals
+  return LanguageDetectionService.detectSmart({
+    email: userData.email,
+    userPreference: userData.languagePreference,
+    country: userData.country || context?.country,
+    userAgent: context?.userAgent,
+    acceptLanguage: context?.acceptLanguage
+  });
 }
 
 export const emailService = {

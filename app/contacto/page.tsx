@@ -175,10 +175,10 @@ export default function ContactoPage() {
                         Respuesta en menos de 24 horas
                       </p>
                       <a
-                        href="mailto:hola@welens.com"
+                        href="mailto:hello@welens.org"
                         className="text-body-emphasized text-pricing-blue hover:text-pricing-blue/80"
                       >
-                        hola@welens.com
+                        hello@welens.org
                       </a>
                     </div>
                   </div>

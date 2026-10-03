@@ -7,8 +7,10 @@ import WeLensEmail, {
   EmailButton, 
   EmailSpacer,
   EmailDivider,
-  EmailDesignSystem 
+  EmailDesignSystem,
+  EmailFooterLinks
 } from './WeLensEmailSystem';
+import { SupportedLanguage, getEmailTranslations } from '@/lib/email-i18n';
 
 interface OrderStatusEmailProps {
   customerName: string;
@@ -16,40 +18,56 @@ interface OrderStatusEmailProps {
   status: string;
   trackingNumber?: string;
   note?: string;
+  language?: SupportedLanguage;
 }
-
-const statusLabels: Record<string, string> = {
-  pending: "Pendiente",
-  processing: "En proceso",
-  manufacturing: "Fabricando",
-  quality_check: "Control de calidad",
-  packaging: "Empacando",
-  shipped: "Enviado",
-  delivered: "Entregado",
-  cancelled: "Cancelado",
-};
 
 export default function OrderStatusEmail({
   customerName,
   orderNumber,
   status,
   trackingNumber,
-  note
+  note,
+  language = 'es'
 }: OrderStatusEmailProps) {
   
-  const statusLabel = statusLabels[status] || status;
+  const translations = getEmailTranslations(language);
+  const statusLabel = translations.orderStatus.statusMessages[status as keyof typeof translations.orderStatus.statusMessages] || status;
   const isShipped = status === 'shipped' || status === 'delivered';
+  
+  const orderUrl = language === 'en' 
+    ? `https://welens.org/en/dashboard/orders/${orderNumber}`
+    : `https://welens.org/dashboard/orders/${orderNumber}`;
+
+  const progressSteps = language === 'en' ? [
+    { key: 'pending', label: 'Pending' },
+    { key: 'processing', label: 'Processing' },
+    { key: 'manufacturing', label: 'Manufacturing' },
+    { key: 'shipped', label: 'Shipped' },
+    { key: 'delivered', label: 'Delivered' }
+  ] : [
+    { key: 'pending', label: 'Pendiente' },
+    { key: 'processing', label: 'En proceso' },
+    { key: 'manufacturing', label: 'Fabricando' },
+    { key: 'shipped', label: 'Enviado' },
+    { key: 'delivered', label: 'Entregado' }
+  ];
 
   return (
-    <WeLensEmail previewText={`Tu orden ${orderNumber} está ${statusLabel.toLowerCase()}`}>
+    <WeLensEmail 
+      previewText={translations.orderStatus.subject(orderNumber, statusLabel)}
+      language={language}
+    >
       
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: EmailDesignSystem.spacing.xl }}>
         <EmailHeadline>
-          Actualización de orden
+          {language === 'es' ? 'Actualización de orden' : 'Order Update'}
         </EmailHeadline>
         <EmailCaption>
-          Hola {customerName}, hay novedades sobre tu orden
+          {language === 'es' 
+            ? `Hola ${customerName}, hay novedades sobre tu orden`
+            : `Hello ${customerName}, there's an update on your order`
+          }
         </EmailCaption>
       </div>
 
@@ -62,7 +80,7 @@ export default function OrderStatusEmail({
         marginBottom: EmailDesignSystem.spacing.lg
       }}>
         <EmailCaption style={{ margin: `0 0 ${EmailDesignSystem.spacing.xs} 0` }}>
-          Orden #{orderNumber}
+          {language === 'es' ? `Orden #${orderNumber}` : `Order #${orderNumber}`}
         </EmailCaption>
         <EmailTitle style={{ 
           margin: 0,
@@ -76,7 +94,9 @@ export default function OrderStatusEmail({
       {note && (
         <>
           <EmailBody>
-            <strong>Actualización:</strong> {note}
+            <strong>
+              {language === 'es' ? 'Actualización:' : 'Update:'}
+            </strong> {note}
           </EmailBody>
           <EmailSpacer size="md" />
         </>
@@ -85,7 +105,7 @@ export default function OrderStatusEmail({
       {/* Tracking */}
       {trackingNumber && (
         <>
-          <EmailTitle>Número de seguimiento</EmailTitle>
+          <EmailTitle>{translations.orderStatus.trackingNumber}</EmailTitle>
           <div style={{ 
             backgroundColor: EmailDesignSystem.colors.surface,
             padding: EmailDesignSystem.spacing.md,
@@ -107,16 +127,12 @@ export default function OrderStatusEmail({
       )}
 
       {/* Progress */}
-      <EmailTitle>Progreso</EmailTitle>
+      <EmailTitle>
+        {language === 'es' ? 'Progreso' : 'Progress'}
+      </EmailTitle>
       
       <div style={{ marginBottom: EmailDesignSystem.spacing.lg }}>
-        {[
-          { key: 'pending', label: 'Pendiente' },
-          { key: 'processing', label: 'En proceso' },
-          { key: 'manufacturing', label: 'Fabricando' },
-          { key: 'shipped', label: 'Enviado' },
-          { key: 'delivered', label: 'Entregado' }
-        ].map((step, index, array) => {
+        {progressSteps.map((step, index, array) => {
           const stepOrder = ['pending', 'processing', 'manufacturing', 'quality_check', 'packaging', 'shipped', 'delivered'];
           const currentStepIndex = stepOrder.indexOf(status);
           const thisStepIndex = stepOrder.indexOf(step.key);
@@ -156,10 +172,18 @@ export default function OrderStatusEmail({
 
       {/* CTA */}
       <div style={{ textAlign: 'center' }}>
-        <EmailButton href={`https://welens.org/dashboard/orders/${orderNumber}`}>
-          Ver detalles
+        <EmailButton href={orderUrl}>
+          {language === 'es' ? 'Ver detalles' : 'View details'}
         </EmailButton>
       </div>
+
+      <EmailSpacer size="lg" />
+
+      {/* Footer Links */}
+      <EmailFooterLinks 
+        language={language}
+        supportUrl={language === 'en' ? 'https://welens.org/en/support' : 'https://welens.org/soporte'}
+      />
 
     </WeLensEmail>
   );

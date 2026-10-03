@@ -7,8 +7,10 @@ import WeLensEmail, {
   EmailButton, 
   EmailSpacer,
   EmailDivider,
-  EmailDesignSystem 
+  EmailDesignSystem,
+  EmailFooterLinks
 } from './WeLensEmailSystem';
+import { SupportedLanguage, getEmailTranslations } from '@/lib/email-i18n';
 
 interface OrderItem {
   itemType: 'lens' | 'accessory';
@@ -41,6 +43,7 @@ interface OrderConfirmationEmailProps {
   total: number;
   shippingAddress: ShippingAddress;
   estimatedDelivery: string;
+  language?: SupportedLanguage;
 }
 
 export default function OrderConfirmationEmail({
@@ -53,28 +56,69 @@ export default function OrderConfirmationEmail({
   tax,
   total,
   shippingAddress,
-  estimatedDelivery
+  estimatedDelivery,
+  language = 'es'
 }: OrderConfirmationEmailProps) {
   
+  const translations = getEmailTranslations(language);
+  
   const formatCurrency = (amount: number) => `$${amount.toFixed(2)}`;
+  
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-ES', {
+    const locale = language === 'en' ? 'en-US' : 'es-ES';
+    return new Date(dateString).toLocaleDateString(locale, {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     });
   };
 
+  const getLensDescription = (item: OrderItem) => {
+    if (language === 'en') {
+      return (
+        <>
+          {item.eye} Lens - {item.type}
+          {item.value !== undefined && (
+            <EmailCaption style={{ margin: 0 }}>
+              Prescription: {item.value > 0 ? '+' : ''}{item.value}
+            </EmailCaption>
+          )}
+        </>
+      );
+    } else {
+      return (
+        <>
+          Lente {item.eye} - {item.type}
+          {item.value !== undefined && (
+            <EmailCaption style={{ margin: 0 }}>
+              Graduación: {item.value > 0 ? '+' : ''}{item.value}
+            </EmailCaption>
+          )}
+        </>
+      );
+    }
+  };
+
+  const orderUrl = language === 'en' 
+    ? `https://welens.org/en/dashboard/orders/${orderNumber}`
+    : `https://welens.org/dashboard/orders/${orderNumber}`;
+
   return (
-    <WeLensEmail previewText={`Tu orden ${orderNumber} ha sido confirmada`}>
+    <WeLensEmail 
+      previewText={translations.orderConfirmation.headline(orderNumber)}
+      language={language}
+    >
       
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: EmailDesignSystem.spacing.xl }}>
         <EmailHeadline>
-          Orden confirmada
+          {translations.orderConfirmation.headline(orderNumber)}
         </EmailHeadline>
         <EmailCaption>
-          Hola {customerName}, hemos recibido tu orden
+          {language === 'es' 
+            ? `Hola ${customerName}, ${translations.orderConfirmation.thankYou.toLowerCase()}`
+            : `Hello ${customerName}, ${translations.orderConfirmation.thankYou.toLowerCase()}`
+          }
         </EmailCaption>
       </div>
 
@@ -88,11 +132,11 @@ export default function OrderConfirmationEmail({
         <table width="100%" cellPadding="0" cellSpacing="0">
           <tr>
             <td>
-              <EmailCaption style={{ margin: 0 }}>Número de orden</EmailCaption>
+              <EmailCaption style={{ margin: 0 }}>{translations.orderConfirmation.orderNumber}</EmailCaption>
               <EmailBody style={{ margin: 0, fontWeight: '500' }}>#{orderNumber}</EmailBody>
             </td>
             <td align="right">
-              <EmailCaption style={{ margin: 0 }}>Fecha</EmailCaption>
+              <EmailCaption style={{ margin: 0 }}>{translations.orderConfirmation.orderDate}</EmailCaption>
               <EmailBody style={{ margin: 0, fontWeight: '500' }}>{formatDate(orderDate)}</EmailBody>
             </td>
           </tr>
@@ -100,7 +144,7 @@ export default function OrderConfirmationEmail({
       </div>
 
       {/* Items */}
-      <EmailTitle>Artículos</EmailTitle>
+      <EmailTitle>{translations.orderConfirmation.items}</EmailTitle>
       
       {items.map((item, index) => (
         <div key={index}>
@@ -108,20 +152,11 @@ export default function OrderConfirmationEmail({
             <tr>
               <td style={{ verticalAlign: 'top' }}>
                 <EmailBody style={{ margin: 0 }}>
-                  {item.itemType === 'lens' ? (
-                    <>
-                      Lente {item.eye} - {item.type}
-                      {item.value !== undefined && (
-                        <EmailCaption style={{ margin: 0 }}>
-                          Graduación: {item.value > 0 ? '+' : ''}{item.value}
-                        </EmailCaption>
-                      )}
-                    </>
-                  ) : (
-                    item.name
-                  )}
+                  {item.itemType === 'lens' ? getLensDescription(item) : item.name}
                   {item.quantity && item.quantity > 1 && (
-                    <EmailCaption style={{ margin: 0 }}>Cantidad: {item.quantity}</EmailCaption>
+                    <EmailCaption style={{ margin: 0 }}>
+                      {language === 'es' ? `Cantidad: ${item.quantity}` : `Quantity: ${item.quantity}`}
+                    </EmailCaption>
                   )}
                 </EmailBody>
               </td>
@@ -140,20 +175,20 @@ export default function OrderConfirmationEmail({
       {/* Totals */}
       <table width="100%" cellPadding="0" cellSpacing="0">
         <tr>
-          <td><EmailBody style={{ margin: 0 }}>Subtotal</EmailBody></td>
+          <td><EmailBody style={{ margin: 0 }}>{translations.orderConfirmation.subtotal}</EmailBody></td>
           <td align="right"><EmailBody style={{ margin: 0 }}>{formatCurrency(subtotal)}</EmailBody></td>
         </tr>
         <tr>
-          <td><EmailBody style={{ margin: 0 }}>Envío</EmailBody></td>
+          <td><EmailBody style={{ margin: 0 }}>{translations.orderConfirmation.shipping}</EmailBody></td>
           <td align="right"><EmailBody style={{ margin: 0 }}>{formatCurrency(shipping)}</EmailBody></td>
         </tr>
         <tr>
-          <td><EmailBody style={{ margin: 0 }}>Impuestos</EmailBody></td>
+          <td><EmailBody style={{ margin: 0 }}>{translations.orderConfirmation.tax}</EmailBody></td>
           <td align="right"><EmailBody style={{ margin: 0 }}>{formatCurrency(tax)}</EmailBody></td>
         </tr>
         <tr style={{ borderTop: `1px solid ${EmailDesignSystem.colors.divider}` }}>
           <td style={{ paddingTop: EmailDesignSystem.spacing.sm }}>
-            <EmailBody style={{ margin: 0, fontWeight: '600' }}>Total</EmailBody>
+            <EmailBody style={{ margin: 0, fontWeight: '600' }}>{translations.orderConfirmation.total}</EmailBody>
           </td>
           <td align="right" style={{ paddingTop: EmailDesignSystem.spacing.sm }}>
             <EmailBody style={{ margin: 0, fontWeight: '600' }}>{formatCurrency(total)}</EmailBody>
@@ -164,7 +199,7 @@ export default function OrderConfirmationEmail({
       <EmailSpacer size="lg" />
 
       {/* Shipping */}
-      <EmailTitle>Dirección de envío</EmailTitle>
+      <EmailTitle>{translations.orderConfirmation.shippingAddress}</EmailTitle>
       <EmailBody style={{ margin: 0 }}>
         {shippingAddress.name}<br />
         {shippingAddress.street}<br />
@@ -175,17 +210,31 @@ export default function OrderConfirmationEmail({
       <EmailSpacer size="md" />
 
       <EmailCaption>
-        Entrega estimada: {formatDate(estimatedDelivery)}
+        {translations.orderConfirmation.estimatedDelivery}: {formatDate(estimatedDelivery)}
+      </EmailCaption>
+
+      <EmailSpacer size="md" />
+
+      <EmailCaption>
+        {translations.orderConfirmation.trackingInfo}
       </EmailCaption>
 
       <EmailSpacer size="lg" />
 
       {/* CTA */}
       <div style={{ textAlign: 'center' }}>
-        <EmailButton href={`https://welens.org/dashboard/orders/${orderNumber}`}>
-          Ver orden
+        <EmailButton href={orderUrl}>
+          {language === 'es' ? 'Ver orden' : 'View order'}
         </EmailButton>
       </div>
+
+      <EmailSpacer size="lg" />
+
+      {/* Footer Links */}
+      <EmailFooterLinks 
+        language={language}
+        supportUrl={language === 'en' ? 'https://welens.org/en/support' : 'https://welens.org/soporte'}
+      />
 
     </WeLensEmail>
   );

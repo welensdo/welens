@@ -321,10 +321,10 @@ export default function AccesibilidadPage() {
                     <span>
                       <strong className="text-ink">Email:</strong>{" "}
                       <a
-                        href="mailto:accesibilidad@welens.com"
+                        href="mailto:accesibilidad@welens.org"
                         className="text-pricing-blue hover:text-pricing-blue/80 underline"
                       >
-                        accesibilidad@welens.com
+                        accesibilidad@welens.org
                       </a>
                     </span>
                   </li>
@@ -400,7 +400,7 @@ export default function AccesibilidadPage() {
               <div className="space-y-4 text-body text-slate">
                 <p>
                   Esta declaración de accesibilidad se aplica a{" "}
-                  <strong className="text-ink">welens.com</strong>
+                  <strong className="text-ink">welens.org</strong>
                 </p>
                 <p>
                   Declaramos que nuestro sitio web es{" "}
@@ -428,10 +428,10 @@ export default function AccesibilidadPage() {
               Estamos aquí para ayudarte. Contacta con nuestro equipo de accesibilidad.
             </p>
             <a
-              href="mailto:accesibilidad@welens.com"
+              href="mailto:accesibilidad@welens.org"
               className="inline-block bg-gallery-white hover:bg-gallery-white/90 text-pricing-blue text-body-emphasized font-semibold px-8 py-4 rounded-full transition-colors"
             >
-              accesibilidad@welens.com
+              accesibilidad@welens.org
             </a>
           </div>
         </section>

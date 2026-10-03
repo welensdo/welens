@@ -361,10 +361,10 @@ export default function CookiesPage() {
                   <br />
                   Email:{" "}
                   <a
-                    href="mailto:privacidad@welens.com"
+                    href="mailto:privacy@welens.org"
                     className="text-pricing-blue hover:text-pricing-blue/80 underline"
                   >
-                    privacidad@welens.com
+                    privacy@welens.org
                   </a>
                   <br />
                   Teléfono: +1 809 504 2837

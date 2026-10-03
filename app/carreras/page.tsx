@@ -125,7 +125,7 @@ export default function CarrerasPage() {
                     </div>
                   </div>
                   <a
-                    href={`mailto:careers@welens.com?subject=Aplicación para ${position.title}&body=Hola,%0D%0A%0D%0AEstoy interesado/a en la posición de ${position.title}.%0D%0A%0D%0ANombre:%0D%0ATeléfono:%0D%0ALinkedIn:%0D%0A%0D%0A[Adjunta tu CV]%0D%0A%0D%0ASaludos`}
+                    href={`mailto:careers@welens.org?subject=Aplicación para ${position.title}&body=Hola,%0D%0A%0D%0AEstoy interesado/a en la posición de ${position.title}.%0D%0A%0D%0ANombre:%0D%0ATeléfono:%0D%0ALinkedIn:%0D%0A%0D%0A[Adjunta tu CV]%0D%0A%0D%0ASaludos`}
                     className="bg-pricing-blue hover:bg-pricing-blue/90 text-gallery-white text-compact-control font-normal px-6 py-2.5 rounded-full transition-colors whitespace-nowrap"
                   >
                     Postularme
@@ -153,7 +153,7 @@ export default function CarrerasPage() {
                     Aplicación
                   </h3>
                   <p className="text-body text-slate">
-                    Envía tu CV y carta de presentación a careers@welens.com
+                    Envía tu CV y carta de presentación a careers@welens.org
                   </p>
                 </div>
               </div>
@@ -228,10 +228,10 @@ export default function CarrerasPage() {
               cuando tengamos una posición que encaje contigo.
             </p>
             <a
-              href="mailto:careers@welens.com"
+              href="mailto:careers@welens.org"
               className="inline-block bg-gallery-white hover:bg-gallery-white/90 text-pricing-blue text-body-emphasized font-semibold px-8 py-4 rounded-full transition-colors"
             >
-              careers@welens.com
+              careers@welens.org
             </a>
           </div>
         </section>

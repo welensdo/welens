@@ -5,31 +5,46 @@ import WeLensEmail, {
   EmailCaption, 
   EmailButton, 
   EmailSpacer,
-  EmailDesignSystem 
+  EmailDesignSystem,
+  EmailFooterLinks
 } from './WeLensEmailSystem';
+import { SupportedLanguage, getEmailTranslations } from '@/lib/email-i18n';
 
 interface PasswordResetEmailProps {
   name: string;
   resetUrl: string;
+  language?: SupportedLanguage;
 }
 
-export default function PasswordResetEmail({ name, resetUrl }: PasswordResetEmailProps) {
+export default function PasswordResetEmail({ 
+  name, 
+  resetUrl, 
+  language = 'es' 
+}: PasswordResetEmailProps) {
+  const translations = getEmailTranslations(language);
+
   return (
-    <WeLensEmail previewText="Restablecer contraseña de WeLens">
+    <WeLensEmail 
+      previewText={translations.passwordReset.headline}
+      language={language}
+    >
       
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: EmailDesignSystem.spacing.xl }}>
         <EmailHeadline>
-          Restablecer contraseña
+          {translations.passwordReset.headline}
         </EmailHeadline>
         <EmailCaption>
-          Hola {name}, recibimos tu solicitud
+          {language === 'es' 
+            ? `Hola ${name}, recibimos tu solicitud`
+            : `Hello ${name}, we received your request`
+          }
         </EmailCaption>
       </div>
 
       {/* Content */}
       <EmailBody>
-        Haz clic en el botón de abajo para crear una nueva contraseña. Este enlace expira en 1 hora.
+        {translations.passwordReset.body}
       </EmailBody>
 
       <EmailSpacer size="lg" />
@@ -37,8 +52,23 @@ export default function PasswordResetEmail({ name, resetUrl }: PasswordResetEmai
       {/* CTA */}
       <div style={{ textAlign: 'center', marginBottom: EmailDesignSystem.spacing.lg }}>
         <EmailButton href={resetUrl}>
-          Restablecer contraseña
+          {translations.passwordReset.cta}
         </EmailButton>
+      </div>
+
+      {/* Expiry Notice */}
+      <div style={{ 
+        backgroundColor: EmailDesignSystem.colors.surface,
+        padding: EmailDesignSystem.spacing.md,
+        borderRadius: '8px',
+        marginBottom: EmailDesignSystem.spacing.md
+      }}>
+        <EmailCaption style={{ 
+          margin: `0 0 ${EmailDesignSystem.spacing.xs} 0`,
+          fontWeight: '500' 
+        }}>
+          {translations.passwordReset.expiry}
+        </EmailCaption>
       </div>
 
       {/* Security Note */}
@@ -48,8 +78,7 @@ export default function PasswordResetEmail({ name, resetUrl }: PasswordResetEmai
         borderRadius: '8px'
       }}>
         <EmailCaption style={{ margin: 0 }}>
-          Si no solicitaste este cambio, puedes ignorar este correo. 
-          Tu contraseña actual seguirá funcionando normalmente.
+          {translations.passwordReset.security}
         </EmailCaption>
       </div>
 
@@ -57,7 +86,10 @@ export default function PasswordResetEmail({ name, resetUrl }: PasswordResetEmai
 
       {/* Manual Link */}
       <EmailCaption>
-        ¿Problemas con el botón? Copia este enlace: <br />
+        {language === 'es' 
+          ? '¿Problemas con el botón? Copia este enlace:'
+          : 'Having trouble with the button? Copy this link:'
+        } <br />
         <span style={{ 
           fontFamily: 'Monaco, Consolas, monospace',
           fontSize: '12px',
@@ -67,6 +99,14 @@ export default function PasswordResetEmail({ name, resetUrl }: PasswordResetEmai
           {resetUrl}
         </span>
       </EmailCaption>
+
+      <EmailSpacer size="lg" />
+
+      {/* Footer Links */}
+      <EmailFooterLinks 
+        language={language}
+        supportUrl={language === 'en' ? 'https://welens.org/en/support' : 'https://welens.org/soporte'}
+      />
 
     </WeLensEmail>
   );

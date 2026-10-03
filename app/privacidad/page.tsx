@@ -31,7 +31,7 @@ export default function PrivacidadPage() {
                 1. Responsable del Tratamiento
               </h2>
               <p>
-                <strong className="text-ink">Email:</strong> privacidad@welens.com
+                <strong className="text-ink">Email:</strong> privacy@welens.org
                 <br />
                 <strong className="text-ink">Teléfono:</strong> +1 809 504 2837
               </p>
@@ -148,10 +148,10 @@ export default function PrivacidadPage() {
               <p className="mb-4">
                 Para ejercer tus derechos, contacta con:{" "}
                 <a
-                  href="mailto:privacidad@welens.com"
+                  href="mailto:privacy@welens.org"
                   className="text-pricing-blue hover:text-pricing-blue/80 underline"
                 >
-                  privacidad@welens.com
+                  privacy@welens.org
                 </a>
               </p>
               <p>
@@ -220,10 +220,10 @@ export default function PrivacidadPage() {
               ¿Tienes preguntas sobre tu privacidad?
             </h2>
             <a
-              href="mailto:privacidad@welens.com"
+              href="mailto:privacy@welens.org"
               className="inline-block bg-gallery-white hover:bg-gallery-white/90 text-pricing-blue text-body-emphasized font-semibold px-8 py-4 rounded-full transition-colors"
             >
-              privacidad@welens.com
+              privacy@welens.org
             </a>
           </div>
         </section>

@@ -107,10 +107,10 @@ export default function PrensaPage() {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
               <a
-                href="mailto:prensa@welens.com"
+                href="mailto:prensa@welens.org"
                 className="text-body-emphasized text-gallery-white hover:text-gallery-white/80"
               >
-                📧 prensa@welens.com
+                📧 prensa@welens.org
               </a>
               <a
                 href="tel:+34900123456"

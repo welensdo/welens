@@ -160,7 +160,7 @@ export default function SoportePage() {
                   href="/contacto"
                   className="text-pricing-blue hover:text-pricing-blue/80 text-compact-emphasized font-semibold"
                 >
-                  soporte@welens.com
+                  soporte@welens.org
                 </Link>
               </div>
 
