@@ -28,9 +28,9 @@ export default function UltrathinVideoSection() {
       const containerRect = container.getBoundingClientRect();
       const containerTop = scrollPosition + containerRect.top;
       
-      // Keep original animation range for proper video control  
-      const animationStart = Math.max(0, containerTop - (windowHeight * 1.5));
-      const animationEnd = containerTop + (windowHeight * 2);
+      // Adjusted animation range for 200vh container height
+      const animationStart = Math.max(0, containerTop - (windowHeight * 1));
+      const animationEnd = containerTop + (windowHeight * 1.5);
       const animationRange = animationEnd - animationStart;
       
       // ALWAYS calculate progress based on current scroll position (not conditional)
@@ -139,7 +139,7 @@ export default function UltrathinVideoSection() {
     <div
       ref={containerRef} 
       className="relative w-full bg-gallery-white pt-20"
-      style={{ height: "300vh" }}
+      style={{ height: "200vh" }}
       id="como-funciona"
     >
       <div className="sticky top-0 h-screen overflow-hidden z-10">
