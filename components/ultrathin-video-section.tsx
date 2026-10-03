@@ -139,7 +139,7 @@ export default function UltrathinVideoSection() {
     <div
       ref={containerRef} 
       className="relative w-full bg-gallery-white"
-      style={{ height: "150vh" }}
+      style={{ height: "300vh" }}
       id="como-funciona"
     >
       <div className="sticky top-0 h-screen overflow-hidden">
