@@ -284,9 +284,6 @@ export async function sendCustomAdminEmail({
       subject,
       html,
     });
-      subject,
-      html,
-    });
 
     if (error) {
       console.error('Error sending custom admin email:', error);
