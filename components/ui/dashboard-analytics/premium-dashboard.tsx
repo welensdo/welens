@@ -286,7 +286,32 @@ export function PremiumDashboard({ initialAnalytics }: { initialAnalytics?: any 
 
   // Función para refrescar los datos
   const handleRefresh = async () => {
-    await fetchAnalytics();
+    try {
+      setLoading(true);
+      setError(null);
+      
+      console.log('🔄 Refetching analytics from /api/typeform/analytics');
+      
+      const response = await fetch('/api/typeform/analytics');
+      
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error('❌ Analytics API error:', errorData);
+        throw new Error(`HTTP ${response.status}: ${errorData}`);
+      }
+      
+      const data = await response.json();
+      console.log('✅ Analytics data refreshed:', data.totalResponses, 'responses');
+      
+      setAnalytics(data);
+      setError(null);
+    } catch (err) {
+      console.error('❌ Analytics refresh error:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+      setError(`Error refreshing analytics: ${errorMessage}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Función para exportar TODOS los datos

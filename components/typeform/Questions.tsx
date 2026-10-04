@@ -209,7 +209,7 @@ export function Question2({ formData, updateFormData, updateFormDataAndAdvance }
       return;
     }
     
-    let updated;
+    let updated: string[];
     
     if (condition === 'none') {
       // Si deselecciona "none"
