@@ -184,7 +184,11 @@ export async function GET(request: NextRequest) {
     }
 
     // 9. Correlaciones importantes
-    const correlations = {
+    const correlations: {
+      ageVisionConditions: { [key: string]: { [key: string]: number } };
+      glassesUsageInnovation: any;
+      graduationWillingness: any;
+    } = {
       // Correlación entre edad y condiciones de visión
       ageVisionConditions: {},
       // Correlación entre uso de lentes e interés en innovación
