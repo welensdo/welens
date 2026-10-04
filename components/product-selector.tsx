@@ -38,7 +38,7 @@ export function ProductSelector() {
     <div className="w-full min-h-screen bg-gallery-white py-2 sm:py-12 lg:py-32">
       <div className="container mx-auto px-3 sm:px-6 lg:px-8">
         <div className="text-center mb-4 sm:mb-12 lg:mb-16">
-          <Badge variant="launch" className="mb-1.5 sm:mb-4 text-[10px] sm:text-xs px-2 py-0.5 sm:px-3 sm:py-1">
+          <Badge variant="default" className="mb-1.5 sm:mb-4 text-[10px] sm:text-xs px-2 py-0.5 sm:px-3 sm:py-1">
             Personaliza tu visión
           </Badge>
           <h2 className="font-sf-pro-display text-xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-ink mb-1.5 sm:mb-4 tracking-tight px-2">
