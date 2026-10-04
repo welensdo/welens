@@ -374,9 +374,14 @@ function getPayloadConfigFromPayload(
   return configLabelKey in config ? config[configLabelKey] : config[key]
 }
 
+const ChartTooltip = RechartsPrimitive.Tooltip
+const ChartLegend = RechartsPrimitive.Legend
+
 export {
   ChartContainer,
+  ChartTooltip,
   ChartTooltipContent,
+  ChartLegend,
   ChartLegendContent,
   ChartLabel,
   ChartStyle,
