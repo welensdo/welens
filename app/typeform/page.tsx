@@ -228,6 +228,8 @@ function SocialMediaCapture({ onSocialSubmitted }: { onSocialSubmitted?: () => v
 interface FormData {
   // Demographics
   age: number | null;
+  firstName: string;
+  lastName: string;
   
   // Vision and glasses usage
   usesGlasses: boolean | null;
@@ -250,6 +252,8 @@ interface FormData {
 
 const initialFormData: FormData = {
   age: null,
+  firstName: '',
+  lastName: '',
   usesGlasses: null,
   glassesType: [],
   visionConditions: [],
@@ -258,8 +262,7 @@ const initialFormData: FormData = {
   reasonsForStopping: [],
   interestInRemovableGraduation: null,
   lifestyleFactors: [],
-  firstName: '',
-  lastName: '',
+  purchaseInfluencers: [],
   glassesUsageFrequency: null,
 };
 
