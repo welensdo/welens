@@ -376,8 +376,6 @@ export const getEmailLanguageContext = (language: SupportedLanguage = 'es') => (
 });
 
 export const useEmailTranslations = (language?: SupportedLanguage) => {
-  const context = React.useContext(EmailLanguageContext);
-  
   if (language) {
     return {
       language,
@@ -385,5 +383,6 @@ export const useEmailTranslations = (language?: SupportedLanguage) => {
     };
   }
   
-  return context;
+  // Return default language context for server-side rendering
+  return getEmailLanguageContext('es');
 };
