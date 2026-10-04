@@ -541,7 +541,7 @@ export async function GET(request: NextRequest) {
         behaviorInsights: {
           stoppedUsingRate: advancedMetrics.stoppedUsingGlassesRate,
           satisfactionScore: advancedMetrics.averageSatisfactionWithCurrentGlasses,
-          innovationReadiness: advancedMetrics.willingToTryInnovation
+          innovationReadiness: advancedMetrics.innovationInterest
         }
       }
     };
