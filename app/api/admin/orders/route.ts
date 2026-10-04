@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb/connection';
-import Order from '@/lib/models/Order';
+// Importar User primero para asegurar que se registre
 import User from '@/lib/models/User';
+import Order from '@/lib/models/Order';
 import { emailService } from '@/lib/emailService';
 import jwt from 'jsonwebtoken';
 
@@ -29,6 +30,11 @@ export async function GET(request: NextRequest) {
     verifyAdminToken(request);
 
     await dbConnect();
+
+    // Asegurar que los modelos estén registrados
+    if (!User || !Order) {
+      throw new Error('Models not properly loaded');
+    }
 
     const orders = await Order.find()
       .populate('userId', 'name email')

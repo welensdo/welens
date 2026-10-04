@@ -51,7 +51,7 @@ const config: Config = {
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
         },
-        // Apple Style Colors
+        // WeLens/Apple Style Colors
         "gallery-white": "#ffffff",
         "studio-mist": "#f5f5f7",
         "paper-frost": "#fafafc",
@@ -61,6 +61,7 @@ const config: Config = {
         slate: "#707070",
         steel: "#86868b",
         "apple-blue": "#0066cc",
+        "accent-blue": "#0066cc", // Same as apple-blue for consistency
         "pricing-blue": "#0071e3",
         "launch-orange": "#b64400",
       },

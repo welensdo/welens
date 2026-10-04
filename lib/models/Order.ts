@@ -175,4 +175,13 @@ const OrderSchema = new mongoose.Schema<IOrder>(
   }
 );
 
-export default mongoose.models.Order || mongoose.model<IOrder>('Order', OrderSchema);
+// Definir el modelo de manera más robusta
+let Order: mongoose.Model<IOrder>;
+
+try {
+  Order = mongoose.model<IOrder>('Order');
+} catch {
+  Order = mongoose.model<IOrder>('Order', OrderSchema);
+}
+
+export default Order;

@@ -37,6 +37,16 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
+    // Only check auth on pages that need it
+    const needsAuth = pathname.startsWith('/dashboard') || 
+                      pathname.startsWith('/checkout') || 
+                      pathname.startsWith('/admin');
+    
+    if (!needsAuth) {
+      setLoading(false);
+      return;
+    }
+
     // Check if user is logged in
     fetch("/api/auth/me")
       .then((res) => {

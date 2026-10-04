@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { EMAIL_ADDRESSES, EMAIL_NAMES } from "@/lib/resend";
+import AnalyticsTab from "@/components/admin/AnalyticsTab";
 
 export const dynamic = 'force-dynamic';
 
@@ -121,6 +122,21 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
+    // Verificar autenticación de admin
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/admin/me');
+        if (!response.ok) {
+          router.push('/admin/login');
+          return;
+        }
+      } catch (error) {
+        router.push('/admin/login');
+        return;
+      }
+    };
+
+    checkAuth();
     loadOrders();
   }, []);
 
@@ -189,7 +205,7 @@ export default function AdminDashboard() {
   };
 
   const handleLogout = async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
+    await fetch("/api/admin/logout", { method: "POST" });
     router.push("/admin/login");
   };
 
@@ -627,9 +643,7 @@ export default function AdminDashboard() {
           )}
 
           {activeTab === "analytics" && (
-            <div className="text-center py-12">
-              <p className="text-slate">Analíticas próximamente...</p>
-            </div>
+            <AnalyticsTab />
           )}
         </div>
       </div>
