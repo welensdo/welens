@@ -266,6 +266,9 @@ export async function sendCustomAdminEmail({
   message: string;
 }) {
   try {
+    // Ensure resend is available
+    const resendClient = ensureResendAvailable();
+    
     const { default: CustomAdminEmailComponent } = await import('@/components/emails/CustomAdminEmail');
     
     const html = await renderEmailToString(
@@ -275,9 +278,12 @@ export async function sendCustomAdminEmail({
       })
     );
 
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await resendClient.emails.send({
       from,
       to: [to],
+      subject,
+      html,
+    });
       subject,
       html,
     });
