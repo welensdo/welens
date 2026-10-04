@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import * as XLSX from 'xlsx';
 import { PremiumStats } from './premium-stats';
 import { PremiumRevenueChart } from './premium-revenue-chart';
 import { PremiumDistributionChart } from './premium-distribution-chart';
@@ -117,6 +118,21 @@ function QuestionsModal({ isOpen, onClose, analytics }: { isOpen: boolean, onClo
         { value: 'sports', label: 'Deportes/Ejercicio', count: analytics.lifestyleFactors?.find((item: any) => item._id === 'sports')?.count || 0 },
         { value: 'social_active', label: 'Vida social activa', count: analytics.lifestyleFactors?.find((item: any) => item._id === 'social_active')?.count || 0 },
         { value: 'travel', label: 'Viajes frecuentes', count: analytics.lifestyleFactors?.find((item: any) => item._id === 'travel')?.count || 0 }
+      ]
+    },
+    {
+      id: 'purchaseInfluencers',
+      question: '¿Qué factores influyen más en tu decisión de compra?',
+      options: [
+        { value: 'price', label: 'Precio', count: analytics.purchaseInfluencers?.find((item: any) => item._id === 'price')?.count || 0 },
+        { value: 'style', label: 'Estilo/Diseño', count: analytics.purchaseInfluencers?.find((item: any) => item._id === 'style')?.count || 0 },
+        { value: 'comfort', label: 'Comodidad', count: analytics.purchaseInfluencers?.find((item: any) => item._id === 'comfort')?.count || 0 },
+        { value: 'functionality', label: 'Funcionalidad', count: analytics.purchaseInfluencers?.find((item: any) => item._id === 'functionality')?.count || 0 },
+        { value: 'brand', label: 'Marca', count: analytics.purchaseInfluencers?.find((item: any) => item._id === 'brand')?.count || 0 },
+        { value: 'durability', label: 'Durabilidad', count: analytics.purchaseInfluencers?.find((item: any) => item._id === 'durability')?.count || 0 },
+        { value: 'innovation', label: 'Innovación', count: analytics.purchaseInfluencers?.find((item: any) => item._id === 'innovation')?.count || 0 },
+        { value: 'recommendations', label: 'Recomendaciones', count: analytics.purchaseInfluencers?.find((item: any) => item._id === 'recommendations')?.count || 0 },
+        { value: 'versatility', label: 'Versatilidad', count: analytics.purchaseInfluencers?.find((item: any) => item._id === 'versatility')?.count || 0 }
       ]
     }
   ];
@@ -268,6 +284,433 @@ export function PremiumDashboard({ initialAnalytics }: { initialAnalytics?: any 
     fetchAnalytics();
   }, []);
 
+  // Función para refrescar los datos
+  const handleRefresh = async () => {
+    await fetchAnalytics();
+  };
+
+  // Función para exportar TODOS los datos
+  const handleExport = async () => {
+    try {
+      setLoading(true);
+      
+      // Mostrar modal de opciones de exportación
+      const exportChoice = await showExportModal();
+      if (!exportChoice) return;
+      
+      // Obtener TODOS los datos de respuestas individuales
+      const responsesResponse = await fetch('/api/typeform/responses');
+      const individualResponses = await responsesResponse.json();
+      
+      // Obtener analytics completos
+      const analyticsResponse = await fetch('/api/typeform/analytics');
+      const fullAnalytics = await analyticsResponse.json();
+      
+      // Crear dataset súper completo
+      const completeData = {
+        // Metadata del export
+        exportInfo: {
+          timestamp: new Date().toISOString(),
+          exportedBy: 'WeLens Dashboard',
+          totalRecords: individualResponses.length,
+          analyticsGenerated: fullAnalytics.keyMetrics?.generatedAt || new Date().toISOString(),
+          version: '1.0'
+        },
+        
+        // Respuestas individuales RAW (TODO)
+        individualResponses: individualResponses.map((response: any) => ({
+          // IDs y Metadata
+          _id: response._id,
+          responseId: response.responseId,
+          submittedAt: response.submittedAt,
+          userAgent: response.userAgent,
+          ipAddress: response.ipAddress,
+          
+          // Información Personal
+          firstName: response.firstName,
+          lastName: response.lastName,
+          age: response.age,
+          
+          // Información de Contacto
+          socialMedia: response.socialMedia,
+          
+          // Uso de Lentes
+          usesGlasses: response.usesGlasses,
+          glassesType: response.glassesType,
+          glassesUsageFrequency: response.glassesUsageFrequency,
+          
+          // Condiciones de Visión
+          visionConditions: response.visionConditions,
+          prescriptionStrength: response.prescriptionStrength,
+          
+          // Comportamiento
+          stoppedUsingGlasses: response.stoppedUsingGlasses,
+          reasonsForStopping: response.reasonsForStopping,
+          
+          // Interés e Innovación
+          interestInRemovableGraduation: response.interestInRemovableGraduation,
+          
+          // Estilo de Vida
+          lifestyleFactors: response.lifestyleFactors,
+          purchaseInfluencers: response.purchaseInfluencers,
+          
+          // Analytics Calculados (si existen)
+          ageGroup: response.ageGroup,
+          marketSegment: response.marketSegment,
+          visionProfile: response.visionProfile,
+          customerPersona: response.customerPersona,
+          
+          // Timestamps
+          createdAt: response.createdAt,
+          updatedAt: response.updatedAt
+        })),
+        
+        // Analytics Agregados COMPLETOS
+        analytics: {
+          overview: {
+            totalResponses: fullAnalytics.totalResponses,
+            completionRate: fullAnalytics.keyMetrics?.completionRate,
+            averageTimeToComplete: fullAnalytics.keyMetrics?.averageTimeToComplete
+          },
+          
+          // Demografía
+          demographics: {
+            ageDistribution: fullAnalytics.ageDistribution,
+            averageAge: fullAnalytics.keyMetrics?.averageAge,
+            ageGroups: {
+              '18-25': fullAnalytics.ageDistribution?.find((item: any) => item._id === '18-25')?.count || 0,
+              '26-35': fullAnalytics.ageDistribution?.find((item: any) => item._id === '26-35')?.count || 0,
+              '36-45': fullAnalytics.ageDistribution?.find((item: any) => item._id === '36-45')?.count || 0,
+              '46-55': fullAnalytics.ageDistribution?.find((item: any) => item._id === '46-55')?.count || 0,
+              '56+': fullAnalytics.ageDistribution?.find((item: any) => item._id === '56+')?.count || 0
+            }
+          },
+          
+          // Uso de Lentes
+          glassesUsage: {
+            distribution: fullAnalytics.glassesUsage,
+            userRate: fullAnalytics.keyMetrics?.glassesUserRate,
+            nonUserRate: fullAnalytics.keyMetrics?.nonGlassesUserRate,
+            types: fullAnalytics.glassesType,
+            frequency: fullAnalytics.glassesUsageFrequency
+          },
+          
+          // Condiciones de Visión
+          visionConditions: {
+            distribution: fullAnalytics.visionConditions,
+            myopiaRate: fullAnalytics.keyMetrics?.myopiaRate,
+            hyperopiaRate: fullAnalytics.keyMetrics?.hyperopiaRate,
+            astigmatismRate: fullAnalytics.keyMetrics?.astigmatismRate,
+            presbyopiaRate: fullAnalytics.keyMetrics?.presbyopiaRate,
+            multipleConditionsRate: fullAnalytics.keyMetrics?.multipleConditionsRate
+          },
+          
+          // Graduación
+          prescription: {
+            distribution: fullAnalytics.graduationLevels,
+            averageStrength: fullAnalytics.keyMetrics?.avgGraduation,
+            highGraduation: fullAnalytics.keyMetrics?.highGraduation,
+            mediumGraduation: fullAnalytics.keyMetrics?.mediumGraduation,
+            lowGraduation: fullAnalytics.keyMetrics?.lowGraduation
+          },
+          
+          // Tipos de Lentes
+          glassesTypes: {
+            prescription: fullAnalytics.keyMetrics?.prescriptionGlassesRate,
+            sunglasses: fullAnalytics.keyMetrics?.sunglassesRate,
+            reading: fullAnalytics.keyMetrics?.readingGlassesRate,
+            computer: fullAnalytics.keyMetrics?.computerGlassesRate,
+            fashion: fullAnalytics.keyMetrics?.fashionGlassesRate
+          },
+          
+          // Comportamiento
+          behavior: {
+            stoppedUsingGlasses: {
+              rate: fullAnalytics.keyMetrics?.stoppedUsingGlassesRate,
+              reasons: fullAnalytics.reasonsForStopping
+            },
+            satisfaction: fullAnalytics.keyMetrics?.averageSatisfactionWithCurrentGlasses,
+            frustration: fullAnalytics.keyMetrics?.frustrationWithGlasses
+          },
+          
+          // Innovación
+          innovation: {
+            interestDistribution: fullAnalytics.innovationInterest,
+            overallInterest: fullAnalytics.keyMetrics?.innovationInterest,
+            byAge: fullAnalytics.keyMetrics?.innovationInterestByAge,
+            byCondition: fullAnalytics.keyMetrics?.innovationInterestByCondition,
+            byGraduation: fullAnalytics.keyMetrics?.innovationInterestByGraduation
+          },
+          
+          // Estilo de Vida
+          lifestyle: {
+            factors: fullAnalytics.lifestyleFactors,
+            purchaseInfluencers: fullAnalytics.purchaseInfluencers
+          },
+          
+          // Correlaciones
+          correlations: {
+            ageVisionConditions: fullAnalytics.correlations?.ageVisionConditions,
+            glassesUsageInnovation: fullAnalytics.correlations?.glassesUsageInnovation,
+            graduationWillingness: fullAnalytics.correlations?.graduationWillingness,
+            ageMyopia: fullAnalytics.keyMetrics?.ageMyopiaCorrelation,
+            agePresbyopia: fullAnalytics.keyMetrics?.agePresbyopiaCorrelation,
+            ageGraduation: fullAnalytics.keyMetrics?.ageGraduationCorrelation
+          },
+          
+          // Segmentación
+          segmentation: {
+            targetMarket: fullAnalytics.advancedAnalytics?.segmentation?.targetMarket,
+            premiumSegment: fullAnalytics.advancedAnalytics?.segmentation?.premiumSegment,
+            dissatisfiedUsers: fullAnalytics.advancedAnalytics?.segmentation?.dissatisfiedUsers,
+            targetSegmentSize: fullAnalytics.keyMetrics?.targetSegmentSize,
+            premiumSegmentSize: fullAnalytics.keyMetrics?.premiumSegment
+          },
+          
+          // Tendencias Temporales
+          trends: {
+            monthly: fullAnalytics.monthlyTrend,
+            growth: calculateGrowthMetrics(fullAnalytics.monthlyTrend)
+          },
+          
+          // Métricas Avanzadas (TODO lo que tengamos)
+          advancedMetrics: fullAnalytics.keyMetrics
+        },
+        
+        // Datos procesados para Excel
+        processedData: {
+          // Tabla plana para Excel - cada respuesta como fila
+          flattenedResponses: individualResponses.map((response: any, index: number) => ({
+            'ID': response._id,
+            'Número de Respuesta': index + 1,
+            'Fecha de Envío': new Date(response.submittedAt).toLocaleDateString('es-ES'),
+            'Hora de Envío': new Date(response.submittedAt).toLocaleTimeString('es-ES'),
+            'Nombre': response.firstName || '',
+            'Apellido': response.lastName || '',
+            'Edad': response.age || '',
+            'Grupo de Edad': response.ageGroup || '',
+            'Usa Lentes': response.usesGlasses ? 'Sí' : 'No',
+            'Tipos de Lentes': Array.isArray(response.glassesType) ? response.glassesType.join(', ') : '',
+            'Frecuencia de Uso': response.glassesUsageFrequency || '',
+            'Condiciones de Visión': Array.isArray(response.visionConditions) ? response.visionConditions.join(', ') : '',
+            'Graduación': response.prescriptionStrength || '',
+            'Dejó de Usar Lentes': response.stoppedUsingGlasses ? 'Sí' : 'No',
+            'Razones para Dejar': Array.isArray(response.reasonsForStopping) ? response.reasonsForStopping.join(', ') : '',
+            'Interés en Innovación': Array.isArray(response.interestInRemovableGraduation) 
+              ? response.interestInRemovableGraduation.join(', ') 
+              : response.interestInRemovableGraduation || '',
+            'Factores de Estilo de Vida': Array.isArray(response.lifestyleFactors) ? response.lifestyleFactors.join(', ') : '',
+            'Influencias de Compra': Array.isArray(response.purchaseInfluencers) ? response.purchaseInfluencers.join(', ') : '',
+            'Red Social Plataforma': response.socialMedia?.platform || '',
+            'Red Social Usuario': response.socialMedia?.handle || '',
+            'Perfil de Visión': response.visionProfile || '',
+            'Segmento de Mercado': response.marketSegment || '',
+            'Persona del Cliente': response.customerPersona || '',
+            'User Agent': response.userAgent || '',
+            'IP Address': response.ipAddress || ''
+          })),
+          
+          // Resumen estadístico
+          statisticalSummary: generateStatisticalSummary(fullAnalytics)
+        }
+      };
+      
+      if (exportChoice === 'excel') {
+        downloadAsExcel(completeData);
+      } else {
+        downloadAsJSON(completeData);
+      }
+      
+    } catch (error) {
+      console.error('Error en export:', error);
+      alert('Error al exportar los datos. Por favor intenta de nuevo.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Función para mostrar modal de selección de formato
+  const showExportModal = (): Promise<'excel' | 'json' | null> => {
+    return new Promise((resolve) => {
+      const modal = document.createElement('div');
+      modal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50';
+      modal.innerHTML = `
+        <div class="bg-white rounded-2xl p-6 shadow-2xl max-w-md w-full mx-4">
+          <h3 class="text-xl font-bold text-gray-900 mb-4">Formato de Export</h3>
+          <p class="text-gray-600 mb-6">Selecciona el formato para descargar TODOS los datos:</p>
+          <div class="space-y-3">
+            <button id="export-excel" class="w-full bg-accent-blue text-white py-3 px-4 rounded-lg hover:bg-accent-blue/90 transition-colors">
+              📊 Excel (.xlsx) - Recomendado para análisis
+            </button>
+            <button id="export-json" class="w-full bg-gray-100 text-gray-800 py-3 px-4 rounded-lg hover:bg-gray-200 transition-colors">
+              📄 JSON - Datos técnicos completos
+            </button>
+            <button id="export-cancel" class="w-full bg-gray-50 text-gray-600 py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors">
+              Cancelar
+            </button>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+      
+      const handleChoice = (choice: 'excel' | 'json' | null) => {
+        document.body.removeChild(modal);
+        resolve(choice);
+      };
+      
+      modal.querySelector('#export-excel')?.addEventListener('click', () => handleChoice('excel'));
+      modal.querySelector('#export-json')?.addEventListener('click', () => handleChoice('json'));
+      modal.querySelector('#export-cancel')?.addEventListener('click', () => handleChoice(null));
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) handleChoice(null);
+      });
+    });
+  };
+
+  // Función para calcular métricas de crecimiento
+  const calculateGrowthMetrics = (monthlyTrend: any[]) => {
+    if (!monthlyTrend || monthlyTrend.length < 2) return {};
+    
+    const latest = monthlyTrend[monthlyTrend.length - 1];
+    const previous = monthlyTrend[monthlyTrend.length - 2];
+    const growth = previous.responses > 0 ? ((latest.responses - previous.responses) / previous.responses * 100).toFixed(2) : 0;
+    
+    return {
+      monthlyGrowthRate: `${growth}%`,
+      totalGrowth: monthlyTrend.reduce((sum, month) => sum + month.responses, 0),
+      averageMonthly: (monthlyTrend.reduce((sum, month) => sum + month.responses, 0) / monthlyTrend.length).toFixed(1)
+    };
+  };
+
+  // Función para generar resumen estadístico
+  const generateStatisticalSummary = (analytics: any) => {
+    return {
+      'Total de Respuestas': analytics.totalResponses || 0,
+      'Tasa de Usuarios de Lentes': analytics.keyMetrics?.glassesUserRate + '%' || '0%',
+      'Edad Promedio': analytics.keyMetrics?.averageAge + ' años' || '0 años',
+      'Graduación Promedio': analytics.keyMetrics?.avgGraduation || '0',
+      'Tasa de Miopía': analytics.keyMetrics?.myopiaRate + '%' || '0%',
+      'Tasa de Interés en Innovación': analytics.keyMetrics?.innovationInterest + '%' || '0%',
+      'Segmento Objetivo': analytics.keyMetrics?.targetSegmentSize || 0,
+      'Segmento Premium': analytics.keyMetrics?.premiumSegment || 0,
+      'Usuarios Frustrados': analytics.keyMetrics?.frustrationWithGlasses || 0,
+      'Satisfacción Promedio': analytics.keyMetrics?.averageSatisfactionWithCurrentGlasses + '%' || '0%'
+    };
+  };
+
+  // Función para descargar como Excel
+  const downloadAsExcel = async (data: any) => {
+    try {
+      // Crear workbook
+      const wb = XLSX.utils.book_new();
+      
+      // Hoja 1: Respuestas individuales
+      const ws1 = XLSX.utils.json_to_sheet(data.processedData.flattenedResponses);
+      XLSX.utils.book_append_sheet(wb, ws1, 'Respuestas');
+      
+      // Hoja 2: Resumen estadístico
+      const summaryData = Object.entries(data.processedData.statisticalSummary).map(([key, value]) => ({
+        'Métrica': key,
+        'Valor': value
+      }));
+      const ws2 = XLSX.utils.json_to_sheet(summaryData);
+      XLSX.utils.book_append_sheet(wb, ws2, 'Resumen');
+      
+      // Hoja 3: Analytics detallados
+      const analyticsFlat = flattenAnalytics(data.analytics);
+      const ws3 = XLSX.utils.json_to_sheet(analyticsFlat);
+      XLSX.utils.book_append_sheet(wb, ws3, 'Analytics');
+      
+      // Hoja 4: Datos RAW JSON (para desarrolladores)
+      const rawData = data.individualResponses.map((response: any, index: number) => ({
+        'Índice': index + 1,
+        'Datos JSON': JSON.stringify(response, null, 2)
+      }));
+      const ws4 = XLSX.utils.json_to_sheet(rawData);
+      XLSX.utils.book_append_sheet(wb, ws4, 'Datos RAW');
+      
+      // Descargar archivo
+      const fileName = `WeLens_Survey_COMPLETO_${new Date().toISOString().split('T')[0]}_${Date.now()}.xlsx`;
+      XLSX.writeFile(wb, fileName);
+      
+    } catch (error) {
+      console.error('Error creando Excel:', error);
+      alert('Error al crear archivo Excel. Descargando como JSON...');
+      downloadAsJSON(data);
+    }
+  };
+
+  // Función para aplanar analytics para Excel
+  const flattenAnalytics = (analytics: any) => {
+    const result: any[] = [];
+    
+    const addToResult = (obj: any, prefix = '') => {
+      Object.entries(obj).forEach(([key, value]) => {
+        const fullKey = prefix ? `${prefix}.${key}` : key;
+        
+        if (Array.isArray(value)) {
+          // Arrays: crear múltiples filas
+          value.forEach((item: any, index: number) => {
+            if (typeof item === 'object' && item !== null) {
+              Object.entries(item).forEach(([subKey, subValue]) => {
+                result.push({
+                  'Categoría': fullKey,
+                  'Elemento': `${subKey}_${index}`,
+                  'Valor': String(subValue)
+                });
+              });
+            } else {
+              result.push({
+                'Categoría': fullKey,
+                'Elemento': `Item_${index}`,
+                'Valor': String(item)
+              });
+            }
+          });
+        } else if (typeof value === 'object' && value !== null) {
+          addToResult(value, fullKey);
+        } else {
+          result.push({
+            'Categoría': prefix || 'Root',
+            'Elemento': key,
+            'Valor': String(value)
+          });
+        }
+      });
+    };
+    
+    addToResult(analytics);
+    return result;
+  };
+
+  // Función para descargar como JSON
+  const downloadAsJSON = (data: any) => {
+    const jsonString = JSON.stringify(data, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `WeLens_Survey_COMPLETO_${new Date().toISOString().split('T')[0]}_${Date.now()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  // Funciones auxiliares para Excel (eliminadas las implementaciones manuales)
+  const arrayToSheet = (array: any[]) => {
+    return XLSX.utils.json_to_sheet(array);
+  };
+
+  const objectToSheet = (obj: any) => {
+    const flatData = Object.entries(obj).map(([key, value]) => ({
+      'Campo': key,
+      'Valor': Array.isArray(value) ? value.join(', ') : String(value)
+    }));
+    return XLSX.utils.json_to_sheet(flatData);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gallery-white flex items-center justify-center">
@@ -351,14 +794,19 @@ export function PremiumDashboard({ initialAnalytics }: { initialAnalytics?: any 
             >
               Questions
             </button>
-            <button className="bg-ink text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-ink/90 transition-colors">
+            <button 
+              onClick={handleExport}
+              disabled={loading}
+              className="bg-ink text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-ink/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               Export
             </button>
-            <button className="bg-ink text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-ink/90 transition-colors">
-              Filters  
-            </button>
-            <button className="bg-ink text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-ink/90 transition-colors">
-              Refresh
+            <button 
+              onClick={handleRefresh}
+              disabled={loading}
+              className="bg-ink text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-ink/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Refreshing...' : 'Refresh'}
             </button>
           </div>
         </div>

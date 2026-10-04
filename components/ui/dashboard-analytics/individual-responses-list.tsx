@@ -170,6 +170,43 @@ function ResponseDetailsModal({ response, isOpen, onClose }: ResponseDetailsModa
                     {response.stoppedUsingGlasses ? 'Yes' : 'No'}
                   </div>
                 </div>
+
+                {/* Glasses Usage Frequency */}
+                {response.glassesUsageFrequency && (
+                  <div>
+                    <label className="text-sm text-gray-600">Glasses Usage Frequency</label>
+                    <div className="font-medium text-gray-900 capitalize">
+                      {(() => {
+                        const frequency = Array.isArray(response.glassesUsageFrequency) 
+                          ? response.glassesUsageFrequency[0] 
+                          : response.glassesUsageFrequency;
+                        
+                        switch(frequency) {
+                          case 'always': return 'Always';
+                          case 'frequently': return 'Frequently';
+                          case 'sometimes': return 'Sometimes';
+                          case 'rarely': return 'Rarely';
+                          case 'never': return 'Never';
+                          default: return frequency;
+                        }
+                      })()}
+                    </div>
+                  </div>
+                )}
+
+                {/* Reasons for Stopping */}
+                {response.reasonsForStopping && response.reasonsForStopping.length > 0 && (
+                  <div>
+                    <label className="text-sm text-gray-600">Reasons for Stopping Glasses Use</label>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {response.reasonsForStopping.map((reason: string, index: number) => (
+                        <span key={index} className="bg-orange-100 text-orange-800 px-2 py-1 rounded text-sm capitalize">
+                          {reason.replace(/_/g, ' ')}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 
                 <div>
                   <label className="text-sm text-gray-600">Interest in Innovation</label>
@@ -191,7 +228,7 @@ function ResponseDetailsModal({ response, isOpen, onClose }: ResponseDetailsModa
                   </div>
                 </div>
                 
-                {response.interestInRemovableGraduation && (
+                {response.interestInRemovableGraduation && Array.isArray(response.interestInRemovableGraduation) && response.interestInRemovableGraduation.length > 1 && (
                   <div>
                     <label className="text-sm text-gray-600">Interest in Removable Graduation</label>
                     <div className="flex flex-wrap gap-2 mt-1">
@@ -205,6 +242,23 @@ function ResponseDetailsModal({ response, isOpen, onClose }: ResponseDetailsModa
                 )}
               </div>
             </div>
+
+            {/* Lifestyle Information */}
+            {response.lifestyleFactors && response.lifestyleFactors.length > 0 && (
+              <div className="bg-purple-50 rounded-lg p-4">
+                <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+                  <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+                  Lifestyle Factors
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {response.lifestyleFactors.map((factor: string, index: number) => (
+                    <span key={index} className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm capitalize">
+                      {factor.replace(/_/g, ' ')}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Technical Data */}
             <div className="bg-gray-100 rounded-lg p-4">
@@ -237,36 +291,170 @@ function ResponseDetailsModal({ response, isOpen, onClose }: ResponseDetailsModa
                   if (detailsWindow) {
                     detailsWindow.document.write(`
                       <html>
-                        <head><title>Respuesta Completa - ${response.firstName || 'Usuario'}</title></head>
-                        <body style="font-family: Arial, sans-serif; padding: 20px;">
-                          <h1>Respuesta Detallada</h1>
-                          <h2>Información Personal</h2>
-                          <p><strong>Nombre:</strong> ${response.firstName || 'No especificado'} ${response.lastName || ''}</p>
-                          <p><strong>Edad:</strong> ${response.age || 'No especificada'}</p>
-                          
-                          <h2>Uso de Lentes</h2>
-                          <p><strong>¿Usa lentes?:</strong> ${response.usesGlasses ? 'Sí' : 'No'}</p>
-                          <p><strong>Tipos de lentes:</strong> ${response.glassesType ? response.glassesType.join(', ') : 'No especificado'}</p>
-                          
-                          <h2>Condiciones de Visión</h2>
-                          <p><strong>Condiciones:</strong> ${response.visionConditions ? response.visionConditions.join(', ') : 'Ninguna'}</p>
-                          <p><strong>Graduación:</strong> ${response.prescriptionStrength || 'No especificada'}</p>
-                          
-                          <h2>Experiencia con Lentes</h2>
-                          <p><strong>¿Dejó de usar lentes?:</strong> ${response.stoppedUsingGlasses ? 'Sí' : 'No'}</p>
-                          <p><strong>Razones:</strong> ${response.reasonsForStopping ? response.reasonsForStopping.join(', ') : 'N/A'}</p>
-                          
-                          <h2>Interés en Innovación</h2>
-                          <p><strong>Interés en graduación removible:</strong> ${response.interestInRemovableGraduation || 'No especificado'}</p>
-                          
-                          <h2>Estilo de Vida</h2>
-                          <p><strong>Factores:</strong> ${response.lifestyleFactors ? response.lifestyleFactors.join(', ') : 'No especificado'}</p>
-                          
-                          <h2>Información Técnica</h2>
-                          <p><strong>ID de Respuesta:</strong> ${response._id}</p>
-                          <p><strong>Enviado:</strong> ${new Date(response.submittedAt).toLocaleString()}</p>
-                          
-                          ${response.socialMedia ? `<h2>Redes Sociales</h2><p><strong>Plataforma:</strong> ${response.socialMedia.platform || 'N/A'}</p><p><strong>Usuario:</strong> @${response.socialMedia.handle || 'N/A'}</p>` : ''}
+                        <head>
+                          <title>Respuesta Completa - ${response.firstName || 'Usuario'}</title>
+                          <style>
+                            body { 
+                              font-family: Arial, sans-serif; 
+                              padding: 20px; 
+                              line-height: 1.6;
+                              background-color: #f8f9fa;
+                            }
+                            .container {
+                              max-width: 800px;
+                              margin: 0 auto;
+                              background: white;
+                              padding: 30px;
+                              border-radius: 10px;
+                              box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                            }
+                            h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; }
+                            h2 { color: #34495e; margin-top: 30px; border-left: 4px solid #3498db; padding-left: 15px; }
+                            .field { margin: 10px 0; }
+                            .label { font-weight: bold; color: #555; }
+                            .value { margin-left: 10px; color: #333; }
+                            .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+                            .tag { 
+                              background: #e3f2fd; 
+                              color: #1565c0; 
+                              padding: 3px 8px; 
+                              border-radius: 15px; 
+                              font-size: 12px;
+                              text-transform: capitalize;
+                            }
+                            .highlight { background-color: #fff3cd; padding: 10px; border-radius: 5px; margin: 10px 0; }
+                          </style>
+                        </head>
+                        <body>
+                          <div class="container">
+                            <h1>📋 Respuesta Detallada de Encuesta WeLens</h1>
+                            
+                            <h2>👤 Información Personal</h2>
+                            <div class="field">
+                              <span class="label">Nombre:</span>
+                              <span class="value">${response.firstName || 'No especificado'} ${response.lastName || ''}</span>
+                            </div>
+                            <div class="field">
+                              <span class="label">Edad:</span>
+                              <span class="value">${response.age || 'No especificada'} años</span>
+                            </div>
+                            ${response.socialMedia ? `
+                            <div class="field">
+                              <span class="label">Redes Sociales:</span>
+                              <span class="value">${response.socialMedia.platform || 'N/A'} - @${response.socialMedia.handle || 'N/A'}</span>
+                            </div>` : ''}
+                            
+                            <h2>👓 Uso de Lentes</h2>
+                            <div class="field">
+                              <span class="label">¿Usa lentes actualmente?:</span>
+                              <span class="value">${response.usesGlasses ? 'Sí' : 'No'}</span>
+                            </div>
+                            ${response.glassesUsageFrequency ? `
+                            <div class="field">
+                              <span class="label">Frecuencia de uso:</span>
+                              <span class="value">${(() => {
+                                const freq = Array.isArray(response.glassesUsageFrequency) 
+                                  ? response.glassesUsageFrequency[0] 
+                                  : response.glassesUsageFrequency;
+                                switch(freq) {
+                                  case 'always': return 'Siempre';
+                                  case 'frequently': return 'Frecuentemente';
+                                  case 'sometimes': return 'A veces';
+                                  case 'rarely': return 'Raramente';
+                                  case 'never': return 'Nunca';
+                                  default: return freq;
+                                }
+                              })()}</span>
+                            </div>` : ''}
+                            ${response.glassesType && response.glassesType.length > 0 ? `
+                            <div class="field">
+                              <span class="label">Tipos de lentes:</span>
+                              <div class="tags">
+                                ${response.glassesType.map((type: string) => 
+                                  `<span class="tag">${type.replace(/_/g, ' ')}</span>`
+                                ).join('')}
+                              </div>
+                            </div>` : ''}
+                            
+                            <h2>👁️ Condiciones de Visión</h2>
+                            ${response.visionConditions && response.visionConditions.length > 0 ? `
+                            <div class="field">
+                              <span class="label">Condiciones:</span>
+                              <div class="tags">
+                                ${response.visionConditions.map((condition: string) => 
+                                  `<span class="tag" style="background: #ffebee; color: #c62828;">${condition.replace(/_/g, ' ')}</span>`
+                                ).join('')}
+                              </div>
+                            </div>` : ''}
+                            <div class="field">
+                              <span class="label">Graduación:</span>
+                              <span class="value">${response.prescriptionStrength ? 
+                                `${response.prescriptionStrength > 0 ? '+' : ''}${response.prescriptionStrength}` : 
+                                'No especificada'}</span>
+                            </div>
+                            
+                            <h2>🔄 Experiencia con Lentes</h2>
+                            <div class="field">
+                              <span class="label">¿Dejó de usar lentes?:</span>
+                              <span class="value">${response.stoppedUsingGlasses ? 'Sí' : 'No'}</span>
+                            </div>
+                            ${response.reasonsForStopping && response.reasonsForStopping.length > 0 ? `
+                            <div class="field">
+                              <span class="label">Razones para dejar de usar lentes:</span>
+                              <div class="tags">
+                                ${response.reasonsForStopping.map((reason: string) => 
+                                  `<span class="tag" style="background: #fff3e0; color: #ef6c00;">${reason.replace(/_/g, ' ')}</span>`
+                                ).join('')}
+                              </div>
+                            </div>` : ''}
+                            
+                            <h2>💡 Interés en Innovación</h2>
+                            <div class="field">
+                              <span class="label">Interés en graduación removible:</span>
+                              <span class="value">${(() => {
+                                const interest = Array.isArray(response.interestInRemovableGraduation) 
+                                  ? response.interestInRemovableGraduation[0] 
+                                  : response.interestInRemovableGraduation;
+                                switch(interest) {
+                                  case 'very_interested': return 'Muy interesado';
+                                  case 'interested': return 'Interesado';
+                                  case 'maybe': return 'Tal vez';
+                                  case 'not_sure': return 'No estoy seguro';
+                                  case 'not_interested': return 'No interesado';
+                                  default: return interest || 'No especificado';
+                                }
+                              })()}</span>
+                            </div>
+                            
+                            ${response.lifestyleFactors && response.lifestyleFactors.length > 0 ? `
+                            <h2>🏃‍♂️ Factores de Estilo de Vida</h2>
+                            <div class="field">
+                              <div class="tags">
+                                ${response.lifestyleFactors.map((factor: string) => 
+                                  `<span class="tag" style="background: #f3e5f5; color: #7b1fa2;">${factor.replace(/_/g, ' ')}</span>`
+                                ).join('')}
+                              </div>
+                            </div>` : ''}
+                            
+                            <div class="highlight">
+                              <h2>📊 Información Técnica</h2>
+                              <div class="field">
+                                <span class="label">ID de Respuesta:</span>
+                                <span class="value" style="font-family: monospace; font-size: 12px;">${response._id}</span>
+                              </div>
+                              <div class="field">
+                                <span class="label">Fecha de envío:</span>
+                                <span class="value">${new Date(response.submittedAt).toLocaleDateString('es-ES', {
+                                  weekday: 'long',
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}</span>
+                              </div>
+                            </div>
+                          </div>
                         </body>
                       </html>
                     `);

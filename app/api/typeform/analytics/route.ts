@@ -118,6 +118,16 @@ export async function GET(request: NextRequest) {
       return acc;
     }, {});
 
+    // Factores de decisión de compra
+    const purchaseInfluencers = responses.reduce((acc: any, response: any) => {
+      if (response.purchaseInfluencers && response.purchaseInfluencers.length > 0) {
+        response.purchaseInfluencers.forEach((influencer: string) => {
+          acc[influencer] = (acc[influencer] || 0) + 1;
+        });
+      }
+      return acc;
+    }, {});
+
     // 5. Distribución de edades
     const ageDistribution = responses.reduce((acc: any, response: any) => {
       if (response.age) {
@@ -496,6 +506,10 @@ export async function GET(request: NextRequest) {
         count: value
       })),
       reasonsForStopping: Object.entries(reasonsForStopping).map(([key, value]) => ({
+        _id: key,
+        count: value
+      })),
+      purchaseInfluencers: Object.entries(purchaseInfluencers).map(([key, value]) => ({
         _id: key,
         count: value
       })),

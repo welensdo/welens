@@ -98,14 +98,18 @@ export async function PATCH(request: NextRequest) {
     // Send status update email if requested
     if (sendEmail && order.userId) {
       try {
-        await emailService.sendOrderStatusEmail({
-          to: order.userId.email,
-          name: order.userId.name,
-          orderNumber: order.orderNumber,
-          status,
-          trackingNumber: trackingNumber || order.trackingNumber,
-          note,
-        });
+        // Populate user data if needed
+        const populatedOrder = await Order.findById(orderId).populate('userId', 'email name');
+        if (populatedOrder && populatedOrder.userId && typeof populatedOrder.userId === 'object' && 'email' in populatedOrder.userId) {
+          await emailService.sendOrderStatusEmail({
+            to: (populatedOrder.userId as any).email,
+            name: (populatedOrder.userId as any).name || 'Cliente',
+            orderNumber: order.orderNumber,
+            status,
+            trackingNumber: trackingNumber || order.trackingNumber,
+            note,
+          });
+        }
       } catch (emailError) {
         console.error('Error enviando email de actualización:', emailError);
         // No fallar la actualización si el email no se puede enviar
