@@ -1,10 +1,18 @@
 import { Resend } from 'resend';
 
-if (!process.env.RESEND_API_KEY) {
-  throw new Error('RESEND_API_KEY is not set in environment variables');
+// Only check for API key on server side
+let resend: Resend | null = null;
+
+if (typeof window === 'undefined') {
+  // Server side only
+  if (!process.env.RESEND_API_KEY) {
+    console.warn('RESEND_API_KEY is not set in environment variables');
+  } else {
+    resend = new Resend(process.env.RESEND_API_KEY);
+  }
 }
 
-export const resend = new Resend(process.env.RESEND_API_KEY);
+export { resend };
 
 // Email configuration - addresses only for Resend compatibility
 export const EMAIL_ADDRESSES = {

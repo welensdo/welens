@@ -3,6 +3,14 @@ import { SupportedLanguage, getEmailTranslations } from './email-i18n';
 import { LanguageDetectionService, detectLanguageForEmail } from './language-detection';
 import React from 'react';
 
+// Check if resend is available
+function ensureResendAvailable() {
+  if (!resend) {
+    throw new Error('Resend API is not available. Check RESEND_API_KEY environment variable.');
+  }
+  return resend;
+}
+
 // Render email templates to string (server-side only)
 async function renderEmailToString(element: React.ReactElement): Promise<string> {
   if (typeof window === 'undefined') {
@@ -69,7 +77,7 @@ export const emailService = {
         React.createElement(WelcomeEmailComponent, { name, email: to })
       );
 
-      const { data, error } = await resend.emails.send({
+      const { data, error } = await ensureResendAvailable().emails.send({
         from: getFromEmail('data'),
         to: [to],
         subject: '¡Bienvenido a WeLens! Tu cuenta ha sido creada',
@@ -132,7 +140,7 @@ export const emailService = {
         })
       );
 
-      const { data, error } = await resend.emails.send({
+      const { data, error } = await ensureResendAvailable().emails.send({
         from: getFromEmail('shipping'), // Confirmaciones de orden desde shipping@welens.org
         to: [to],
         subject: `Orden ${orderNumber} confirmada - WeLens`,
@@ -192,7 +200,7 @@ export const emailService = {
 
       const statusLabel = statusLabels[status] || status;
 
-      const { data, error } = await resend.emails.send({
+      const { data, error } = await ensureResendAvailable().emails.send({
         from: getFromEmail('shipping'), // Status updates desde shipping@welens.org
         to: [to],
         subject: `Actualización: Tu orden ${orderNumber} está ${statusLabel.toLowerCase()}`,
@@ -224,7 +232,7 @@ export const emailService = {
         })
       );
 
-      const { data, error } = await resend.emails.send({
+      const { data, error } = await ensureResendAvailable().emails.send({
         from: getFromEmail('support'), // Password reset desde support@welens.org
         to: [to],
         subject: 'Restablecer contraseña - WeLens',

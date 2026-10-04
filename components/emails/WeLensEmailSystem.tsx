@@ -369,13 +369,10 @@ export const EmailFooterLinks: React.FC<{
   );
 };
 
-// Context Provider for Language (for complex templates)
-export const EmailLanguageContext = React.createContext<{
-  language: SupportedLanguage;
-  translations: EmailTranslations;
-}>({
-  language: 'es',
-  translations: getEmailTranslations('es')
+// Context Provider for Language (for complex templates) - Server-safe version
+export const getEmailLanguageContext = (language: SupportedLanguage = 'es') => ({
+  language,
+  translations: getEmailTranslations(language)
 });
 
 export const useEmailTranslations = (language?: SupportedLanguage) => {
