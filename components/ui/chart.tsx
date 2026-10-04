@@ -91,9 +91,11 @@ const ChartTooltipContent = React.forwardRef<
   }
 >(
   (
-    {
+    props,
+    ref
+  ) => {
+    const {
       active,
-      payload = [],
       className,
       indicator = "dot",
       hideLabel = false,
@@ -105,10 +107,11 @@ const ChartTooltipContent = React.forwardRef<
       color,
       nameKey,
       labelKey,
-      ...props
-    },
-    ref
-  ) => {
+      ...restProps
+    } = props
+
+    // Extract payload safely
+    const payload = (props as any).payload || []
     const chartConfig = React.useContext(ChartContext)
 
     const tooltipLabel = React.useMemo(() => {
@@ -151,7 +154,7 @@ const ChartTooltipContent = React.forwardRef<
           "grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl",
           className
         )}
-        {...props}
+        {...restProps}
       >
         {!nestLabel ? (
           <div className={cn("font-medium", labelClassName)}>
